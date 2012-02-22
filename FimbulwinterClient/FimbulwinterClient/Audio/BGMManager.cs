@@ -21,7 +21,7 @@ namespace FimbulwinterClient.Audio
         private FMOD.Sound _sound;
         private FMOD.Channel _channel;
 
-        public BGMManager(Game g, ROConfig cfg)
+        public BGMManager(ROClient g, ROConfig cfg)
             : base(g)
         {
             RESULT result = Factory.System_Create(ref _system);

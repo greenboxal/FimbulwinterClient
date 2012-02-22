@@ -10,10 +10,8 @@ namespace FimbulwinterClient
         /// </summary>
         static void Main(string[] args)
         {
-            using (ROClient game = new ROClient())
-            {
-                game.Run();
-            }
+            ROClient game = new ROClient();
+            game.Run();
         }
     }
 #endif

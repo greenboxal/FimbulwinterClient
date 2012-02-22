@@ -11,7 +11,7 @@ namespace FimbulwinterClient.IO.ContentLoaders
     {
         public object LoadContent(ROContentManager rcm, Stream s)
         {
-            return Texture2D.FromStream(rcm.GraphicsDevice, s);
+            return Texture2D.FromStream(rcm.Game.GraphicsDevice, s);
         }
     }
 }

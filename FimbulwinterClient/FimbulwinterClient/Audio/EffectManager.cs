@@ -11,7 +11,7 @@ namespace FimbulwinterClient.Audio
     {
         ROConfig _cfg;
 
-        public EffectManager(Game g, ROConfig cfg)
+        public EffectManager(ROClient g, ROConfig cfg)
             : base(g)
         {
             _cfg = cfg;

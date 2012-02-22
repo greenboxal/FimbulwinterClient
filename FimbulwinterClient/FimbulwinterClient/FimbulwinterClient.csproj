@@ -39,7 +39,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;NO_DIRECTINPUT;NO_XMLSCHEMA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -72,6 +72,7 @@
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Input.Touch, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -93,6 +94,7 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
@@ -113,7 +115,9 @@
     <Compile Include="Audio\FMOD\fmod_dsp.cs" />
     <Compile Include="Audio\FMOD\fmod_errors.cs" />
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
+    <Compile Include="GUI\ServiceSelect.cs" />
     <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
+    <Compile Include="IO\ContentLoaders\StreamLoader.cs" />
     <Compile Include="IO\ContentLoaders\Texture2DLoader.cs" />
     <Compile Include="IO\ROContentManager.cs" />
     <Compile Include="IO\GRF\DES.cs" />
@@ -139,6 +143,194 @@
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketSerializer.cs" />
+    <Compile Include="Nuclex\Input\CollectionHelper.cs" />
+    <Compile Include="Nuclex\Input\ControllerDetector.cs" />
+    <Compile Include="Nuclex\Input\ControllerEventArgs.cs" />
+    <Compile Include="Nuclex\Input\Devices\BufferedKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\BufferedMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedAxes.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedGamePadState.Builders.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedGamePadState.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedSliders.cs" />
+    <Compile Include="Nuclex\Input\Devices\GamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\IGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\IInputDevice.cs" />
+    <Compile Include="Nuclex\Input\Devices\IKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\IKeyboardMessageSource.cs" />
+    <Compile Include="Nuclex\Input\Devices\IMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\IMouseMessageSource.cs" />
+    <Compile Include="Nuclex\Input\Devices\ITouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\KeyboardStateHelper.cs" />
+    <Compile Include="Nuclex\Input\Devices\LeakyQueue.cs" />
+    <Compile Include="Nuclex\Input\Devices\LeakyQueue.Test.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedKeyboard.KeyMap.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchCollectionHelper.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchPanelBase.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchState.cs" />
+    <Compile Include="Nuclex\Input\Devices\WindowMessageKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\WindowMessageMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaKeyboard.CharacterMap.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\ExtendedPlayerIndex.cs" />
+    <Compile Include="Nuclex\Input\GamePadButtonsHelper.cs" />
+    <Compile Include="Nuclex\Input\IInputService.cs" />
+    <Compile Include="Nuclex\Input\InputManager.cs" />
+    <Compile Include="Nuclex\Input\MockInputManager.cs" />
+    <Compile Include="Nuclex\Input\UnsafeNativeMethods.cs" />
+    <Compile Include="Nuclex\Input\WindowMessageFilter.cs" />
+    <Compile Include="Nuclex\Support\AffineThreadPool.cs" />
+    <Compile Include="Nuclex\Support\Cloning\CloneFactoryTest.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ClonerHelpers.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.FieldBased.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.PropertyBased.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ICloneFactory.cs" />
+    <Compile Include="Nuclex\Support\Cloning\IStateCopier.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ReflectionCloner.cs" />
+    <Compile Include="Nuclex\Support\Cloning\SerializationCloner.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Insertion.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Removal.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Search.cs" />
+    <Compile Include="Nuclex\Support\Collections\IMultiDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\IObservableCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\IRecyclable.cs" />
+    <Compile Include="Nuclex\Support\Collections\ItemEventArgs.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.ValueCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableList.cs" />
+    <Compile Include="Nuclex\Support\Collections\PairPriorityQueue.cs" />
+    <Compile Include="Nuclex\Support\Collections\Parentable.cs" />
+    <Compile Include="Nuclex\Support\Collections\ParentingCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\Pool.cs" />
+    <Compile Include="Nuclex\Support\Collections\PriorityItemPair.cs" />
+    <Compile Include="Nuclex\Support\Collections\PriorityQueue.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyList.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReverseComparer.cs" />
+    <Compile Include="Nuclex\Support\Collections\TransformingReadOnlyCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\TransformingReadOnlyCollection.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\WeakCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\WeakCollection.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\EnumHelper.cs" />
+    <Compile Include="Nuclex\Support\FloatHelper.cs" />
+    <Compile Include="Nuclex\Support\IntegerHelper.cs" />
+    <Compile Include="Nuclex\Support\IO\ChainStream.cs" />
+    <Compile Include="Nuclex\Support\IO\PartialStream.cs" />
+    <Compile Include="Nuclex\Support\IO\RingMemoryStream.cs" />
+    <Compile Include="Nuclex\Support\Licensing\LicenseKey.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Argument.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Formatter.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Parser.cs" />
+    <Compile Include="Nuclex\Support\PathHelper.cs" />
+    <Compile Include="Nuclex\Support\Plugins\AssemblyLoadEventArgs.cs" />
+    <Compile Include="Nuclex\Support\Plugins\Employer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\FactoryEmployer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\IAbstractFactory.cs" />
+    <Compile Include="Nuclex\Support\Plugins\IAssemblyLoader.cs" />
+    <Compile Include="Nuclex\Support\Plugins\InstanceEmployer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\NoPluginAttribute.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginHelper.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginHost.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginRepository.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PrototypeFactory.cs" />
+    <Compile Include="Nuclex\Support\Semaphore.cs" />
+    <Compile Include="Nuclex\Support\Services\AppDomainTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ExplicitTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\Instancing.cs" />
+    <Compile Include="Nuclex\Support\Services\ITypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\MultiAssemblyTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\IProgressCollectingService.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\IProgressPublishingService.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\ITrackedProcess.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\ProgressTrackingComponent.cs" />
+    <Compile Include="Nuclex\Support\Services\RepositoryTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.Analyzer.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.For.cs" />
+    <Compile Include="Nuclex\Support\Shared.cs" />
+    <Compile Include="Nuclex\Support\StringBuilderHelper.cs" />
+    <Compile Include="Nuclex\Support\StringHelper.cs" />
+    <Compile Include="Nuclex\Support\StringSegment.cs" />
+    <Compile Include="Nuclex\Support\WeakReference.cs" />
+    <Compile Include="Nuclex\Support\WeakReference.Phone7.cs" />
+    <Compile Include="Nuclex\Support\XmlHelper.cs" />
+    <Compile Include="Nuclex\UI\Controls\Arcade\CommandControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Arcade\PanelControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Control.cs" />
+    <Compile Include="Nuclex\UI\Controls\Control.Input.cs" />
+    <Compile Include="Nuclex\UI\Controls\ControlEventArgs.cs" />
+    <Compile Include="Nuclex\UI\Controls\DesktopControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\ButtonControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\ChoiceControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\CloseWindowButtonControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\DraggableControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\HorizontalSliderControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\IListRowLocator.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\InputControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\IOpeningLocator.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\IThumbLocator.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\ListControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\SliderControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\VerticalSliderControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\Desktop\WindowControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\IFocusable.cs" />
+    <Compile Include="Nuclex\UI\Controls\IWritable.cs" />
+    <Compile Include="Nuclex\UI\Controls\LabelControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\ParentingControlCollection.cs" />
+    <Compile Include="Nuclex\UI\Controls\PressableControl.cs" />
+    <Compile Include="Nuclex\UI\Controls\ProgressControl.cs" />
+    <Compile Include="Nuclex\UI\DuplicateNameException.cs" />
+    <Compile Include="Nuclex\UI\GuiManager.cs" />
+    <Compile Include="Nuclex\UI\IGuiService.cs" />
+    <Compile Include="Nuclex\UI\Input\Command.cs" />
+    <Compile Include="Nuclex\UI\Input\DefaultInputCapturer.cs" />
+    <Compile Include="Nuclex\UI\Input\IInputCapturer.cs" />
+    <Compile Include="Nuclex\UI\Input\IInputReceiver.cs" />
+    <Compile Include="Nuclex\Input\MouseButtons.cs" />
+    <Compile Include="Nuclex\UI\RectangleF.cs" />
+    <Compile Include="Nuclex\UI\Screen.cs" />
+    <Compile Include="Nuclex\UI\UniAssertHelper.cs" />
+    <Compile Include="Nuclex\UI\UniRectangle.cs" />
+    <Compile Include="Nuclex\UI\UniScalar.cs" />
+    <Compile Include="Nuclex\UI\UniVector.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\FlatGuiGraphics.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\FlatGuiGraphics.Drawing.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\FlatGuiGraphics.SkinParsing.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\FlatGuiGraphics.SkinParsing2.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\FlatGuiVisualizer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\IFlatControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\IFlatGuiGraphics.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\OpeningLocator.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatInputControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatLabelControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatListControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
+    <Compile Include="Nuclex\UI\Visuals\IGuiVisualizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />

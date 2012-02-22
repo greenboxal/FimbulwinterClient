@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.IO.ContentLoaders;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace FimbulwinterClient.IO
 {
@@ -15,7 +16,7 @@ namespace FimbulwinterClient.IO
         object LoadContent(ROContentManager rcm, Stream s);
     }
 
-    public class ROContentManager : GameComponent
+    public class ROContentManager : ContentManager
     {
         private static Dictionary<Type, IContentLoader> m_loaders;
         public static Dictionary<Type, IContentLoader> Loaders
@@ -27,6 +28,7 @@ namespace FimbulwinterClient.IO
         {
             m_loaders = new Dictionary<Type, IContentLoader>();
 
+            m_loaders.Add(typeof(Stream), new StreamLoader());
             m_loaders.Add(typeof(Texture2D), new Texture2DLoader());
             m_loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
         }
@@ -43,19 +45,19 @@ namespace FimbulwinterClient.IO
             get { return m_fs; }
         }
 
-        private GraphicsDevice m_gd;
-        public GraphicsDevice GraphicsDevice
+        private ROClient m_g;
+        public ROClient Game
         {
-            get { return m_gd; }
-            set { m_gd = value; }
+            get { return m_g; }
+            set { m_g = value; }
         }
 
-        public ROContentManager(Game g)
-            : base(g)
+        public ROContentManager(IServiceProvider isp, ROClient g)
+            : base(isp)
         {
             m_cache = new Dictionary<string, object>();
             m_fs = new ROFileSystem();
-            m_gd = g.GraphicsDevice;
+            m_g = g;
         }
 
         public T LoadContent<T>(string asset) where T : class
@@ -80,6 +82,16 @@ namespace FimbulwinterClient.IO
             m_cache.Add(asset, m_loaders[typeof(T)].LoadContent(this, fs));
             
             return (T)m_cache[asset];
+        }
+
+        protected override Stream OpenStream(string assetName)
+        {
+            return GetStream(this.RootDirectory + "/" + assetName + ".xnb");
+        }
+
+        public Stream GetStream(string asset)
+        {
+            return m_fs.LoadFile(asset);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace FimbulwinterClient.IO
         {
             if (File.Exists(asset))
             {
-                return new FileStream(asset, FileMode.Open, FileAccess.Read);
+                return new FileStream(asset, FileMode.Open);
             }
             else
             {
