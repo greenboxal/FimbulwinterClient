@@ -500,6 +500,16 @@ namespace GRFSharp
         }
         #endregion
 
+        public GRFFile GetFile(string asset)
+        {
+            for (int i = 0; i < _GRFFiles.Count; i++)
+            {
+                if (string.Equals(asset, _GRFFiles[i].Name.ToLower(), StringComparison.CurrentCultureIgnoreCase))
+                    return _GRFFiles[i];
+            }
+
+            return null;
+        }
     }
 }
 

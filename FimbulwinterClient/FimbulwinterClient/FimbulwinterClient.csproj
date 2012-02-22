@@ -107,12 +107,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\DES.cs" />
-    <Compile Include="IO\GRFEventArg.cs" />
-    <Compile Include="IO\GRFFile.cs" />
-    <Compile Include="IO\GRFFileExtractEventArg.cs" />
-    <Compile Include="IO\GRFHeader.cs" />
-    <Compile Include="IO\GRFSharp.cs" />
+    <Compile Include="IO\ContentLoaders\Texture2DLoader.cs" />
+    <Compile Include="IO\ROContentManager.cs" />
+    <Compile Include="IO\GRF\DES.cs" />
+    <Compile Include="IO\GRF\GRFEventArg.cs" />
+    <Compile Include="IO\GRF\GRFFile.cs" />
+    <Compile Include="IO\GRF\GRFFileExtractEventArg.cs" />
+    <Compile Include="IO\GRF\GRFHeader.cs" />
+    <Compile Include="IO\GRF\GRFSharp.cs" />
+    <Compile Include="IO\ROFileSystem.cs" />
     <Compile Include="IO\ZLib\CRC32.cs" />
     <Compile Include="IO\ZLib\Deflate.cs" />
     <Compile Include="IO\ZLib\DeflateStream.cs" />

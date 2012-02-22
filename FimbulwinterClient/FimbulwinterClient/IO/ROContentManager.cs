@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using Microsoft.Xna.Framework.Graphics;
+using FimbulwinterClient.IO.ContentLoaders;
+
+namespace FimbulwinterClient.IO
+{
+    public interface IContentLoader
+    {
+        object LoadContent(ROContentManager rcm, Stream s);
+    }
+
+    public class ROContentManager
+    {
+        private static Dictionary<Type, IContentLoader> m_loaders;
+        public static Dictionary<Type, IContentLoader> Loaders
+        {
+            get { return ROContentManager.m_loaders; }
+        }
+
+        static ROContentManager()
+        {
+            m_loaders = new Dictionary<Type, IContentLoader>();
+
+            m_loaders.Add(typeof(Texture2D), new Texture2DLoader());
+        }
+
+        private Dictionary<string, object> m_cache;
+        public Dictionary<string, object> Cache
+        {
+            get { return m_cache; }
+        }
+
+        private ROFileSystem m_fs;
+        public ROFileSystem FileSystem
+        {
+            get { return m_fs; }
+        }
+
+        private GraphicsDevice m_gd;
+        public GraphicsDevice GraphicsDevice
+        {
+            get { return m_gd; }
+            set { m_gd = value; }
+        }
+
+        public ROContentManager(GraphicsDevice gd)
+        {
+            m_cache = new Dictionary<string, object>();
+            m_fs = new ROFileSystem();
+            m_gd = gd;
+        }
+
+        public T LoadContent<T>(string asset) where T : class
+        {
+            if (!m_loaders.ContainsKey(typeof(T)))
+                return null;
+            
+            asset = asset.ToLower();
+            if (m_cache.ContainsKey(asset))
+            {
+                if (m_cache[asset] != null)
+                    return (T)m_cache[asset];
+                else
+                    m_cache.Remove(asset);
+            }
+
+            Stream fs = m_fs.LoadFile(asset);
+
+            if (fs == null)
+                return null;
+
+            m_cache.Add(asset, m_loaders[typeof(T)].LoadContent(this, fs));
+            
+            return (T)m_cache[asset];
+        }
+    }
+}
