@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using FimbulwinterClient.IO;
+using FimbulwinterClient.Audio;
 
 namespace FimbulwinterClient
 {
@@ -16,15 +18,26 @@ namespace FimbulwinterClient
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        ROConfig cfg;
+        ROContentManager contentManager;
+        BGMManager bgmManager;
+        EffectManager effectManager;
+
         public ROClient()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "data";
+
+            cfg = new ROConfig();
+            contentManager = new ROContentManager(this);
+            bgmManager = new BGMManager(this, cfg);
+            effectManager = new EffectManager(this, cfg);
         }
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            bgmManager.PlayBGM("01");
         }
 
         protected override void LoadContent()

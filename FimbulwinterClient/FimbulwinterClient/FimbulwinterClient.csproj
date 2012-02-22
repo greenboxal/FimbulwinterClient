@@ -107,6 +107,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\BGMManager.cs" />
+    <Compile Include="Audio\EffectManager.cs" />
+    <Compile Include="Audio\FMOD\fmod.cs" />
+    <Compile Include="Audio\FMOD\fmod_dsp.cs" />
+    <Compile Include="Audio\FMOD\fmod_errors.cs" />
+    <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
+    <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
     <Compile Include="IO\ContentLoaders\Texture2DLoader.cs" />
     <Compile Include="IO\ROContentManager.cs" />
     <Compile Include="IO\GRF\DES.cs" />
@@ -135,6 +142,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />
+    <Compile Include="ROConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.IO.ContentLoaders;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework;
 
 namespace FimbulwinterClient.IO
 {
@@ -13,7 +15,7 @@ namespace FimbulwinterClient.IO
         object LoadContent(ROContentManager rcm, Stream s);
     }
 
-    public class ROContentManager
+    public class ROContentManager : GameComponent
     {
         private static Dictionary<Type, IContentLoader> m_loaders;
         public static Dictionary<Type, IContentLoader> Loaders
@@ -26,6 +28,7 @@ namespace FimbulwinterClient.IO
             m_loaders = new Dictionary<Type, IContentLoader>();
 
             m_loaders.Add(typeof(Texture2D), new Texture2DLoader());
+            m_loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
         }
 
         private Dictionary<string, object> m_cache;
@@ -47,11 +50,12 @@ namespace FimbulwinterClient.IO
             set { m_gd = value; }
         }
 
-        public ROContentManager(GraphicsDevice gd)
+        public ROContentManager(Game g)
+            : base(g)
         {
             m_cache = new Dictionary<string, object>();
             m_fs = new ROFileSystem();
-            m_gd = gd;
+            m_gd = g.GraphicsDevice;
         }
 
         public T LoadContent<T>(string asset) where T : class
