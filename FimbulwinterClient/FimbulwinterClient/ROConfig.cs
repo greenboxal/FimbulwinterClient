@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
+using System.Xml.Linq;
 using System.IO;
 
 namespace FimbulwinterClient
@@ -145,28 +145,26 @@ namespace FimbulwinterClient
 
         private void ReadClientInfo()
         {
-            XmlDocument xml = new XmlDocument();
-            xml.Load(m_client.ContentManager.LoadContent<Stream>("data/fb/clientinfo.xml"));
+            XDocument xml = XDocument.Load(m_client.ContentManager.LoadContent<Stream>("data/fb/clientinfo.xml"));
+            
+            XElement clientinfo = xml.Element("clientinfo");
 
-            XmlNode clientinfo = xml.SelectSingleNode("clientinfo");
+            m_serviceType = clientinfo.Element("servicetype").Value;
+            m_serverType = clientinfo.Element("servertype").Value;
 
-            m_serviceType = clientinfo.SelectSingleNode("servicetype").Value;
-            m_serverType = clientinfo.SelectSingleNode("servertype").Value;
+            var connections = from connection in clientinfo.Elements("connection")
+                              select new ServerInfo
+                              {
+                                  Display = connection.Element("display").Value,
+                                  Desc = connection.Element("desc").Value,
+                                  Address = connection.Element("address").Value,
+                                  Port = int.Parse(connection.Element("port").Value),
+                                  Version = int.Parse(connection.Element("version").Value),
+                                  RegistrationUrl = connection.Element("version").Value
+                              };
 
-            XmlNodeList connections = clientinfo.SelectNodes("connection");
-            foreach (XmlNode conn in connections)
-            {
-                ServerInfo si = new ServerInfo();
-
-                si.Display = conn.SelectSingleNode("display").InnerText;
-                si.Desc = conn.SelectSingleNode("desc").InnerText;
-                si.Address = conn.SelectSingleNode("address").InnerText;
-                si.Port = int.Parse(conn.SelectSingleNode("port").InnerText);
-                si.Version = int.Parse(conn.SelectSingleNode("version").InnerText);
-                si.RegistrationUrl = conn.SelectSingleNode("registrationweb").InnerText;
-
-                m_servers.Add(si);
-            }
+            foreach (var connection in connections)
+	            m_servers.Add(connection);
         }
     }
 }
