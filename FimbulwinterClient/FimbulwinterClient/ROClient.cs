@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -13,12 +13,14 @@ using FimbulwinterClient.Audio;
 using Nuclex.Input;
 using Nuclex.UserInterface;
 using FimbulwinterClient.GUI;
+using FimbulwinterClient.Content;
 
 namespace FimbulwinterClient
 {
     public enum ROClientState
     {
         None,
+        Test,
         Login,
         Loading,
         InGame,
@@ -51,6 +53,9 @@ namespace FimbulwinterClient
         GuiManager guiManager;
 
         Screen currentScreen;
+
+        SpriteAction mouseAction;
+        float mouseX, mouseY;
 
         public GuiManager GuiManager
         {
@@ -92,7 +97,9 @@ namespace FimbulwinterClient
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
 
-            Window.Title = "Ragnar�k - Fimbulwinter Client";
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+
+            Window.Title = "Ragnarök - Fimbulwinter Client";
 
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
@@ -104,29 +111,29 @@ namespace FimbulwinterClient
             effectManager = new EffectManager(this, cfg);
 
             inputManager = new Nuclex.Input.InputManager(Services, Window.Handle);
+            inputManager.Mice[0].MouseMoved += new Nuclex.Input.Devices.MouseMoveDelegate(ROClient_MouseMoved);
+
             guiManager = new Nuclex.UserInterface.GuiManager(Services, ContentManager);
+            guiManager.DrawOrder = 1000;
 
             Components.Add(inputManager);
             Components.Add(guiManager);
-
-            guiManager.DrawOrder = 1000;
-
-            IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            ChangeState(ROClientState.Login);
-            ChangeLoginState(ROLoginState.ServiceSelect);
+            ChangeState(ROClientState.Test);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            loginScreenBG = ContentManager.LoadContent<Texture2D>("data/fb/lsbg.jpg");
+            loginScreenBG = ContentManager.LoadContent<Texture2D>("data/texture/À¯ÀúÀÎÅÍÆäÀÌ½º/bgi_temp.bmp");
+            mouseAction = ContentManager.LoadContent<SpriteAction>("data/sprite/cursors.act");
+            mouseAction.Loop = true;
         }
 
         protected override void UnloadContent()
@@ -137,25 +144,24 @@ namespace FimbulwinterClient
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            mouseAction.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
-            if (state == ROClientState.Login)
+            if (state == ROClientState.Login || state == ROClientState.Test)
             {
                 spriteBatch.Begin();
-                spriteBatch.Draw(loginScreenBG, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
-
-                switch (loginState)
-                {
-                    case ROLoginState.ServiceSelect:
-                        break;
-                }
-                
+                spriteBatch.Draw(loginScreenBG, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);                
                 spriteBatch.End();
             }
+
+            spriteBatch.Begin();
+            mouseAction.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
@@ -168,9 +174,11 @@ namespace FimbulwinterClient
             if (s == ROLoginState.ServiceSelect)
             {
                 Viewport viewport = GraphicsDevice.Viewport;
+                ServiceSelect ss = new ServiceSelect(this);
 
                 currentScreen = new Screen(viewport.Width, viewport.Height);
-                currentScreen.Desktop.Children.Add(new ServiceSelect(this));
+                ss.Bounds = new UniRectangle(currentScreen.Width / 2 - 140, currentScreen.Height - 350, 280.0f, 200.0f);
+                currentScreen.Desktop.Children.Add(ss);
 
                 guiManager.Screen = currentScreen;
             }
@@ -180,12 +188,18 @@ namespace FimbulwinterClient
 
         public void ChangeState(ROClientState s)
         {
-            if (s == ROClientState.Login)
+            if (s == ROClientState.Login || s == ROClientState.Test)
             {
                 bgmManager.PlayBGM("01");
             }
 
             state = s;
+        }
+
+        void ROClient_MouseMoved(float x, float y)
+        {
+            mouseX = x;
+            mouseY = y;
         }
     }
 }

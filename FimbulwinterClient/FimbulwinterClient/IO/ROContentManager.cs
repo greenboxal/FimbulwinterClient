@@ -8,12 +8,13 @@ using FimbulwinterClient.IO.ContentLoaders;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using FimbulwinterClient.Content;
 
 namespace FimbulwinterClient.IO
 {
     public interface IContentLoader
     {
-        object LoadContent(ROContentManager rcm, Stream s);
+        object LoadContent(ROContentManager rcm, Stream s, string fn);
     }
 
     public class ROContentManager : ContentManager
@@ -31,6 +32,8 @@ namespace FimbulwinterClient.IO
             m_loaders.Add(typeof(Stream), new StreamLoader());
             m_loaders.Add(typeof(Texture2D), new Texture2DLoader());
             m_loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
+            m_loaders.Add(typeof(Sprite), new SpriteLoader());
+            m_loaders.Add(typeof(SpriteAction), new SpriteActionLoader());
         }
 
         private Dictionary<string, object> m_cache;
@@ -60,10 +63,10 @@ namespace FimbulwinterClient.IO
             m_g = g;
         }
 
-        public T LoadContent<T>(string asset) where T : class
+        public T LoadContent<T>(string asset)
         {
             if (!m_loaders.ContainsKey(typeof(T)))
-                return null;
+                return default(T);
             
             asset = asset.ToLower();
             if (m_cache.ContainsKey(asset))
@@ -77,11 +80,21 @@ namespace FimbulwinterClient.IO
             Stream fs = m_fs.LoadFile(asset);
 
             if (fs == null)
-                return null;
+                return default(T);
 
-            m_cache.Add(asset, m_loaders[typeof(T)].LoadContent(this, fs));
+            m_cache.Add(asset, m_loaders[typeof(T)].LoadContent(this, fs, asset));
             
             return (T)m_cache[asset];
+        }
+
+        public override T Load<T>(string assetName)
+        {
+            if (typeof(T) == typeof(Texture2D))
+            {
+                return LoadContent<T>(this.RootDirectory + "/" + assetName);
+            }
+            
+            return base.Load<T>(assetName);
         }
 
         protected override Stream OpenStream(string assetName)

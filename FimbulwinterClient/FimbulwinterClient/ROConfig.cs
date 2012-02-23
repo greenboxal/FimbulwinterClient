@@ -95,7 +95,7 @@ namespace FimbulwinterClient
         }
 
         private List<ServerInfo> m_servers;
-        private List<ServerInfo> Servers
+        public List<ServerInfo> Servers
         {
             get { return m_servers; }
             set { m_servers = value; }

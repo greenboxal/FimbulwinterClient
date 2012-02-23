@@ -39,8 +39,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fb\Arial.spritefont">
-      <Name>Arial</Name>
+    <Compile Include="fb\Arial10.spritefont">
+      <Name>Arial10</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>

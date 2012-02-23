@@ -346,12 +346,19 @@ namespace GRFSharp
                 fileFlags = bodyReader.ReadByte();
                 fileOffset = bodyReader.ReadInt32();
 
-                if (fileFlags == 3)
+                if (fileFlags == 1 || fileFlags == 5 || fileFlags == 3)
                 {
                     int lop, srccount, srclen = fileCompressedLength;
 
-                    for (lop = 10, srccount = 1; srclen >= lop; lop *= 10, srccount++)
-                        fileCycle = srccount;
+                    if (fileFlags == 3)
+                    {
+                        for (lop = 10, srccount = 1; srclen >= lop; lop *= 10, srccount++)
+                            fileCycle = srccount;
+                    }
+                    else if (fileFlags == 5)
+                        fileCycle = 0;
+                    else
+                        fileCycle = -1;
                 }
 
                 if (fileFlags == 2) // Do not add folders 
@@ -359,6 +366,7 @@ namespace GRFSharp
                     OnFileReadComplete(new GRFEventArg(new GRFFile(System.Text.Encoding.Default.GetString(System.Text.Encoding.Default.GetBytes(fileName)),0,0,0,0,0,0,this)));
                     continue;
                 }
+
                 GRFFile newGRFFile = new GRFFile(
                     System.Text.Encoding.Default.GetString(System.Text.Encoding.Default.GetBytes(fileName)),
                     fileCompressedLength,
@@ -409,17 +417,12 @@ namespace GRFSharp
         /// </param>
         public byte[] GetDataFromFile(GRFFile file)
         {
-            byte[] compressedBody = new byte[file.CompressedLength];
+            byte[] compressedBody = new byte[file.CompressedLengthAligned];
 
             _grfStream.Seek(46 + file.Offset, SeekOrigin.Begin);
             _grfStream.Read(compressedBody, 0, file.CompressedLengthAligned);
 
-            if ((file.Flags == 3) || (file.Flags == 5))
-            {
-                //@Todo fix DES.Decode()
-                //compressedBody = DES.Decode(compressedBody, file.CompressedLengthAligned, file.Cycle);
-                return new byte[file.CompressedLength];
-            }
+            DES.GrfDecode(compressedBody, file.Flags, file.CompressedLength);
 
             return ZlibStream.UncompressBuffer(compressedBody);
         }
@@ -502,6 +505,8 @@ namespace GRFSharp
 
         public GRFFile GetFile(string asset)
         {
+            asset = asset.Replace('/', '\\');
+
             for (int i = 0; i < _GRFFiles.Count; i++)
             {
                 if (string.Equals(asset, _GRFFiles[i].Name.ToLower(), StringComparison.CurrentCultureIgnoreCase))
