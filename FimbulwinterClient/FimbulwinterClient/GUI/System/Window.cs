@@ -63,15 +63,21 @@ namespace FimbulwinterClient.GUI.System
         {
             if (dragging)
             {
-                this.Position = new Vector2(x - dragDeltaX, y - dragDeltaY);
+                this.Position = new Vector2(GetAbsX() + x - dragDeltaX, GetAbsY() + y - dragDeltaY);
             }
         }
 
         public override void OnMouseDown(MouseButtons buttons, float x, float y)
         {
             dragging = true;
-            dragDeltaX = x - this.Position.X;
-            dragDeltaY = y - this.Position.Y;
+            dragDeltaX = x;
+            dragDeltaY = y;
+        }
+
+        public void Close()
+        {
+            if (Parent == null)
+                GuiManager.Singleton.EnqueueRemove(this);
         }
     }
 }

@@ -77,7 +77,21 @@ namespace FimbulwinterClient.GUI.System
             set { m_text = value; }
         }
 
-        protected float GetAbsX()
+        private Color m_foreColor;
+        public Color ForeColor
+        {
+            get { return m_foreColor; }
+            set { m_foreColor = value; }
+        }
+
+        private Color m_backColor;
+        public Color BackColor
+        {
+            get { return m_backColor; }
+            set { m_backColor = value; }
+        }
+
+        internal float GetAbsX()
         {
             if (m_parent != null)
                 return m_parent.GetAbsX() + m_position.X;
@@ -85,7 +99,7 @@ namespace FimbulwinterClient.GUI.System
                 return m_position.X;
         }
 
-        protected float GetAbsY()
+        internal float GetAbsY()
         {
             if (m_parent != null)
                 return m_parent.GetAbsY() + m_position.Y;
@@ -100,6 +114,9 @@ namespace FimbulwinterClient.GUI.System
 
             if (arial10 == null)
                 arial10 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb/arial10");
+
+            m_foreColor = Color.Black;
+            m_backColor = Color.White;
 
             m_controls = new ControlCollection(this);
 
@@ -212,6 +229,11 @@ namespace FimbulwinterClient.GUI.System
         public override int GetHashCode()
         {
             return m_handle;
+        }
+
+        public void Focus()
+        {
+            GuiManager.Singleton.SetActiveControl(this);
         }
     }
 }

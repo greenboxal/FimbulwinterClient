@@ -31,6 +31,8 @@ namespace FimbulwinterClient.GUI.System
             get { return m_controls; }
         }
 
+        private Queue<Control> m_deleteQueue;
+
         private SpriteBatch spriteBatch;
 
         private Control m_activeControl;
@@ -62,6 +64,7 @@ namespace FimbulwinterClient.GUI.System
 
             spriteBatch = new SpriteBatch(m_client.GraphicsDevice);
             m_controls = new List<Control>();
+            m_deleteQueue = new Queue<Control>();
 
             m_cursor = m_client.ContentManager.LoadContent<SpriteAction>("data/sprite/cursors.act");
             m_cursor.Loop = true;
@@ -111,7 +114,7 @@ namespace FimbulwinterClient.GUI.System
 
             if ((m_downButtons & MouseButtons.Left) != 0 && m_downControl != null)
             {
-                m_hoverControl.OnMouseMove(x, y);
+                m_hoverControl.OnMouseMove(mouseX - m_hoverControl.GetAbsX(), mouseY - m_hoverControl.GetAbsY());
             }
             else
             {
@@ -129,7 +132,7 @@ namespace FimbulwinterClient.GUI.System
                 }
 
                 if (m_hoverControl != null)
-                    m_hoverControl.OnMouseMove(x, y);
+                    m_hoverControl.OnMouseMove(mouseX - m_hoverControl.GetAbsX(), mouseY - m_hoverControl.GetAbsY());
             }
         }
 
@@ -139,11 +142,11 @@ namespace FimbulwinterClient.GUI.System
 
             if (m_downControl != null)
             {
-                m_downControl.OnMouseUp(buttons, mouseX, mouseY);
+                m_downControl.OnMouseUp(buttons, mouseX - m_downControl.GetAbsX(), mouseY - m_downControl.GetAbsY());
 
                 if (m_downControl == c && (m_downButtons & buttons) != 0)
                 {
-                    m_downControl.OnClick(m_downButtons & buttons, mouseX, mouseY);
+                    m_downControl.OnClick(m_downButtons & buttons, mouseX - m_downControl.GetAbsX(), mouseY - m_downControl.GetAbsY());
                 }
             }
 
@@ -152,10 +155,10 @@ namespace FimbulwinterClient.GUI.System
 
         void mouse_MouseButtonPressed(MouseButtons buttons)
         {
-            m_activeControl = GetControlByPosition(m_controls, null, 0, 0, (int)mouseX, (int)mouseY);
+            SetActiveControl(GetControlByPosition(m_controls, null, 0, 0, (int)mouseX, (int)mouseY));
 
             if (m_activeControl != null)
-                m_activeControl.OnMouseDown(buttons, mouseX, mouseY);
+                m_activeControl.OnMouseDown(buttons, mouseX - m_activeControl.GetAbsX(), mouseY - m_activeControl.GetAbsY());
 
             m_downControl = m_activeControl;
             m_downButtons |= buttons;
@@ -164,6 +167,9 @@ namespace FimbulwinterClient.GUI.System
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            while (m_deleteQueue.Count > 0)
+                m_controls.Remove(m_deleteQueue.Dequeue());
 
             for (int i = 0; i < m_controls.Count; i++)
             {
@@ -193,9 +199,11 @@ namespace FimbulwinterClient.GUI.System
         {
             Control c = def;
 
-            foreach (Control ctl in controls)
+            for (int i = controls.Count - 1; i >= 0; --i)
             {
-                if (x > (totalX + ctl.Position.X) && y > (totalY + ctl.Position.Y) && x < (totalX + ctl.Position.X + ctl.Size.X) && y < (totalY + ctl.Position.Y + ctl.Size.Y))
+                Control ctl = controls[i];
+
+                if (x >= (totalX + ctl.Position.X) && y > (totalY + ctl.Position.Y) && x < (totalX + ctl.Position.X + ctl.Size.X) && y < (totalY + ctl.Position.Y + ctl.Size.Y))
                 {
                     c = GetControlByPosition(ctl.Controls, ctl, totalX + ctl.Position.X, totalY + ctl.Position.Y, x, y);
                     break;
@@ -209,6 +217,31 @@ namespace FimbulwinterClient.GUI.System
         public int GetNewHandle()
         {
             return ++m_handlePointer;
+        }
+
+        public void EnqueueRemove(Window window)
+        {
+            m_deleteQueue.Enqueue(window);
+        }
+
+        public void SetActiveControl(Control c)
+        {
+            m_activeControl = c;
+
+            Control tmp = m_activeControl;
+            while (tmp != null && tmp.Parent != null)
+            {
+                tmp = tmp.Parent;
+            }
+
+            if (tmp != null)
+            {
+                if (m_controls.Contains(tmp))
+                {
+                    m_controls.Remove(tmp);
+                    m_controls.Add(tmp);
+                }
+            }
         }
     }
 }

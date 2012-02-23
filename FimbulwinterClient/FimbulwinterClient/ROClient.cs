@@ -88,12 +88,6 @@ namespace FimbulwinterClient
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.ApplyChanges();
-
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-
             Window.Title = "Ragnarök - Fimbulwinter Client";
 
             Content = (ContentManager)new ROContentManager(Services, this);
@@ -114,6 +108,12 @@ namespace FimbulwinterClient
             Components.Add(guiManager);
 
             Services.AddService(typeof(InputManager), inputManager);
+
+            graphics.PreferredBackBufferWidth = cfg.ScreenWidth;
+            graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
+            graphics.ApplyChanges();
+
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
         protected override void Initialize()
@@ -172,12 +172,7 @@ namespace FimbulwinterClient
             {
                 bgmManager.PlayBGM("01");
 
-                Window w = new Window();
-                Button btn = new Button();
-                btn.Text = "OK";
-                btn.Position = new Vector2(20, 20);
-                btn.Size = new Vector2(42, 20);
-                w.Controls.Add(btn);
+                ServiceSelectWindow w = new ServiceSelectWindow(cfg);
                 guiManager.Controls.Add(w);
             }
 

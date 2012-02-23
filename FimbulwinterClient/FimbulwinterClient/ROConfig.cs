@@ -50,6 +50,11 @@ namespace FimbulwinterClient
             get { return m_registrationUrl; }
             set { m_registrationUrl = value; }
         }
+
+        public override string ToString()
+        {
+            return m_display;
+        }
     }
 
     public class ROConfig
@@ -82,6 +87,20 @@ namespace FimbulwinterClient
             }
         }
 
+        private int m_screenWidth;
+        public int ScreenWidth
+        {
+            get { return m_screenWidth; }
+            set { m_screenWidth = value; }
+        }
+
+        private int m_screenHeight;
+        public int ScreenHeight
+        {
+            get { return m_screenHeight; }
+            set { m_screenHeight = value; }
+        }
+
         private string m_serviceType;
         public string ServiceType
         {
@@ -112,6 +131,9 @@ namespace FimbulwinterClient
             m_effectVolume = 1.0f;
 
             m_servers = new List<ServerInfo>();
+
+            m_screenWidth = 1280;
+            m_screenHeight = 768;
         }
 
         public void ReadConfig()
