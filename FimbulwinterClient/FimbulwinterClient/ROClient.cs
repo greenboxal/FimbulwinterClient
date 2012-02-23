@@ -11,9 +11,9 @@ using Microsoft.Xna.Framework.Media;
 using FimbulwinterClient.IO;
 using FimbulwinterClient.Audio;
 using Nuclex.Input;
-using Nuclex.UserInterface;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.Content;
+using FimbulwinterClient.GUI.System;
 
 namespace FimbulwinterClient
 {
@@ -51,11 +51,6 @@ namespace FimbulwinterClient
 
         InputManager inputManager;
         GuiManager guiManager;
-
-        Screen currentScreen;
-
-        SpriteAction mouseAction;
-        float mouseX, mouseY;
 
         public GuiManager GuiManager
         {
@@ -111,13 +106,14 @@ namespace FimbulwinterClient
             effectManager = new EffectManager(this, cfg);
 
             inputManager = new Nuclex.Input.InputManager(Services, Window.Handle);
-            inputManager.Mice[0].MouseMoved += new Nuclex.Input.Devices.MouseMoveDelegate(ROClient_MouseMoved);
 
-            guiManager = new Nuclex.UserInterface.GuiManager(Services, ContentManager);
+            guiManager = new GuiManager(this);
             guiManager.DrawOrder = 1000;
 
             Components.Add(inputManager);
             Components.Add(guiManager);
+
+            Services.AddService(typeof(InputManager), inputManager);
         }
 
         protected override void Initialize()
@@ -132,8 +128,6 @@ namespace FimbulwinterClient
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             loginScreenBG = ContentManager.LoadContent<Texture2D>("data/texture/À¯ÀúÀÎÅÍÆäÀÌ½º/bgi_temp.bmp");
-            mouseAction = ContentManager.LoadContent<SpriteAction>("data/sprite/cursors.act");
-            mouseAction.Loop = true;
         }
 
         protected override void UnloadContent()
@@ -144,8 +138,6 @@ namespace FimbulwinterClient
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-            mouseAction.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -159,10 +151,6 @@ namespace FimbulwinterClient
                 spriteBatch.End();
             }
 
-            spriteBatch.Begin();
-            mouseAction.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null);
-            spriteBatch.End();
-
             base.Draw(gameTime);
         }
 
@@ -173,14 +161,6 @@ namespace FimbulwinterClient
 
             if (s == ROLoginState.ServiceSelect)
             {
-                Viewport viewport = GraphicsDevice.Viewport;
-                ServiceSelect ss = new ServiceSelect(this);
-
-                currentScreen = new Screen(viewport.Width, viewport.Height);
-                ss.Bounds = new UniRectangle(currentScreen.Width / 2 - 140, currentScreen.Height - 350, 280.0f, 200.0f);
-                currentScreen.Desktop.Children.Add(ss);
-
-                guiManager.Screen = currentScreen;
             }
 
             loginState = s;
@@ -191,15 +171,12 @@ namespace FimbulwinterClient
             if (s == ROClientState.Login || s == ROClientState.Test)
             {
                 bgmManager.PlayBGM("01");
+
+                Window w = new Window();
+                guiManager.Controls.Add(w);
             }
 
             state = s;
-        }
-
-        void ROClient_MouseMoved(float x, float y)
-        {
-            mouseX = x;
-            mouseY = y;
         }
     }
 }

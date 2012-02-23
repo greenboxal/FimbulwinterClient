@@ -16,7 +16,9 @@ namespace FimbulwinterClient.IO.ContentLoaders
             {
                 MemoryStream ms = new MemoryStream();
 
-                Bitmap.FromStream(s).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                Bitmap bmp = (Bitmap)Bitmap.FromStream(s);
+                bmp.MakeTransparent(Color.Fuchsia);
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
                 return Texture2D.FromStream(rcm.Game.GraphicsDevice, ms);
             }
