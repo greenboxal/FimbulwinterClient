@@ -173,6 +173,11 @@ namespace FimbulwinterClient
                 bgmManager.PlayBGM("01");
 
                 Window w = new Window();
+                Button btn = new Button();
+                btn.Text = "OK";
+                btn.Position = new Vector2(20, 20);
+                btn.Size = new Vector2(42, 20);
+                w.Controls.Add(btn);
                 guiManager.Controls.Add(w);
             }
 

@@ -10,18 +10,14 @@ namespace FimbulwinterClient.GUI.System
 {
     public class Window : Control
     {
-        private static Texture2D formSkin;
-
         private float dragDeltaX;
         private float dragDeltaY;
         private bool dragging;
 
         public Window()
         {
-            if (formSkin == null)
-                formSkin = GuiManager.Singleton.Client.ContentManager.LoadContent<Texture2D>("data/fb/texture/wndskin.png");
-
             this.Size = new Vector2(280, 120);
+            this.Text = "Window";
         }
 
         public override void Draw(SpriteBatch sb, GameTime gt)
@@ -41,17 +37,21 @@ namespace FimbulwinterClient.GUI.System
             Rectangle bMid = new Rectangle(absX + 3, absY + 17 + mMid.Height, (int)Size.X - 6, 28);
             Rectangle bRight = new Rectangle(absX + bMid.Width + 3, absY + 17 + mMid.Height, 3, 28);
 
-            sb.Draw(formSkin, tLeft, new Rectangle(0, 0, 14, 17), Color.White);
-            sb.Draw(formSkin, tMid, new Rectangle(14, 0, 11, 17), Color.White);
-            sb.Draw(formSkin, tRight, new Rectangle(25, 0, 3, 17), Color.White);
+            sb.Draw(FormSkin, tLeft, new Rectangle(0, 0, 14, 17), Color.White);
+            sb.Draw(FormSkin, tMid, new Rectangle(14, 0, 11, 17), Color.White);
+            sb.Draw(FormSkin, tRight, new Rectangle(25, 0, 3, 17), Color.White);
 
-            sb.Draw(formSkin, mLeft, new Rectangle(0, 17, 1, 8), Color.White);
-            sb.Draw(formSkin, mMid, new Rectangle(6, 20, 2, 2), Color.White);
-            sb.Draw(formSkin, mRight, new Rectangle(27, 17, 1, 8), Color.White);
+            sb.Draw(FormSkin, mLeft, new Rectangle(0, 17, 1, 8), Color.White);
+            sb.Draw(FormSkin, mMid, new Rectangle(6, 20, 2, 2), Color.White);
+            sb.Draw(FormSkin, mRight, new Rectangle(27, 17, 1, 8), Color.White);
 
-            sb.Draw(formSkin, bLeft, new Rectangle(0, 25, 3, 28), Color.White);
-            sb.Draw(formSkin, bMid, new Rectangle(3, 25, 22, 28), Color.White);
-            sb.Draw(formSkin, bRight, new Rectangle(25, 25, 3, 28), Color.White);
+            sb.Draw(FormSkin, bLeft, new Rectangle(0, 25, 3, 28), Color.White);
+            sb.Draw(FormSkin, bMid, new Rectangle(3, 25, 22, 28), Color.White);
+            sb.Draw(FormSkin, bRight, new Rectangle(25, 25, 3, 28), Color.White);
+
+            sb.DrawString(Arial10, this.Text, new Vector2(absX + 17, absY + 1), Color.Black);
+
+            base.Draw(sb, gt);
         }
 
         public override void OnMouseUp(MouseButtons buttons, float x, float y)

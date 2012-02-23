@@ -119,6 +119,7 @@
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\Sprite.cs" />
+    <Compile Include="GUI\System\Button.cs" />
     <Compile Include="GUI\System\Control.cs" />
     <Compile Include="GUI\System\ControlCollection.cs" />
     <Compile Include="GUI\System\GuiManager.cs" />
