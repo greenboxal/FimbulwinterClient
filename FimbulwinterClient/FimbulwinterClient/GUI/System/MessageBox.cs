@@ -51,7 +51,7 @@ namespace FimbulwinterClient.GUI.System
             lblText = new Label();
             lblText.Position = new Vector2(13, 29);
 
-            if (type == 1)
+            if (type >= 1)
             {
                 btnOkYes = new Button();
                 btnOkYes.Size = new Vector2(42, 20);
@@ -61,7 +61,7 @@ namespace FimbulwinterClient.GUI.System
                 this.Controls.Add(btnOkYes);
             }
             
-            if (type == 2)
+            if (type >= 2)
             {
                 btnNo = new Button();
                 btnNo.Size = new Vector2(42, 20);

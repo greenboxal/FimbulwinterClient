@@ -52,6 +52,8 @@ namespace FimbulwinterClient.Network
 
             m_ns = m_client.GetStream();
             m_bw = new BinaryWriter(m_ns);
+
+            Start();
         }
 
         public void Disconnect()
@@ -82,11 +84,19 @@ namespace FimbulwinterClient.Network
 
         private void ReadComplete(IAsyncResult ar)
         {
-            SocketError err;
+            SocketError err = SocketError.Success;
 
-            int size = m_client.Client.EndReceive(ar, out err);
+            int size = 0;
+            try
+            {
+                size = m_client.Client.EndReceive(ar, out err);
+            }
+            catch
+            {
+                return; // IAsyncResult bla bla bla
+            }
 
-            if (size == 0)
+            if (size <= 0 || err != SocketError.Success)
             {
                 if (Disconnected != null)
                     Disconnected();

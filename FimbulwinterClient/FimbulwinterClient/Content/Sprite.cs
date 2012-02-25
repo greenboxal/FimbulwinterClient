@@ -213,20 +213,52 @@ namespace FimbulwinterClient.Content
             }
         }
 
-        public void Draw(int p, SpriteBatch spriteBatch, Vector2 pos)
+        public int GetIndex(int idx, int type)
         {
-            if (p >= m_images.Length)
-                return;
+            if (type == 0)
+            {
+                if (idx >= 0 && idx < m_palCount)
+                    return idx;
+            }
+            else if (type == 1)
+            {
+                if (idx >= 0 && idx < m_rgbaCount)
+                    return idx + m_palCount;
+            }
 
-            spriteBatch.Draw(m_images[p], pos, Color.White);
+            return -1;
         }
 
-        public void Draw(int p, SpriteBatch spriteBatch, Rectangle rect, Color mask)
+        public void Draw(SpriteAction.Motion mo, int i, SpriteBatch sb, int x, int y, bool ext)
         {
-            if (p >= m_images.Length)
+            SpriteAction.SpriteClip sc = mo.Clips[i];
+            int idx = GetIndex(sc.SpriteNumber, sc.SpriteType);
+
+            if (idx == -1)
                 return;
 
-            spriteBatch.Draw(m_images[p], rect, mask);
+            float w, h;
+            w = m_images[idx].Width;
+            h = m_images[idx].Height;
+
+            w *= sc.Zoom.X;
+            h *= sc.Zoom.Y;
+
+            if (ext && mo.AttachPoints.Count > 0)
+            {
+                x -= mo.AttachPoints[0].Position.X;
+                y -= mo.AttachPoints[0].Position.Y;
+            }
+
+            Rectangle r = new Rectangle(
+                (int)(x - Math.Ceiling(w / 2) + sc.Position.X),
+                (int)(y - Math.Ceiling(h / 2) + sc.Position.Y),
+                (int)w,
+                (int)h);
+
+            sb.Draw(m_images[idx], r, null, mo.Clips[i].Mask, 
+                (float)(Math.PI * mo.Clips[i].Angle / 180.0F), default(Vector2), 
+                SpriteEffects.None, 0);
         }
     }
 }

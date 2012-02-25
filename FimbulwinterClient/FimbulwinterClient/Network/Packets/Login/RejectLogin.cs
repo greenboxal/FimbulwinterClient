@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using FimbulwinterClient.Utils;
 
-namespace FimbulwinterClient.Network.Packets
+namespace FimbulwinterClient.Network.Packets.Login
 {
     public class RejectLogin : InPacket
     {

@@ -61,6 +61,8 @@ namespace FimbulwinterClient
     [Serializable]
     public class ROConfig
     {
+        public const int RO_MAXCHARS = 9;
+
         private ROClient m_client;
         [XmlIgnore]
         public ROClient Client

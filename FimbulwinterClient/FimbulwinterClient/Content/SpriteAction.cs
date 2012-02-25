@@ -224,7 +224,7 @@ namespace FimbulwinterClient.Content
                                             sc.Size.Y = br.ReadInt32();
                                         }
                                     }
-                                    
+
                                     mo.Clips.Add(sc);
                                 }
                             }
@@ -260,7 +260,7 @@ namespace FimbulwinterClient.Content
                                     }
                                 }
                             }
-                            
+
                             act.Motions.Add(mo);
                         }
                     }
@@ -327,26 +327,24 @@ namespace FimbulwinterClient.Content
 
         }
 
-        public void Draw(SpriteBatch sb, Point pos, SpriteAction parent)
+        public void Draw(SpriteBatch sb, Point pos, SpriteAction parent, bool ext)
         {
             Act act = m_actions[m_action];
             Motion mo = act.Motions[m_frame];
 
-            foreach (SpriteClip sc in mo.Clips)
+            if (parent != null)
             {
-                int x = (int)pos.X;
-                int y = (int)pos.Y;
-                int w = (int)(m_sprite.Images[sc.SpriteNumber].Width * sc.Zoom.X);
-                int h = (int)(m_sprite.Images[sc.SpriteNumber].Height * sc.Zoom.Y);
+                Motion pmo = parent.Actions[m_action].Motions[m_frame];
 
-                if (sc.Mirror)
-                    w = -w;
-
-                //x += mo.Range1.X;
-               //y += mo.Range1.Y;
-
-                m_sprite.Draw(sc.SpriteNumber, sb, new Rectangle(x, y, w, h), sc.Mask);
+                if (pmo.AttachPoints.Count > 0)
+                {
+                    pos.X += pmo.AttachPoints[0].Position.X;
+                    pos.Y += pmo.AttachPoints[0].Position.Y;
+                }
             }
+
+            for (int i = 0; i < mo.Clips.Count; i++)
+                m_sprite.Draw(mo, i, sb, pos.X, pos.Y, ext);
         }
     }
 }

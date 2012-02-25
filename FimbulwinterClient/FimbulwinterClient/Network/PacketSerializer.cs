@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using FimbulwinterClient.Network.Packets;
+using FimbulwinterClient.Network.Packets.Char;
+using FimbulwinterClient.Network.Packets.Login;
 
 namespace FimbulwinterClient.Network
 {
@@ -23,6 +25,13 @@ namespace FimbulwinterClient.Network
             set { m_memory = value; }
         }
 
+        private int m_bytesToSkip;
+        public int BytesToSkip
+        {
+            get { return m_bytesToSkip; }
+            set { m_bytesToSkip = value; }
+        }
+
         private static Dictionary<ushort, PacketInfo> m_packetSize;
         public static Dictionary<ushort, PacketInfo> PacketSize
         {
@@ -33,8 +42,14 @@ namespace FimbulwinterClient.Network
         {
             m_packetSize = new Dictionary<ushort, PacketInfo>();
 
-            m_packetSize.Add(0x69, new PacketInfo { Size = -1, Type = typeof(AcceptLogin) });
-            m_packetSize.Add(0x6A, new PacketInfo { Size = 23, Type = typeof(RejectLogin) });
+            // Login
+            m_packetSize.Add(0x0069, new PacketInfo { Size = -1, Type = typeof(AcceptLogin) });
+            m_packetSize.Add(0x006A, new PacketInfo { Size = 23, Type = typeof(RejectLogin) });
+
+            // Char
+            m_packetSize.Add(0x006C, new PacketInfo { Size = 3, Type = typeof(CSRejectLogin) });
+            m_packetSize.Add(0x006B, new PacketInfo { Size = -1, Type = typeof(CSAcceptLogin) });
+            m_packetSize.Add(0x08B9, new PacketInfo { Size = 12, Type = typeof(PinCodeRequest) });
         }
 
         public PacketSerializer()
@@ -59,6 +74,13 @@ namespace FimbulwinterClient.Network
 
         private void TryReadPackets()
         {
+            if (m_bytesToSkip > 0)
+            {
+                int skipped = Math.Min(m_bytesToSkip, (int)m_memory.Length);
+                m_memory.Position += skipped;
+                m_bytesToSkip -= skipped;
+            }
+
             while (m_memory.Length - m_memory.Position > 2)
             {
                 byte[] tmp = new byte[2];

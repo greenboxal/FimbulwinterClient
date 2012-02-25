@@ -241,7 +241,7 @@ namespace FimbulwinterClient.GUI.System
                     m_controls[i].Draw(spriteBatch, gameTime);
             }
 
-            m_cursor.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null);
+            m_cursor.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null, false);
             spriteBatch.End();
         }
 

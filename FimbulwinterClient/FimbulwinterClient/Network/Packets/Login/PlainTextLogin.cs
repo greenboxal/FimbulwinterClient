@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using FimbulwinterClient.Utils;
 
-namespace FimbulwinterClient.Network.Packets
+namespace FimbulwinterClient.Network.Packets.Login
 {
     public class PlainTextLogin : OutPacket
     {
@@ -31,6 +31,7 @@ namespace FimbulwinterClient.Network.Packets
             bw.WriteCString(login, 24);
             bw.WriteCString(pw, 24);
             bw.Write((byte)type);
+            bw.Flush();
 
             return true;
         }

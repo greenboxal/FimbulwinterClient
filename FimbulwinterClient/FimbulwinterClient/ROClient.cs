@@ -17,6 +17,8 @@ using FimbulwinterClient.GUI.System;
 using System.IO;
 using FimbulwinterClient.Network;
 using FimbulwinterClient.Network.Packets;
+using FimbulwinterClient.Network.Packets.Char;
+using FimbulwinterClient.Network.Packets.Login;
 
 namespace FimbulwinterClient
 {
@@ -64,6 +66,13 @@ namespace FimbulwinterClient
         {
             get { return acceptedLogin; }
             set { acceptedLogin = value; }
+        }
+
+        CSAcceptLogin charAccept;
+        public CSAcceptLogin CharAccept
+        {
+            get { return charAccept; }
+            set { charAccept = value; }
         }
 
         Connection currentConnection;
@@ -172,6 +181,12 @@ namespace FimbulwinterClient
 
         protected override void Update(GameTime gameTime)
         {
+            if (currentConnection != null && state == ROClientState.Login && loginState == ROLoginState.CharSelect && (int)gameTime.TotalGameTime.TotalSeconds % 12 == 0)
+            {
+                Ping p = new Ping(Environment.TickCount);
+                currentConnection.SendPacket(p);
+            }
+
             base.Update(gameTime);
         }
 
@@ -213,6 +228,11 @@ namespace FimbulwinterClient
                 c.ServerSelected += new Action<CharServerInfo>(c_ServerSelected);
                 guiManager.Controls.Add(c);
             }
+            else if (s == ROLoginState.CharSelect)
+            {
+                CharSelectWindow c = new CharSelectWindow();
+                guiManager.Controls.Add(c);
+            }
             
             loginState = s;
         }
@@ -225,6 +245,21 @@ namespace FimbulwinterClient
             }
 
             state = s;
+        }
+
+        public void OpenServerWaitDialog()
+        {
+            currentWait = MessageBox.ShowMessage("Please wait...");
+            currentWait.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 120);
+        }
+
+        public void CloseWaitDlg()
+        {
+            if (currentWait != null)
+            {
+                currentWait.Close();
+                currentWait = null;
+            }
         }
 
         void PacketSerializer_InvalidPacket()
@@ -242,6 +277,8 @@ namespace FimbulwinterClient
                     {
                         acceptedLogin = (AcceptLogin)arg3;
 
+                        CloseWaitDlg();
+
                         ChangeLoginState(ROLoginState.CharServerSelect);
                     }
                     else if (arg1 == 0x6a)
@@ -251,21 +288,34 @@ namespace FimbulwinterClient
                         MessageBox.ShowOk(rl.Text, backToLogin);
                     }
                 }
+                else if (loginState == ROLoginState.CharServerSelect)
+                {
+                    if (arg1 == 0x6c)
+                    {
+                        CloseWaitDlg();
+                        MessageBox.ShowOk("Rejected from server.", backToLogin);
+                    }
+                    else if (arg1 == 0x6b)
+                    {
+                        charAccept = (CSAcceptLogin)arg3;
+
+                        CloseWaitDlg();
+
+                        ChangeLoginState(ROLoginState.CharSelect);
+                    }
+                }
             }
         }
 
         void currentConnection_Disconnected()
         {
+            currentConnection = null;
             MessageBox.ShowOk("Disconnected from server.", backToLogin);
         }
 
         void backToLogin(int res)
         {
-            if (currentWait != null)
-            {
-                currentWait.Close();
-                currentWait = null;
-            }
+            CloseWaitDlg();
 
             ChangeLoginState(ROLoginState.Login);
         }
@@ -283,8 +333,7 @@ namespace FimbulwinterClient
 
         void l_DoLogin(string arg1, string arg2)
         {
-            currentWait = MessageBox.ShowMessage("Please wait...");
-            currentWait.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 120);
+            OpenServerWaitDialog();
 
             currentConnection = new Connection();
             currentConnection.Disconnected += new Action(currentConnection_Disconnected);
@@ -300,13 +349,25 @@ namespace FimbulwinterClient
                 return;
             }
 
-            currentConnection.Start();
             currentConnection.SendPacket(new PlainTextLogin(arg1, arg2, selectedSInfo.Version, 14));
         }
 
         void c_ServerSelected(CharServerInfo csi)
         {
-            
+            currentConnection.Disconnect(); 
+            try
+            {
+                currentConnection.Connect(csi.IP.ToString(), csi.Port);
+            }
+            catch
+            {
+                MessageBox.ShowOk("Could not connect to server.", backToLogin);
+                return;
+            }
+
+            CharServerLoginPacket cslp = new CharServerLoginPacket(acceptedLogin.AccountID, acceptedLogin.LoginID1, acceptedLogin.LoginID2, acceptedLogin.Sex);
+            currentConnection.PacketSerializer.BytesToSkip = 4; // Skip AID
+            currentConnection.SendPacket(cslp);
         }
     }
 }

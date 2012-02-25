@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using FimbulwinterClient.Utils;
 
-namespace FimbulwinterClient.Network.Packets
+namespace FimbulwinterClient.Network.Packets.Login
 {
     public struct CharServerInfo
     {
@@ -19,7 +19,7 @@ namespace FimbulwinterClient.Network.Packets
 
         public override string ToString()
         {
-            return Name;
+            return Name + " (" + Users + ")";
         }
     }
 

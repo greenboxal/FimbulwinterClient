@@ -64,12 +64,15 @@ namespace FimbulwinterClient.GUI
         {
             if (arg1 == MouseButtons.Left)
             {
-                TingSound.Play();
+                if (lstServices.SelectedIndex >= 0 && lstServices.SelectedIndex < lstServices.Items.Count)
+                {
+                    TingSound.Play();
 
-                if (ServerSelected != null)
-                    ServerSelected((ServerInfo)lstServices.Items[lstServices.SelectedIndex]);
+                    if (ServerSelected != null)
+                        ServerSelected((ServerInfo)lstServices.Items[lstServices.SelectedIndex]);
 
-                this.Close();
+                    this.Close();
+                }
             }
         }
 

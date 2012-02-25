@@ -6,6 +6,7 @@ using FimbulwinterClient.GUI.System;
 using FimbulwinterClient.Network.Packets;
 using Nuclex.Input;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Network.Packets.Login;
 
 namespace FimbulwinterClient.GUI
 {

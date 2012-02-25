@@ -119,14 +119,18 @@
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\Sprite.cs" />
+    <Compile Include="Graphics\Actor.cs" />
+    <Compile Include="GUI\CharSelectWindow.cs" />
     <Compile Include="GUI\CharServerSelectWindow.cs" />
     <Compile Include="GUI\LoginWindow.cs" />
     <Compile Include="GUI\ServiceSelectWindow.cs" />
     <Compile Include="GUI\System\Button.cs" />
+    <Compile Include="GUI\System\CharBrowser.cs" />
     <Compile Include="GUI\System\CheckBox.cs" />
     <Compile Include="GUI\System\Control.cs" />
     <Compile Include="GUI\System\ControlCollection.cs" />
     <Compile Include="GUI\System\GuiManager.cs" />
+    <Compile Include="GUI\System\ImageButton.cs" />
     <Compile Include="GUI\System\Label.cs" />
     <Compile Include="GUI\System\Listbox.cs" />
     <Compile Include="GUI\System\MessageBox.cs" />
@@ -163,9 +167,14 @@
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketSerializer.cs" />
-    <Compile Include="Network\Packets\AcceptLogin.cs" />
-    <Compile Include="Network\Packets\PlainTextLogin.cs" />
-    <Compile Include="Network\Packets\RejectLogin.cs" />
+    <Compile Include="Network\Packets\Char\CSAcceptLogin.cs" />
+    <Compile Include="Network\Packets\Char\CSRejectLogin.cs" />
+    <Compile Include="Network\Packets\Char\PinCodeRequest.cs" />
+    <Compile Include="Network\Packets\Char\Ping.cs" />
+    <Compile Include="Network\Packets\Login\AcceptLogin.cs" />
+    <Compile Include="Network\Packets\Char\CharServerLoginPacket.cs" />
+    <Compile Include="Network\Packets\Login\PlainTextLogin.cs" />
+    <Compile Include="Network\Packets\Login\RejectLogin.cs" />
     <Compile Include="Nuclex\Input\CollectionHelper.cs" />
     <Compile Include="Nuclex\Input\ControllerDetector.cs" />
     <Compile Include="Nuclex\Input\ControllerEventArgs.cs" />
@@ -299,6 +308,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />
     <Compile Include="ROConfig.cs" />
+    <Compile Include="ROConst.cs" />
     <Compile Include="RODirection.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
