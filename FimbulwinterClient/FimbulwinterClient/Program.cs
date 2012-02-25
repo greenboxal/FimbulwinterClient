@@ -12,6 +12,7 @@ namespace FimbulwinterClient
         {
             ROClient game = new ROClient();
             game.Run();
+            game.Config.Save();
         }
     }
 #endif

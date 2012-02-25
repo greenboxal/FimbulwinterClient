@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FimbulwinterClient.GUI.System;
-using Microsoft.Xna.Framework;
+using FimbulwinterClient.Network.Packets;
 using Nuclex.Input;
+using Microsoft.Xna.Framework;
 
 namespace FimbulwinterClient.GUI
 {
-    public class ServiceSelectWindow : Window
+    public class CharServerSelectWindow : Window
     {
         ROConfig cfg;
 
-        public ServiceSelectWindow(ROConfig cfg)
+        public CharServerSelectWindow(ROConfig cfg, CharServerInfo[] charServerInfo)
         {
             this.cfg = cfg;
 
             InitializeComponent();
 
-            foreach (ServerInfo si in cfg.Servers)
-                lstServices.Items.Add(si);
+            foreach (CharServerInfo csi in charServerInfo)
+                lstServices.Items.Add(csi);
             lstServices.SelectedIndex = 0;
 
             lstServices.Focus();
@@ -29,7 +30,7 @@ namespace FimbulwinterClient.GUI
         {
             this.Size = new Vector2(280, 200);
             this.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 200);
-            this.Text = "Service Select";
+            this.Text = "Server Select";
 
             lstServices = new Listbox();
             lstServices.Size = new Vector2(256, 143);
@@ -37,14 +38,14 @@ namespace FimbulwinterClient.GUI
             lstServices.OnActivate += new Action(lstServices_OnActivate);
 
             btnOK = new Button();
-            btnOK.Text = "OK";
+            btnOK.Text = "enter";
             btnOK.Position = new Vector2(189, 176);
             btnOK.Size = new Vector2(42, 20);
             btnOK.Clicked += new Action<MouseButtons, float, float>(btnOK_Clicked);
 
             btnCancel = new Button();
             btnCancel.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(btnCancel_Clicked);
-            btnCancel.Text = "Exit";
+            btnCancel.Text = "cancel";
             btnCancel.Position = new Vector2(234, 176);
             btnCancel.Size = new Vector2(42, 20);
 
@@ -58,8 +59,6 @@ namespace FimbulwinterClient.GUI
             btnOK_Clicked(MouseButtons.Left, 0, 0);
         }
 
-        public event Action<ServerInfo> ServerSelected;
-
         void btnOK_Clicked(MouseButtons arg1, float arg2, float arg3)
         {
             if (arg1 == MouseButtons.Left)
@@ -67,7 +66,7 @@ namespace FimbulwinterClient.GUI
                 TingSound.Play();
 
                 if (ServerSelected != null)
-                    ServerSelected((ServerInfo)lstServices.Items[lstServices.SelectedIndex]);
+                    ServerSelected((CharServerInfo)lstServices.Items[lstServices.SelectedIndex]);
 
                 this.Close();
             }
@@ -100,7 +99,7 @@ namespace FimbulwinterClient.GUI
                     TingSound.Play();
 
                     if (ServerSelected != null)
-                        ServerSelected((ServerInfo)lstServices.Items[lstServices.SelectedIndex]);
+                        ServerSelected((CharServerInfo)lstServices.Items[lstServices.SelectedIndex]);
 
                     this.Close();
                 }
@@ -112,5 +111,7 @@ namespace FimbulwinterClient.GUI
         Listbox lstServices;
         Button btnOK;
         Button btnCancel;
+
+        public event Action<CharServerInfo> ServerSelected;
     }
 }

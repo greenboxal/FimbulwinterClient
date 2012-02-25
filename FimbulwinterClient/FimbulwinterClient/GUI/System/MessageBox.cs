@@ -8,18 +8,28 @@ namespace FimbulwinterClient.GUI.System
 {
     public class MessageBox : Window
     {
-        public static void ShowYesNo(string text, Action<int> result)
+        public static MessageBox ShowYesNo(string text, Action<int> result)
+        {
+            MessageBox msg = new MessageBox(2, text, result);
+            GuiManager.Singleton.Controls.Add(msg);
+            msg.Focus();
+            return msg;
+        }
+
+        public static MessageBox ShowOk(string text, Action<int> result)
         {
             MessageBox msg = new MessageBox(1, text, result);
             GuiManager.Singleton.Controls.Add(msg);
             msg.Focus();
+            return msg;
         }
 
-        public static void ShowOk(string text, Action<int> result)
+        public static MessageBox ShowMessage(string text)
         {
-            MessageBox msg = new MessageBox(0, text, result);
+            MessageBox msg = new MessageBox(0, text, null);
             GuiManager.Singleton.Controls.Add(msg);
             msg.Focus();
+            return msg;
         }
 
         private MessageBox(int type, string text, Action<int> callback)
@@ -41,14 +51,17 @@ namespace FimbulwinterClient.GUI.System
             lblText = new Label();
             lblText.Position = new Vector2(13, 29);
 
-            btnOkYes = new Button();
-            btnOkYes.Size = new Vector2(42, 20);
-            btnOkYes.Position = new Vector2(189, 96);
-            btnOkYes.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(btnOkYes_Clicked);
-            btnOkYes.Text = "OK";
-            this.Controls.Add(btnOkYes);
-            
             if (type == 1)
+            {
+                btnOkYes = new Button();
+                btnOkYes.Size = new Vector2(42, 20);
+                btnOkYes.Position = new Vector2(189, 96);
+                btnOkYes.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(btnOkYes_Clicked);
+                btnOkYes.Text = "OK";
+                this.Controls.Add(btnOkYes);
+            }
+            
+            if (type == 2)
             {
                 btnNo = new Button();
                 btnNo.Size = new Vector2(42, 20);

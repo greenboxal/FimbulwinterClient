@@ -20,6 +20,8 @@ namespace FimbulwinterClient.IO.ContentLoaders
             if (!act.Load(s))
                 return null;
 
+            s.Close();
+
             return act;
         }
     }

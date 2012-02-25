@@ -20,11 +20,17 @@ namespace FimbulwinterClient.IO.ContentLoaders
                 bmp.MakeTransparent(Color.Fuchsia);
                 bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
+                s.Close();
+
                 return Texture2D.FromStream(rcm.Game.GraphicsDevice, ms);
             }
             else
             {
-                return Texture2D.FromStream(rcm.Game.GraphicsDevice, s);
+                Texture2D r = Texture2D.FromStream(rcm.Game.GraphicsDevice, s);
+
+                s.Close();
+
+                return r;
             }
         }
     }

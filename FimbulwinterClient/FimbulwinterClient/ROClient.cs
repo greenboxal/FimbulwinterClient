@@ -14,6 +14,9 @@ using Nuclex.Input;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.Content;
 using FimbulwinterClient.GUI.System;
+using System.IO;
+using FimbulwinterClient.Network;
+using FimbulwinterClient.Network.Packets;
 
 namespace FimbulwinterClient
 {
@@ -37,6 +40,8 @@ namespace FimbulwinterClient
 
     public class ROClient : Microsoft.Xna.Framework.Game
     {
+        public static ROClient Singleton { get; set; }
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -51,6 +56,22 @@ namespace FimbulwinterClient
 
         InputManager inputManager;
         GuiManager guiManager;
+        ServerInfo selectedSInfo;
+        MessageBox currentWait;
+
+        AcceptLogin acceptedLogin;
+        public AcceptLogin AcceptedLogin
+        {
+            get { return acceptedLogin; }
+            set { acceptedLogin = value; }
+        }
+
+        Connection currentConnection;
+        public Connection CurrentConnection
+        {
+            get { return currentConnection; }
+            set { currentConnection = value; }
+        }
 
         public GuiManager GuiManager
         {
@@ -86,6 +107,7 @@ namespace FimbulwinterClient
 
         public ROClient()
         {
+            Singleton = this;
             graphics = new GraphicsDeviceManager(this);
 
             Window.Title = "Ragnarök - Fimbulwinter Client";
@@ -93,7 +115,17 @@ namespace FimbulwinterClient
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
 
-            cfg = new ROConfig(this);
+            try
+            {
+                Stream s = ContentManager.LoadContent<Stream>("data/fb/config.xml");
+                cfg = ROConfig.FromStream(s);
+                cfg.Client = this;
+                s.Close();
+            }
+            catch
+            {
+                cfg = new ROConfig(this);
+            }
             cfg.ReadConfig();
 
             bgmManager = new BGMManager(this, cfg);
@@ -120,7 +152,10 @@ namespace FimbulwinterClient
         {
             base.Initialize();
 
-            ChangeState(ROClientState.Test);
+            ChangeState(ROClientState.Login);
+            ChangeLoginState(ROLoginState.ServiceSelect);
+
+            GUI.Utils.Init(GraphicsDevice);
         }
 
         protected override void LoadContent()
@@ -161,22 +196,117 @@ namespace FimbulwinterClient
 
             if (s == ROLoginState.ServiceSelect)
             {
+                ServiceSelectWindow w = new ServiceSelectWindow(cfg);
+                w.ServerSelected += new Action<ServerInfo>(w_ServerSelected);
+                guiManager.Controls.Add(w);
             }
-
+            else if (s == ROLoginState.Login)
+            {
+                LoginWindow l = new LoginWindow(cfg);
+                l.GoBack += new Action(l_GoBack);
+                l.DoLogin += new Action<string, string>(l_DoLogin);
+                guiManager.Controls.Add(l);
+            }
+            else if (s == ROLoginState.CharServerSelect)
+            {
+                CharServerSelectWindow c = new CharServerSelectWindow(cfg, acceptedLogin.Servers);
+                c.ServerSelected += new Action<CharServerInfo>(c_ServerSelected);
+                guiManager.Controls.Add(c);
+            }
+            
             loginState = s;
         }
 
         public void ChangeState(ROClientState s)
         {
-            if (s == ROClientState.Login || s == ROClientState.Test)
+            if (s == ROClientState.Login)
             {
                 bgmManager.PlayBGM("01");
-
-                ServiceSelectWindow w = new ServiceSelectWindow(cfg);
-                guiManager.Controls.Add(w);
             }
 
             state = s;
+        }
+
+        void PacketSerializer_InvalidPacket()
+        {
+            MessageBox.ShowOk("Invalid packet received.", backToLogin);
+        }
+
+        void PacketSerializer_PacketReceived(ushort arg1, int arg2, InPacket arg3)
+        {
+            if (state == ROClientState.Login)
+            {
+                if (loginState == ROLoginState.Login)
+                {
+                    if (arg1 == 0x69)
+                    {
+                        acceptedLogin = (AcceptLogin)arg3;
+
+                        ChangeLoginState(ROLoginState.CharServerSelect);
+                    }
+                    else if (arg1 == 0x6a)
+                    {
+                        RejectLogin rl = (RejectLogin)arg3;
+
+                        MessageBox.ShowOk(rl.Text, backToLogin);
+                    }
+                }
+            }
+        }
+
+        void currentConnection_Disconnected()
+        {
+            MessageBox.ShowOk("Disconnected from server.", backToLogin);
+        }
+
+        void backToLogin(int res)
+        {
+            if (currentWait != null)
+            {
+                currentWait.Close();
+                currentWait = null;
+            }
+
+            ChangeLoginState(ROLoginState.Login);
+        }
+
+        void w_ServerSelected(ServerInfo obj)
+        {
+            selectedSInfo = obj;
+            ChangeLoginState(ROLoginState.Login);
+        }
+
+        void l_GoBack()
+        {
+            ChangeLoginState(ROLoginState.ServiceSelect);
+        }
+
+        void l_DoLogin(string arg1, string arg2)
+        {
+            currentWait = MessageBox.ShowMessage("Please wait...");
+            currentWait.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 120);
+
+            currentConnection = new Connection();
+            currentConnection.Disconnected += new Action(currentConnection_Disconnected);
+            currentConnection.PacketSerializer.PacketReceived += new Action<ushort, int, InPacket>(PacketSerializer_PacketReceived);
+            currentConnection.PacketSerializer.InvalidPacket += new Action(PacketSerializer_InvalidPacket);
+            try
+            {
+                currentConnection.Connect(selectedSInfo.Address, selectedSInfo.Port);
+            }
+            catch
+            {
+                MessageBox.ShowOk("Could not connect to server.", backToLogin);
+                return;
+            }
+
+            currentConnection.Start();
+            currentConnection.SendPacket(new PlainTextLogin(arg1, arg2, selectedSInfo.Version, 14));
+        }
+
+        void c_ServerSelected(CharServerInfo csi)
+        {
+            
         }
     }
 }

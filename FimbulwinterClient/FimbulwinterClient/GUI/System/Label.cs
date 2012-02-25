@@ -9,7 +9,7 @@ namespace FimbulwinterClient.GUI.System
     {
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, Microsoft.Xna.Framework.GameTime gt)
         {
-            sb.DrawString(Arial10, this.Text, new Microsoft.Xna.Framework.Vector2(GetAbsX(), GetAbsY()), ForeColor);
+            sb.DrawString(Font, this.Text, new Microsoft.Xna.Framework.Vector2(GetAbsX(), GetAbsY()), ForeColor);
         }
     }
 }

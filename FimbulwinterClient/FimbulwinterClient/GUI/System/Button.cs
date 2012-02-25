@@ -12,6 +12,11 @@ namespace FimbulwinterClient.GUI.System
         private bool pressed;
         private bool hover;
 
+        public Button()
+        {
+            TabStop = false;
+        }
+
         public override void Draw(SpriteBatch sb, GameTime gt)
         {
             int absX = (int)GetAbsX();

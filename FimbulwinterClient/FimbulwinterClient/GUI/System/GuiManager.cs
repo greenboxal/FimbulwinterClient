@@ -31,24 +31,30 @@ namespace FimbulwinterClient.GUI.System
             get { return m_controls; }
         }
 
-        private Queue<Control> m_deleteQueue;
-
-        private SpriteBatch spriteBatch;
 
         private Control m_activeControl;
-        private Control m_hoverControl;
-        private Control m_downControl;
-        private MouseButtons m_downButtons;
+        public Control ActiveControl
+        {
+            get { return m_activeControl; }
+            set { m_activeControl = value; }
+        }
 
-        private SpriteAction m_cursor;
+        SpriteAction m_cursor;
         public SpriteAction Cursor
         {
             get { return m_cursor; }
             set { m_cursor = value; }
         }
 
-        private float mouseX;
-        private float mouseY;
+        private Queue<Control> m_deleteQueue;
+        private SpriteBatch spriteBatch;
+
+        float mouseX;
+        float mouseY;
+
+        private Control m_hoverControl;
+        private Control m_downControl;
+        private MouseButtons m_downButtons;
 
         public GuiManager(ROClient roc)
             : base(roc)
@@ -85,6 +91,50 @@ namespace FimbulwinterClient.GUI.System
 
         void kb_CharacterEntered(char character)
         {
+            if (m_activeControl != null && character == '\t' && !m_activeControl.HandleTab())
+            {
+                if (m_activeControl.Parent != null)
+                {
+                    Control parent = m_activeControl.Parent;
+                    int cIdx = -1;
+
+                    for (int i = 0; i < parent.Controls.Count; i++)
+                    {
+                        if (parent.Controls[i] == m_activeControl)
+                        {
+                            cIdx = i;
+                            break;
+                        }
+                    }
+
+                    if (cIdx != -1)
+                    {
+                        cIdx++;
+                        if (cIdx >= parent.Controls.Count)
+                            cIdx = 0;
+
+                        Control next = parent.Controls[cIdx];
+
+                        int started = cIdx;
+                        while (!next.TabStop)
+                        {
+                            cIdx++;
+                            if (cIdx >= parent.Controls.Count)
+                                cIdx = 0;
+
+                            next = parent.Controls[cIdx];
+
+                            if (cIdx == started)
+                                break;
+                        }
+
+                        SetActiveControl(parent.Controls[cIdx]);
+                    }
+
+                    return;
+                }
+            }
+
             if (m_activeControl != null)
                 m_activeControl.OnKeyPress(character);
         }

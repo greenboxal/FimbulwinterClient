@@ -8,39 +8,7 @@ namespace FimbulwinterClient.Network
 {
     public abstract class InPacket
     {
-        private ushort packet;
-        private int size;
-        private bool isFixed;
-
-        public InPacket(ushort packet, int size)
-        {
-            this.packet = packet;
-            this.size = size;
-
-            isFixed = size > 0;
-        }
-
-        public virtual bool Read(byte[] br)
-        {
-            packet = BitConverter.ToUInt16(br, 0);
-
-            if (!isFixed)
-                size = BitConverter.ToInt16(br, 2);
-
-            return true;
-        }
-
-        public ushort PacketCmd
-        {
-            get { return packet; }
-            set { packet = value; }
-        }
-
-        public int Size
-        {
-            get { return size; }
-            set { size = value; }
-        }
+        public abstract bool Read(byte[] data);
     }
 
     public abstract class OutPacket
@@ -59,16 +27,21 @@ namespace FimbulwinterClient.Network
 
         public virtual bool Write(BinaryWriter bw)
         {
-            if (!isFixed)
-                ComputeSize();
-
             bw.Write(packet);
-            bw.Write((ushort)size);
+
+            if (!isFixed)
+            {
+                ComputeSize();
+                bw.Write((ushort)size);
+            }
 
             return true;
         }
 
-        protected abstract void ComputeSize();
+        protected virtual void ComputeSize()
+        {
+
+        }
 
         public ushort PacketCmd
         {

@@ -11,7 +11,11 @@ namespace FimbulwinterClient.IO.ContentLoaders
     {
         public object LoadContent(ROContentManager rcm, Stream s, string fn)
         {
-            return SoundEffect.FromStream(s);
+            SoundEffect se = SoundEffect.FromStream(s);
+
+            s.Close();
+
+            return se;
         }
     }
 }

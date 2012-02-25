@@ -81,5 +81,16 @@ namespace FimbulwinterClient.GUI.System
 
             base.OnClick(buttons, x, y);
         }
+
+        public override void OnKeyDown(Microsoft.Xna.Framework.Input.Keys key)
+        {
+            base.OnKeyDown(key);
+
+            if (key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                if (OnActivate != null)
+                    OnActivate();
+        }
+
+        public event Action OnActivate;
     }
 }

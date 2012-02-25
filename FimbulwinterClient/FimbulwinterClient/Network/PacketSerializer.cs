@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Reflection;
+using FimbulwinterClient.Network.Packets;
 
 namespace FimbulwinterClient.Network
 {
     public class PacketSerializer
     {
+        public struct PacketInfo
+        {
+            public int Size;
+            public Type Type;
+        }
+
         private MemoryStream m_memory;
         public MemoryStream Memory
         {
@@ -15,15 +23,18 @@ namespace FimbulwinterClient.Network
             set { m_memory = value; }
         }
 
-        private static Dictionary<ushort, int> m_packetSize;
-        public static Dictionary<ushort, int> PacketSize
+        private static Dictionary<ushort, PacketInfo> m_packetSize;
+        public static Dictionary<ushort, PacketInfo> PacketSize
         {
             get { return m_packetSize; }
         }
 
         static PacketSerializer()
         {
-            m_packetSize = new Dictionary<ushort, int>();
+            m_packetSize = new Dictionary<ushort, PacketInfo>();
+
+            m_packetSize.Add(0x69, new PacketInfo { Size = -1, Type = typeof(AcceptLogin) });
+            m_packetSize.Add(0x6A, new PacketInfo { Size = 23, Type = typeof(RejectLogin) });
         }
 
         public PacketSerializer()
@@ -33,7 +44,10 @@ namespace FimbulwinterClient.Network
 
         public void EnqueueBytes(byte[] data, int size)
         {
-            m_memory.Write(data, 0, data.Length);
+            int pos = (int)m_memory.Position;
+            m_memory.Position = m_memory.Length;
+            m_memory.Write(data, 0, size);
+            m_memory.Position = pos;
 
             TryReadPackets();
         }
@@ -63,7 +77,7 @@ namespace FimbulwinterClient.Network
                 }
                 else
                 {
-                    int size = m_packetSize[cmd];
+                    int size = m_packetSize[cmd].Size;
                     bool isFixed = true;
 
                     if (size <= 0)
@@ -77,7 +91,7 @@ namespace FimbulwinterClient.Network
                         }
                         else
                         {
-                            m_memory.Position -= 2;
+                            m_memory.Position -= 4;
 
                             break;
                         }
@@ -85,12 +99,22 @@ namespace FimbulwinterClient.Network
 
                     if (PacketReceived != null)
                     {
-                        m_memory.Position -= isFixed ? 2 : 4;
-
                         byte[] data = new byte[size];
-                        m_memory.Read(data, 0, size);
+                        m_memory.Read(data, 0, size - (isFixed ? 2 : 4));
 
-                        PacketReceived(cmd, size, data);
+                        ConstructorInfo ci = m_packetSize[cmd].Type.GetConstructor(new Type[] { });
+                        InPacket p = (InPacket)ci.Invoke(null);
+
+                        if (!p.Read(data))
+                        {
+                            if (InvalidPacket != null)
+                                InvalidPacket();
+
+                            break;
+                        }
+
+                        if (PacketReceived != null)
+                            PacketReceived(cmd, size, p);
                     }
                 }
             }
@@ -107,6 +131,6 @@ namespace FimbulwinterClient.Network
         }
 
         public event Action InvalidPacket;
-        public event Action<ushort, int, byte[]> PacketReceived;
+        public event Action<ushort, int, InPacket> PacketReceived;
     }
 }

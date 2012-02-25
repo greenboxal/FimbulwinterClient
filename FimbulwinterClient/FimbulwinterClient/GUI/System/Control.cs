@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nuclex.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace FimbulwinterClient.GUI.System
 {
@@ -21,6 +22,19 @@ namespace FimbulwinterClient.GUI.System
         public static SpriteFont Arial10
         {
             get { return Control.arial10; }
+        }
+
+        private static SpriteFont arial10B;
+        public static SpriteFont Arial10B
+        {
+            get { return Control.arial10B; }
+        }
+
+        private static SoundEffect tingSound;
+        public static SoundEffect TingSound
+        {
+            get { return Control.tingSound; }
+            set { Control.tingSound = value; }
         }
 
         private Control m_parent;
@@ -71,7 +85,7 @@ namespace FimbulwinterClient.GUI.System
         }
 
         private string m_text;
-        public string Text
+        public virtual string Text
         {
             get { return m_text; }
             set { m_text = value; }
@@ -89,6 +103,27 @@ namespace FimbulwinterClient.GUI.System
         {
             get { return m_backColor; }
             set { m_backColor = value; }
+        }
+
+        private int m_zorder;
+        public int ZOrder
+        {
+            get { return m_zorder; }
+            set { m_zorder = value; if (m_parent != null) m_parent.Controls.SortByZOrder(); }
+        }
+
+        private bool m_tabStop;
+        public bool TabStop
+        {
+            get { return m_tabStop; }
+            set { m_tabStop = value; }
+        }
+
+        private SpriteFont m_font;
+        public SpriteFont Font
+        {
+            get { return m_font; }
+            set { m_font = value; }
         }
 
         internal float GetAbsX()
@@ -115,15 +150,26 @@ namespace FimbulwinterClient.GUI.System
             if (arial10 == null)
                 arial10 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb/arial10");
 
+            if (arial10B == null)
+                arial10B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb/arial10b");
+
+            if (tingSound == null)
+                tingSound = GuiManager.Singleton.Client.ContentManager.LoadContent<SoundEffect>("data/wav/¹öÆ°¼Ò¸®.wav");
+
+            m_controls = new ControlCollection(this);
+            m_handle = GuiManager.Singleton.GetNewHandle();
+
             m_foreColor = Color.Black;
             m_backColor = Color.White;
 
-            m_controls = new ControlCollection(this);
+            m_text = "";
 
             m_visible = true;
             m_enabled = true;
+            m_tabStop = false;
 
-            m_handle = GuiManager.Singleton.GetNewHandle();
+            m_zorder = 0;
+            m_font = Arial10;
         }
 
         public virtual void Update(GameTime gt)
@@ -216,6 +262,11 @@ namespace FimbulwinterClient.GUI.System
         {
             if (KeyPress != null)
                 KeyPress(c);
+        }
+
+        public virtual bool HandleTab()
+        {
+            return false;
         }
 
         public override bool Equals(object obj)

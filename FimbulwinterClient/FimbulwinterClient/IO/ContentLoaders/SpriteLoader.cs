@@ -15,6 +15,8 @@ namespace FimbulwinterClient.IO.ContentLoaders
             if (!spr.Load(rcm.Game.GraphicsDevice, s))
                 return null;
 
+            s.Close();
+
             return spr;
         }
     }

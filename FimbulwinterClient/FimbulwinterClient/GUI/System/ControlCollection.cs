@@ -25,6 +25,18 @@ namespace FimbulwinterClient.GUI.System
             c.Parent = m_owner;
 
             base.Add(c);
+
+            SortByZOrder();
+        }
+
+        public void SortByZOrder()
+        {
+            Sort(ZOrderComparer);
+        }
+
+        private int ZOrderComparer(Control f, Control l)
+        {
+            return f.ZOrder - l.ZOrder;
         }
     }
 }

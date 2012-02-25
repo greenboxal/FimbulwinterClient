@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace FimbulwinterClient
 {
@@ -57,9 +58,16 @@ namespace FimbulwinterClient
         }
     }
 
+    [Serializable]
     public class ROConfig
     {
         private ROClient m_client;
+        [XmlIgnore]
+        public ROClient Client
+        {
+            get { return m_client; }
+            set { m_client = value; }
+        }
 
         private float m_bgmVolume;
         public float BgmVolume
@@ -102,31 +110,46 @@ namespace FimbulwinterClient
         }
 
         private string m_serviceType;
+        [XmlIgnore]
         public string ServiceType
         {
             get { return m_serviceType; }
         }
 
         private string m_serverType;
+        [XmlIgnore]
         public string ServerType
         {
             get { return m_serverType; }
         }
 
         private List<ServerInfo> m_servers;
+        [XmlIgnore]
         public List<ServerInfo> Servers
         {
             get { return m_servers; }
             set { m_servers = value; }
         }
 
+        private string m_lastLogin;
+        public string LastLogin
+        {
+            get { return m_lastLogin; }
+            set { m_lastLogin = value; }
+        }
+
+        private bool m_saveLast;
+        public bool SaveLast
+        {
+            get { return m_saveLast; }
+            set { m_saveLast = value; }
+        }
+
         public event Action<float> BgmVolumeChanged;
         public event Action<float> EffectVolumeChanged;
 
-        public ROConfig(ROClient cl)
+        public ROConfig()
         {
-            m_client = cl;
-
             m_bgmVolume = 1.0f;
             m_effectVolume = 1.0f;
 
@@ -134,6 +157,22 @@ namespace FimbulwinterClient
 
             m_screenWidth = 1280;
             m_screenHeight = 768;
+
+            m_saveLast = false;
+            m_lastLogin = "";
+        }
+
+        public ROConfig(ROClient cl)
+            : this()
+        {
+            m_client = cl;
+        }
+
+        public static ROConfig FromStream(Stream s)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(ROConfig));
+
+            return (ROConfig)xs.Deserialize(s);
         }
 
         public void ReadConfig()
@@ -165,6 +204,13 @@ namespace FimbulwinterClient
 
             foreach (var connection in connections)
 	            m_servers.Add(connection);
+        }
+
+        public void Save()
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(ROConfig));
+
+            xs.Serialize(new FileStream("data/fb/config.xml", FileMode.Create), this);
         }
     }
 }
