@@ -8,31 +8,8 @@ using Microsoft.Xna.Framework;
 
 namespace FimbulwinterClient.Content
 {
-    public class Sprite
+    public class Sprite : ROFormats.Sprite
     {
-        List<byte[]> palData = new List<byte[]>();
-
-        private short m_version;
-        public short Version
-        {
-            get { return m_version; }
-            set { m_version = value; }
-        }
-
-        private short m_palCount;
-        public short PalCount
-        {
-            get { return m_palCount; }
-            set { m_palCount = value; }
-        }
-
-        private short m_rgbaCount;
-        public short RgbaCount
-        {
-            get { return m_rgbaCount; }
-            set { m_rgbaCount = value; }
-        }
-
         private Texture2D[] m_images;
         public Texture2D[] Images
         {
@@ -40,193 +17,47 @@ namespace FimbulwinterClient.Content
             set { m_images = value; }
         }
 
-        private Palette m_palette;
-        internal Palette Palette
-        {
-            get { return m_palette; }
-            set { m_palette = value; RemapPalette(); }
-        }
-
         private GraphicsDevice m_gd;
-        public GraphicsDevice GraphicsDevice
-        {
-            get { return m_gd; }
-            set { m_gd = value; }
-        }
-
-        public Sprite()
-        {
-
-        }
 
         public bool Load(GraphicsDevice gd, Stream s)
         {
-            BinaryReader br = new BinaryReader(s);
-            byte[] magic = br.ReadBytes(2);
+            bool res;
 
-            if (magic[0] != (byte)'S' || magic[1] != (byte)'P')
-            {
-                return false;
-            }
-
-            m_version = br.ReadInt16();
-
-            if (m_version != 0x100 && m_version != 0x101 &&
-                m_version != 0x200 && m_version != 0x201)
-            {
-                return false;
-            }
-
-            m_palCount = br.ReadInt16();
-            if (m_version >= 0x200)
-                m_rgbaCount = br.ReadInt16();
-
-            List<Texture2D> images = new List<Texture2D>();
-
-            if (m_palCount > 0)
-            {
-                for (int p = 0; p < m_palCount; p++)
-                {
-                    ushort w = br.ReadUInt16();
-                    ushort h = br.ReadUInt16();
-                    int pixelCount = w * h;
-
-                    if (pixelCount > 0)
-                    {
-                        byte[] data;
-
-                        if (m_version >= 0x201)
-                        {
-                            data = new byte[pixelCount];
-
-                            uint next = 0;
-                            ushort encoded;
-
-                            encoded = br.ReadUInt16();
-                            while (next < pixelCount && encoded > 0)
-                            {
-                                byte c = br.ReadByte();
-
-                                encoded--;
-
-                                if (c == 0)
-                                {
-                                    byte len = br.ReadByte();
-
-                                    encoded--;
-
-                                    if (len == 0)
-                                        len = 1;
-
-                                    if (next + len > pixelCount)
-                                        return false;
-
-                                    for (int i = 0; i < len; i++)
-                                        data[next] = 0;
-
-                                    next += len;
-                                }
-                                else
-                                {
-                                    data[next++] = c;
-                                }
-                            }
-
-                            if (next != pixelCount || encoded > 0)
-                                return false;
-                        }
-                        else
-                        {
-                            data = br.ReadBytes(pixelCount);
-                        }
-
-                        palData.Add(data);
-                        images.Add(new Texture2D(gd, w, h, false, SurfaceFormat.Color));
-                    }
-                }
-            }
-
-            if (m_rgbaCount > 0)
-            {
-                for (int p = 0; p < m_rgbaCount; p++)
-                {
-                    ushort w = br.ReadUInt16();
-                    ushort h = br.ReadUInt16();
-                    byte[] texData = new byte[w * h * 4];
-
-                    for (int i = 0; i < texData.Length; i += 4)
-                    {
-                        // RGBA to ARGB
-                        texData[i + 1] = br.ReadByte();
-                        texData[i + 2] = br.ReadByte();
-                        texData[i + 3] = br.ReadByte();
-                        texData[i + 0] = br.ReadByte();
-                    }
-
-                    Texture2D tex = new Texture2D(gd, w, h, false, SurfaceFormat.Color);
-                    tex.SetData(texData);
-                    images.Add(tex);
-                }
-            }
-
-            m_images = images.ToArray();
             m_gd = gd;
+            res = base.Load(s);
 
-            if (m_version >= 0x101)
+            if (!res)
+                return false;
+
+            m_images = new Texture2D[RawImages.Length];
+
+            if (RgbaCount > 0)
             {
-                m_palette = new Palette();
-                m_palette.Read(br);
-
-                RemapPalette();
+                for (int i = PalCount; i < RawImages.Length; i++)
+                {
+                    m_images[i] = new Texture2D(m_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
+                }
             }
+
+            RecreatePalImages();
 
             return true;
         }
 
-        private void RemapPalette()
+        public override void SetPalette(ROFormats.Palette p)
         {
-            for (int p = 0; p < palData.Count; p++)
-            {
-                byte[] data = palData[p];
-                int w = m_images[p].Width;
-                int h = m_images[p].Height;
+            base.SetPalette(p);
 
-                Texture2D tex = new Texture2D(m_gd, w, h, false, SurfaceFormat.Color);
-                uint[] texData = new uint[w * h];
-
-                for (int i = 0; i < texData.Length; i++)
-                {
-                    byte idx = data[i];
-                    Color c = m_palette.Colors[idx];
-
-                    if (idx == 0)
-                    {
-                        texData[i] = Color.Transparent.PackedValue;
-                    }
-                    else
-                    {
-                        texData[i] = c.PackedValue;
-                    }
-                }
-
-                m_images[p].SetData(texData);
-            }
+            RecreatePalImages();
         }
 
-        public int GetIndex(int idx, int type)
+        private void RecreatePalImages()
         {
-            if (type == 0)
+            for (int i = 0; i < PalCount; i++)
             {
-                if (idx >= 0 && idx < m_palCount)
-                    return idx;
+                m_images[i] = new Texture2D(m_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
+                m_images[i].SetData(RawImages[i].RawData);
             }
-            else if (type == 1)
-            {
-                if (idx >= 0 && idx < m_rgbaCount)
-                    return idx + m_palCount;
-            }
-
-            return -1;
         }
 
         public void Draw(SpriteAction.Motion mo, int i, SpriteBatch sb, int x, int y, bool ext)
@@ -256,7 +87,7 @@ namespace FimbulwinterClient.Content
                 (int)w,
                 (int)h);
 
-            sb.Draw(m_images[idx], r, null, mo.Clips[i].Mask, 
+            sb.Draw(m_images[idx], r, null, new Color(mo.Clips[i].Mask.R, mo.Clips[i].Mask.G, mo.Clips[i].Mask.B, mo.Clips[i].Mask.A), 
                 (float)(Math.PI * mo.Clips[i].Angle / 180.0F), default(Vector2), 
                 SpriteEffects.None, 0);
         }

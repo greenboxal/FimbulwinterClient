@@ -1,0 +1,3 @@
+[submodule "FimbulwinterClient/ROFormats"]
+	path = FimbulwinterClient/ROFormats
+	url = https://greenboxal@github.com/greenboxal/roformats.git

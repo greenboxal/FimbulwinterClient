@@ -117,7 +117,6 @@
     <Compile Include="Audio\FMOD\fmod_errors.cs" />
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
     <Compile Include="Content\SpriteAction.cs" />
-    <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
     <Compile Include="GUI\CharSelectWindow.cs" />
@@ -320,6 +319,10 @@
     <ProjectReference Include="..\FimbulwinterClientContent\FimbulwinterClientContent.contentproj">
       <Name>FimbulwinterClientContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
+    <ProjectReference Include="..\ROFormats\ROFormats\ROFormats.csproj">
+      <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>
+      <Name>ROFormats</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
