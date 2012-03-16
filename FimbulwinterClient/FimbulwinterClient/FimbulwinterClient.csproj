@@ -324,6 +324,10 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ROFormats\ROFormats\ROFormats.csproj">
+      <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>
+      <Name>ROFormats</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FimbulwinterClientContent\FimbulwinterClientContent.contentproj">
       <Name>FimbulwinterClientContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
