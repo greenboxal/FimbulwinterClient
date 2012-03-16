@@ -116,6 +116,8 @@
     <Compile Include="Audio\FMOD\fmod_dsp.cs" />
     <Compile Include="Audio\FMOD\fmod_errors.cs" />
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
+    <Compile Include="Config\ServerInfo.cs" />
+    <Compile Include="Config\ServersInfo.cs" />
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
@@ -136,7 +138,8 @@
     <Compile Include="GUI\System\TextBox.cs" />
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
-    <Compile Include="GUI\WaitWindow.cs" />
+    <Compile Include="Screens\CharSelectScreen.cs" />
+    <Compile Include="Screens\IGameScreen.cs" />
     <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
     <Compile Include="IO\ContentLoaders\SpriteActionLoader.cs" />
     <Compile Include="IO\ContentLoaders\SpriteLoader.cs" />
@@ -163,17 +166,18 @@
     <Compile Include="IO\ZLib\ZlibCodec.cs" />
     <Compile Include="IO\ZLib\ZlibConstants.cs" />
     <Compile Include="IO\ZLib\ZlibStream.cs" />
+    <Compile Include="NetworkState.cs" />
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketSerializer.cs" />
     <Compile Include="Network\Packets\Char\CSAcceptLogin.cs" />
     <Compile Include="Network\Packets\Char\CSRejectLogin.cs" />
-    <Compile Include="Network\Packets\Char\PinCodeRequest.cs" />
-    <Compile Include="Network\Packets\Char\Ping.cs" />
-    <Compile Include="Network\Packets\Login\AcceptLogin.cs" />
-    <Compile Include="Network\Packets\Char\CharServerLoginPacket.cs" />
-    <Compile Include="Network\Packets\Login\PlainTextLogin.cs" />
-    <Compile Include="Network\Packets\Login\RejectLogin.cs" />
+    <Compile Include="Network\Packets\Char\CSPinCodeRequest.cs" />
+    <Compile Include="Network\Packets\Char\CSPing.cs" />
+    <Compile Include="Network\Packets\Login\LSAcceptLogin.cs" />
+    <Compile Include="Network\Packets\Char\CSLoginPacket.cs" />
+    <Compile Include="Network\Packets\Login\LSPlainTextLogin.cs" />
+    <Compile Include="Network\Packets\Login\LSRejectLogin.cs" />
     <Compile Include="Nuclex\Input\CollectionHelper.cs" />
     <Compile Include="Nuclex\Input\ControllerDetector.cs" />
     <Compile Include="Nuclex\Input\ControllerEventArgs.cs" />
@@ -306,9 +310,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />
-    <Compile Include="ROConfig.cs" />
+    <Compile Include="Config\Configuration.cs" />
     <Compile Include="ROConst.cs" />
     <Compile Include="RODirection.cs" />
+    <Compile Include="Screens\BaseLoginScreen.cs" />
+    <Compile Include="Screens\LoginScreen.cs" />
+    <Compile Include="Screens\CharServerSelectScreen.cs" />
+    <Compile Include="Screens\ServiceSelectScreen.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -319,10 +327,6 @@
     <ProjectReference Include="..\FimbulwinterClientContent\FimbulwinterClientContent.contentproj">
       <Name>FimbulwinterClientContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
-    </ProjectReference>
-    <ProjectReference Include="..\ROFormats\ROFormats\ROFormats.csproj">
-      <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>
-      <Name>ROFormats</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

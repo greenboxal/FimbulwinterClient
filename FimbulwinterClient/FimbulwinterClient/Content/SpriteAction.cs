@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Microsoft.Xna.Framework;
-using FimbulwinterClient.Utils;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FimbulwinterClient.Content
@@ -12,7 +11,7 @@ namespace FimbulwinterClient.Content
     public class SpriteAction : ROFormats.SpriteAction
     {
         private Sprite m_sprite;
-        public Sprite Sprite
+        public Sprite XnaSprite
         {
             get { return m_sprite; }
         }

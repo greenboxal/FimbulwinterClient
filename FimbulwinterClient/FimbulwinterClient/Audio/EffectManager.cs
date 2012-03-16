@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using FimbulwinterClient.Config;
 
 namespace FimbulwinterClient.Audio
 {
     public class EffectManager : GameComponent
     {
-        ROConfig _cfg;
-
-        public EffectManager(ROClient g, ROConfig cfg)
-            : base(g)
+        public EffectManager()
+            : base(ROClient.Singleton)
         {
-            _cfg = cfg;
+
         }
 
         public void PlayEffect(SoundEffect se)
         {
             SoundEffectInstance sei = se.CreateInstance();
-            sei.Volume = _cfg.EffectVolume;
+            sei.Volume = ROClient.Singleton.Config.EffectVolume;
             sei.Play();
         }
     }

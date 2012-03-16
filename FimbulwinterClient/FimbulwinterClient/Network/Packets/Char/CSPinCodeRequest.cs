@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
-    public class PinCodeRequest : InPacket
+    public class CSPinCodeRequest : InPacket
     {
         public override bool Read(byte[] data)
         {

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ServersInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ServiceType>Fimbulwinter</ServiceType>
+  <ServerType>Athena</ServerType>
+  <Servers>
+	<ServerInfo>
+	  <DisplayName>LocalHost</DisplayName>
+	  <Description>None</Description>
+	  <Address>127.0.0.1</Address>
+	  <Port>6900</Port>
+	  <Version>1</Version>
+	  <RegistrationUrl>http://localhost/</RegistrationUrl>
+	</ServerInfo>
+  </Servers>
+</ServersInfo>

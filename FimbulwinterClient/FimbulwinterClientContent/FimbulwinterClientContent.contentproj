@@ -46,18 +46,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fb\DefaultFont.spritefont">
-      <Name>DefaultFont</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-    <Compile Include="fb\TitleFont.spritefont">
-      <Name>TitleFont</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="fb\SuaveSheet.png">
       <Name>SuaveSheet</Name>
       <Importer>TextureImporter</Importer>

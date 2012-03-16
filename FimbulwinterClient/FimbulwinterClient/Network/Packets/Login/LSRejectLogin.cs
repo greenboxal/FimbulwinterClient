@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using FimbulwinterClient.Utils;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
-    public class RejectLogin : InPacket
+    public class LSRejectLogin : InPacket
     {
         public int Result { get; set; }
         public string Text { get; set; }

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FimbulwinterClient.Content;
+using FimbulwinterClient.Config;
 
 namespace FimbulwinterClient.GUI.System
 {
@@ -33,8 +34,8 @@ namespace FimbulwinterClient.GUI.System
 
             for (int i = 0; i < chars.Length; i++)
             {
-                bodies[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Body, ROConst.Sex[ROClient.Singleton.AcceptedLogin.Sex], ROConst.ClassNames[chars[i].Class], ROConst.Sex[ROClient.Singleton.AcceptedLogin.Sex]));
-                heads[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Head, ROConst.Sex[ROClient.Singleton.AcceptedLogin.Sex], chars[i].Hair, ROConst.Sex[ROClient.Singleton.AcceptedLogin.Sex]));
+                bodies[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Body, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROConst.ClassNames[chars[i].Class], ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
+                heads[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Head, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], chars[i].Hair, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
             }
         }
 
@@ -51,7 +52,7 @@ namespace FimbulwinterClient.GUI.System
             selectionBase -= 3;
 
             if (selectionBase < 0)
-                selectionBase = ROConfig.RO_MAXCHARS - 3;
+                selectionBase = Configuration.MaxCharacters - 3;
 
             RefreshIndex();
         }
@@ -60,7 +61,7 @@ namespace FimbulwinterClient.GUI.System
         {
             selectionBase += 3;
 
-            if (selectionBase >= ROConfig.RO_MAXCHARS)
+            if (selectionBase >= Configuration.MaxCharacters)
                 selectionBase = 0;
 
             RefreshIndex();

@@ -7,30 +7,27 @@ using FimbulwinterClient.Network.Packets;
 using Nuclex.Input;
 using Microsoft.Xna.Framework;
 using FimbulwinterClient.Network.Packets.Login;
+using FimbulwinterClient.Config;
 
 namespace FimbulwinterClient.GUI
 {
     public class CharServerSelectWindow : Window
     {
-        ROConfig cfg;
-
-        public CharServerSelectWindow(ROConfig cfg, CharServerInfo[] charServerInfo)
+        public CharServerSelectWindow()
         {
-            this.cfg = cfg;
-
             InitializeComponent();
 
-            foreach (CharServerInfo csi in charServerInfo)
+            foreach (CharServerInfo csi in ROClient.Singleton.NetworkState.LoginAccept.Servers)
                 lstServices.Items.Add(csi);
-            lstServices.SelectedIndex = 0;
 
+            lstServices.SelectedIndex = 0;
             lstServices.Focus();
         }
 
         private void InitializeComponent()
         {
             this.Size = new Vector2(280, 200);
-            this.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 200);
+            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - 140, GuiManager.Singleton.Client.Config.ScreenHeight - 140 - 200);
             this.Text = "Server Select";
 
             lstServices = new Listbox();

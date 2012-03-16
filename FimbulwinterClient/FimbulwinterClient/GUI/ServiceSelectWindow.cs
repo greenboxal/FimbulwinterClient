@@ -5,30 +5,27 @@ using System.Text;
 using FimbulwinterClient.GUI.System;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
+using FimbulwinterClient.Config;
 
 namespace FimbulwinterClient.GUI
 {
     public class ServiceSelectWindow : Window
     {
-        ROConfig cfg;
-
-        public ServiceSelectWindow(ROConfig cfg)
+        public ServiceSelectWindow()
         {
-            this.cfg = cfg;
-
             InitializeComponent();
 
-            foreach (ServerInfo si in cfg.Servers)
+            foreach (ServerInfo si in GuiManager.Singleton.Client.Config.ServersInfo.Servers)
                 lstServices.Items.Add(si);
-            lstServices.SelectedIndex = 0;
 
+            lstServices.SelectedIndex = 0;
             lstServices.Focus();
         }
 
         private void InitializeComponent()
         {
             this.Size = new Vector2(280, 200);
-            this.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 200);
+            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - 140, GuiManager.Singleton.Client.Config.ScreenHeight - 140 - 200);
             this.Text = "Service Select";
 
             lstServices = new Listbox();

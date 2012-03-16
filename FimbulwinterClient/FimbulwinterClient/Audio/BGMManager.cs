@@ -5,58 +5,70 @@ using System.Text;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework;
 using FMOD;
+using FimbulwinterClient.Config;
+using System.IO;
 
 namespace FimbulwinterClient.Audio
 {
     public class BGMManager : GameComponent
     {
-        private ROConfig _cfg;
-
-        private readonly FMOD.System _system;
+        private readonly FMOD.System system;
         public FMOD.System System
         {
-            get { return _system; }
+            get { return system; }
         }
 
-        private FMOD.Sound _sound;
-        private FMOD.Channel _channel;
+        private FMOD.Sound sound;
+        private FMOD.Channel channel;
+        private string currentSound;
 
-        public BGMManager(ROClient g, ROConfig cfg)
-            : base(g)
+        public BGMManager()
+            : base(ROClient.Singleton)
         {
-            RESULT result = Factory.System_Create(ref _system);
+            uint version = 0;
+            RESULT result = Factory.System_Create(ref system);
+
             if (result != RESULT.OK)
                 throw new Exception("Create SoundSystem Failed");
 
-            uint version = 0;
             result = System.getVersion(ref version);
+
             if (result != RESULT.OK || version < VERSION.number)
                 throw new Exception("Create SoundSystem Failed");
 
             result = System.init(32, INITFLAGS.NORMAL, (IntPtr)null);
+
             if (result != RESULT.OK)
                 throw new Exception("Create SoundSystem Failed");
 
-            _cfg = cfg;
-            cfg.BgmVolumeChanged += new Action<float>(cfg_BgmVolumeChanged);
+            ROClient.Singleton.Config.BgmVolumeChanged += new Action<float>(cfg_BgmVolumeChanged);
         }
 
-        void cfg_BgmVolumeChanged(float obj)
+        void cfg_BgmVolumeChanged(float vol)
         {
-            if (_channel != null)
-                _channel.setVolume(obj);
+            if (channel != null)
+                channel.setVolume(vol);
         }
 
         public void PlayBGM(string name)
         {
-            RESULT result = _system.createSound(string.Format("BGM/{0}.mp3", name), MODE.HARDWARE, ref _sound);
-            if (result != RESULT.OK)
-                throw new Exception("Create Sound Failed");
+            string fname = string.Format("BGM/{0}.mp3", name);
 
-            result = _system.playSound(CHANNELINDEX.FREE, _sound, false, ref _channel);
-            if (result != RESULT.OK)
-                throw new Exception("Play Sound Failed");
-            _channel.setVolume(_cfg.BgmVolume);
+            if (currentSound != fname && File.Exists(fname))
+            {
+                RESULT result = system.createSound(fname, MODE.HARDWARE, ref sound);
+
+                if (result != RESULT.OK)
+                    throw new Exception("Create Sound Failed");
+
+                result = system.playSound(CHANNELINDEX.FREE, sound, false, ref channel);
+
+                if (result != RESULT.OK)
+                    throw new Exception("Play Sound Failed");
+
+               channel.setVolume(ROClient.Singleton.Config.BgmVolume);
+               currentSound = fname;
+            }
         }
     }
 }

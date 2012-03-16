@@ -109,11 +109,6 @@ namespace FimbulwinterClient.Network
             Start();
         }
 
-        public void SendPacket(OutPacket op)
-        {
-            op.Write(m_bw);
-        }
-
         public event Action Disconnected;
     }
 }

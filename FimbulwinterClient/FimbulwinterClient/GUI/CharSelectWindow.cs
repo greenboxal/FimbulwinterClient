@@ -24,7 +24,7 @@ namespace FimbulwinterClient.GUI
             this.Size = new Vector2(576, 358);
             this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - (576 / 2), GuiManager.Singleton.Client.Config.ScreenHeight / 2 - (358 / 2));
 
-            cbChars = new CharBrowser(ROClient.Singleton.CharAccept.Chars);
+            cbChars = new CharBrowser(ROClient.Singleton.NetworkState.CharAccept.Chars);
             cbChars.Position = new Vector2(60, 43);
             cbChars.Size = new Vector2(421, 120);
             cbChars.SelectedIndexChanged += new Action(cbChars_SelectedIndexChanged);
@@ -99,13 +99,22 @@ namespace FimbulwinterClient.GUI
             this.Controls.Add(btnCancel);
         }
 
+        public event Action<int> OnCreateChar;
+        public event Action<int> OnSelectChar;
+
         void btnAction_Clicked(Nuclex.Input.MouseButtons arg1, float arg2, float arg3)
         {
             if (arg1 == Nuclex.Input.MouseButtons.Left)
             {
                 if (cbChars.SelectedIndex == -1)
                 {
-                    ROClient.Singleton.ChangeLoginState(ROLoginState.CreateChar);
+                    if (OnCreateChar != null)
+                        OnCreateChar(cbChars.SelectedSlot);
+                }
+                else
+                {
+                    if (OnSelectChar != null)
+                        OnSelectChar(cbChars.SelectedSlot);
                 }
             }
         }
@@ -118,20 +127,20 @@ namespace FimbulwinterClient.GUI
             }
             else
             {
-                lblName.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Name;
-                lblJob.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Class.ToString();
-                lblLv.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].BaseLevel.ToString();
-                lblEXP.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].BaseExp.ToString();
-                lblHP.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].HP.ToString();
-                lblSP.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].SP.ToString();
-                lblMap.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].MapName;
+                lblName.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Name;
+                lblJob.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Class.ToString();
+                lblLv.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseLevel.ToString();
+                lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseExp.ToString();
+                lblHP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].HP.ToString();
+                lblSP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].SP.ToString();
+                lblMap.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].MapName;
 
-                lblStr.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Str.ToString();
-                lblAgi.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Agi.ToString();
-                lblVit.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Vit.ToString();
-                lblInt.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Int.ToString();
-                lblDex.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Dex.ToString();
-                lblLuk.Text = ROClient.Singleton.CharAccept.Chars[cbChars.SelectedIndex].Luk.ToString();
+                lblStr.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Str.ToString();
+                lblAgi.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Agi.ToString();
+                lblVit.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Vit.ToString();
+                lblInt.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Int.ToString();
+                lblDex.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Dex.ToString();
+                lblLuk.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Luk.ToString();
 
                 btnAction.Text = "enter";
             }

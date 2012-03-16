@@ -19,60 +19,81 @@ using FimbulwinterClient.Network;
 using FimbulwinterClient.Network.Packets;
 using FimbulwinterClient.Network.Packets.Char;
 using FimbulwinterClient.Network.Packets.Login;
+using FimbulwinterClient.Screens;
+using FimbulwinterClient.Config;
 
 namespace FimbulwinterClient
 {
-    public enum ROClientState
-    {
-        None,
-        Test,
-        Login,
-        Loading,
-        InGame,
-    }
-
-    public enum ROLoginState
-    {
-        ServiceSelect,
-        Login,
-        CharServerSelect,
-        CharSelect,
-        CreateChar,
-    }
-
     public class ROClient : Microsoft.Xna.Framework.Game
     {
         public static ROClient Singleton { get; set; }
 
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
-        ROConfig cfg;
-        BGMManager bgmManager;
-        EffectManager effectManager;
-
-        ROClientState state;
-        ROLoginState loginState;
-
-        Texture2D loginScreenBG;
-
-        InputManager inputManager;
-        GuiManager guiManager;
-        ServerInfo selectedSInfo;
-        MessageBox currentWait;
-
-        AcceptLogin acceptedLogin;
-        public AcceptLogin AcceptedLogin
+        public GraphicsDeviceManager Graphics
         {
-            get { return acceptedLogin; }
-            set { acceptedLogin = value; }
+            get { return graphics; }
+            set { graphics = value; }
         }
 
-        CSAcceptLogin charAccept;
-        public CSAcceptLogin CharAccept
+        SpriteBatch spriteBatch;
+        public SpriteBatch SpriteBatch
         {
-            get { return charAccept; }
-            set { charAccept = value; }
+            get { return spriteBatch; }
+            set { spriteBatch = value; }
+        }
+
+        Configuration cfg;
+        public Configuration Config
+        {
+            get { return cfg; }
+            set { cfg = value; }
+        }
+        
+        public ROContentManager ContentManager
+        {
+            get { return (ROContentManager)Content; }
+        }
+
+        BGMManager bgmManager;
+        public BGMManager BgmManager
+        {
+            get { return bgmManager; }
+            set { bgmManager = value; }
+        }
+
+        EffectManager effectManager;
+        public EffectManager EffectManager
+        {
+            get { return effectManager; }
+            set { effectManager = value; }
+        }
+
+        InputManager inputManager;
+        public InputManager InputManager
+        {
+            get { return inputManager; }
+            set { inputManager = value; }
+        }
+
+        GuiManager guiManager;
+        public GuiManager GuiManager
+        {
+            get { return guiManager; }
+            set { guiManager = value; }
+        }
+
+        IGameScreen screen;
+        public IGameScreen Screen
+        {
+            get { return screen; }
+            set { screen = value; }
+        }
+
+        NetworkState netState;
+        public NetworkState NetworkState
+        {
+            get { return netState; }
+            set { netState = value; }
         }
 
         Connection currentConnection;
@@ -80,38 +101,6 @@ namespace FimbulwinterClient
         {
             get { return currentConnection; }
             set { currentConnection = value; }
-        }
-
-        public GuiManager GuiManager
-        {
-            get { return guiManager; }
-            set { guiManager = value; }
-        }
-
-        public InputManager InputManager
-        {
-            get { return inputManager; }
-            set { inputManager = value; }
-        }
-
-        public ROConfig Config
-        {
-            get { return cfg; }
-        }
-
-        public ROContentManager ContentManager
-        {
-            get { return (ROContentManager)Content; }
-        }
-
-        public BGMManager BgmManager
-        {
-            get { return bgmManager; }
-        }
-
-        public EffectManager EffectManager
-        {
-            get { return effectManager; }
         }
 
         public ROClient()
@@ -126,19 +115,20 @@ namespace FimbulwinterClient
 
             try
             {
-                Stream s = ContentManager.LoadContent<Stream>("data/fb/config.xml");
-                cfg = ROConfig.FromStream(s);
+                Stream s = ContentManager.LoadContent<Stream>("data/fb/config/config.xml");
+                cfg = Configuration.FromStream(s);
                 cfg.Client = this;
                 s.Close();
             }
             catch
             {
-                cfg = new ROConfig(this);
+                cfg = new Configuration(this);
             }
+
             cfg.ReadConfig();
 
-            bgmManager = new BGMManager(this, cfg);
-            effectManager = new EffectManager(this, cfg);
+            bgmManager = new BGMManager();
+            effectManager = new EffectManager();
 
             inputManager = new Nuclex.Input.InputManager(Services, Window.Handle);
 
@@ -149,29 +139,31 @@ namespace FimbulwinterClient
             Components.Add(guiManager);
 
             Services.AddService(typeof(InputManager), inputManager);
+            Services.AddService(typeof(GuiManager), guiManager);
+            Services.AddService(typeof(EffectManager), effectManager);
+            Services.AddService(typeof(BGMManager), bgmManager);
 
             graphics.PreferredBackBufferWidth = cfg.ScreenWidth;
             graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
             graphics.ApplyChanges();
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
+
+            netState = new NetworkState();
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            ChangeState(ROClientState.Login);
-            ChangeLoginState(ROLoginState.ServiceSelect);
-
             GUI.Utils.Init(GraphicsDevice);
+
+            ChangeScreen(new ServiceSelectScreen());
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            loginScreenBG = ContentManager.LoadContent<Texture2D>("data/texture/À¯ÀúÀÎÅÍÆäÀÌ½º/bgi_temp.bmp");
         }
 
         protected override void UnloadContent()
@@ -181,11 +173,8 @@ namespace FimbulwinterClient
 
         protected override void Update(GameTime gameTime)
         {
-            if (currentConnection != null && state == ROClientState.Login && loginState == ROLoginState.CharSelect && (int)gameTime.TotalGameTime.TotalSeconds % 12 == 0)
-            {
-                Ping p = new Ping(Environment.TickCount);
-                currentConnection.SendPacket(p);
-            }
+            if (screen != null)
+                screen.Update(spriteBatch, gameTime);
 
             base.Update(gameTime);
         }
@@ -194,17 +183,21 @@ namespace FimbulwinterClient
         {
             GraphicsDevice.Clear(Color.Black);
 
-            if (state == ROClientState.Login || state == ROClientState.Test)
-            {
-                spriteBatch.Begin();
-                spriteBatch.Draw(loginScreenBG, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);                
-                spriteBatch.End();
-            }
+            if (screen != null)
+                screen.Draw(spriteBatch, gameTime);
 
             base.Draw(gameTime);
         }
 
-        public void ChangeLoginState(ROLoginState s)
+        public void ChangeScreen(IGameScreen screen)
+        {
+            if (this.screen != null)
+                this.screen.Dispose();
+
+            this.screen = screen;
+        }
+
+        /*public void ChangeLoginState(ROLoginState s)
         {
             if (state != ROClientState.Login)
                 ChangeState(ROClientState.Login);
@@ -275,7 +268,7 @@ namespace FimbulwinterClient
                 {
                     if (arg1 == 0x69)
                     {
-                        acceptedLogin = (AcceptLogin)arg3;
+                        acceptedLogin = (LSAcceptLogin)arg3;
 
                         CloseWaitDlg();
 
@@ -283,7 +276,7 @@ namespace FimbulwinterClient
                     }
                     else if (arg1 == 0x6a)
                     {
-                        RejectLogin rl = (RejectLogin)arg3;
+                        LSRejectLogin rl = (LSRejectLogin)arg3;
 
                         MessageBox.ShowOk(rl.Text, backToLogin);
                     }
@@ -349,7 +342,7 @@ namespace FimbulwinterClient
                 return;
             }
 
-            currentConnection.SendPacket(new PlainTextLogin(arg1, arg2, selectedSInfo.Version, 14));
+            currentConnection.SendPacket(new LSPlainTextLogin(arg1, arg2, selectedSInfo.Version, 14));
         }
 
         void c_ServerSelected(CharServerInfo csi)
@@ -365,9 +358,9 @@ namespace FimbulwinterClient
                 return;
             }
 
-            CharServerLoginPacket cslp = new CharServerLoginPacket(acceptedLogin.AccountID, acceptedLogin.LoginID1, acceptedLogin.LoginID2, acceptedLogin.Sex);
+            CSLoginPacket cslp = new CSLoginPacket(acceptedLogin.AccountID, acceptedLogin.LoginID1, acceptedLogin.LoginID2, acceptedLogin.Sex);
             currentConnection.PacketSerializer.BytesToSkip = 4; // Skip AID
             currentConnection.SendPacket(cslp);
-        }
+        }*/
     }
 }

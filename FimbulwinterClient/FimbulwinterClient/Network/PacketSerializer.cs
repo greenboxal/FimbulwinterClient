@@ -18,137 +18,145 @@ namespace FimbulwinterClient.Network
             public Type Type;
         }
 
-        private MemoryStream m_memory;
+        private MemoryStream memory;
         public MemoryStream Memory
         {
-            get { return m_memory; }
-            set { m_memory = value; }
+            get { return memory; }
+            set { memory = value; }
         }
 
-        private int m_bytesToSkip;
+        private int bytesToSkip;
         public int BytesToSkip
         {
-            get { return m_bytesToSkip; }
-            set { m_bytesToSkip = value; }
+            get { return bytesToSkip; }
+            set { bytesToSkip = value; }
         }
 
-        private static Dictionary<ushort, PacketInfo> m_packetSize;
+        private static Dictionary<ushort, PacketInfo> packetSize;
         public static Dictionary<ushort, PacketInfo> PacketSize
         {
-            get { return m_packetSize; }
+            get { return packetSize; }
+        }
+
+        private Dictionary<ushort, Delegate> packetHooks;
+        public Dictionary<ushort, Delegate> PacketHooks
+        {
+            get { return packetHooks; }
+            set { packetHooks = value; }
         }
 
         static PacketSerializer()
         {
-            m_packetSize = new Dictionary<ushort, PacketInfo>();
+            packetSize = new Dictionary<ushort, PacketInfo>();
 
             // Login
-            m_packetSize.Add(0x0069, new PacketInfo { Size = -1, Type = typeof(AcceptLogin) });
-            m_packetSize.Add(0x006A, new PacketInfo { Size = 23, Type = typeof(RejectLogin) });
+            packetSize.Add(0x0069, new PacketInfo { Size = -1, Type = typeof(LSAcceptLogin) });
+            packetSize.Add(0x006A, new PacketInfo { Size = 23, Type = typeof(LSRejectLogin) });
 
             // Char
-            m_packetSize.Add(0x006C, new PacketInfo { Size = 3, Type = typeof(CSRejectLogin) });
-            m_packetSize.Add(0x006B, new PacketInfo { Size = -1, Type = typeof(CSAcceptLogin) });
-            m_packetSize.Add(0x08B9, new PacketInfo { Size = 12, Type = typeof(PinCodeRequest) });
+            packetSize.Add(0x006C, new PacketInfo { Size = 3, Type = typeof(CSRejectLogin) });
+            packetSize.Add(0x006B, new PacketInfo { Size = -1, Type = typeof(CSAcceptLogin) });
+            packetSize.Add(0x08B9, new PacketInfo { Size = 12, Type = typeof(CSPinCodeRequest) });
         }
 
         public PacketSerializer()
         {
-            m_memory = new MemoryStream();
+            memory = new MemoryStream();
+            packetHooks = new Dictionary<ushort, Delegate>();
         }
 
         public void EnqueueBytes(byte[] data, int size)
         {
-            int pos = (int)m_memory.Position;
-            m_memory.Position = m_memory.Length;
-            m_memory.Write(data, 0, size);
-            m_memory.Position = pos;
+            int pos = (int)memory.Position;
+            memory.Position = memory.Length;
+            memory.Write(data, 0, size);
+            memory.Position = pos;
 
             TryReadPackets();
         }
 
         public void Reset()
         {
-            m_memory = new MemoryStream();
+            memory = new MemoryStream();
         }
 
         private void TryReadPackets()
         {
-            if (m_bytesToSkip > 0)
+            if (bytesToSkip > 0)
             {
-                int skipped = Math.Min(m_bytesToSkip, (int)m_memory.Length);
-                m_memory.Position += skipped;
-                m_bytesToSkip -= skipped;
+                int skipped = Math.Min(bytesToSkip, (int)memory.Length);
+                memory.Position += skipped;
+                bytesToSkip -= skipped;
             }
 
-            while (m_memory.Length - m_memory.Position > 2)
+            while (memory.Length - memory.Position > 2)
             {
                 byte[] tmp = new byte[2];
 
-                m_memory.Read(tmp, 0, 2);
+                memory.Read(tmp, 0, 2);
                 ushort cmd = BitConverter.ToUInt16(tmp, 0);
 
-                if (!m_packetSize.ContainsKey(cmd))
+                if (!packetSize.ContainsKey(cmd))
                 {
                     if (InvalidPacket != null)
                         InvalidPacket();
 
-                    m_memory.Position -= 2;
+                    memory.Position -= 2;
 
                     break;
                 }
                 else
                 {
-                    int size = m_packetSize[cmd].Size;
+                    int size = packetSize[cmd].Size;
                     bool isFixed = true;
 
                     if (size <= 0)
                     {
                         isFixed = false;
 
-                        if (m_memory.Length - m_memory.Position > 2)
+                        if (memory.Length - memory.Position > 2)
                         {
-                            m_memory.Read(tmp, 0, 2);
+                            memory.Read(tmp, 0, 2);
                             size = BitConverter.ToUInt16(tmp, 0);
                         }
                         else
                         {
-                            m_memory.Position -= 4;
+                            memory.Position -= 4;
 
                             break;
                         }
                     }
+
+                    byte[] data = new byte[size];
+                    memory.Read(data, 0, size - (isFixed ? 2 : 4));
+
+                    ConstructorInfo ci = packetSize[cmd].Type.GetConstructor(new Type[] { });
+                    InPacket p = (InPacket)ci.Invoke(null);
+
+                    if (!p.Read(data))
+                    {
+                        if (InvalidPacket != null)
+                            InvalidPacket();
+
+                        break;
+                    }
+
+                    if (packetHooks.ContainsKey(cmd))
+                        packetHooks[cmd].DynamicInvoke(cmd, size, p);
 
                     if (PacketReceived != null)
-                    {
-                        byte[] data = new byte[size];
-                        m_memory.Read(data, 0, size - (isFixed ? 2 : 4));
-
-                        ConstructorInfo ci = m_packetSize[cmd].Type.GetConstructor(new Type[] { });
-                        InPacket p = (InPacket)ci.Invoke(null);
-
-                        if (!p.Read(data))
-                        {
-                            if (InvalidPacket != null)
-                                InvalidPacket();
-
-                            break;
-                        }
-
-                        if (PacketReceived != null)
-                            PacketReceived(cmd, size, p);
-                    }
+                        PacketReceived(cmd, size, p);
                 }
             }
 
-            if (m_memory.Length - m_memory.Position > 0)
+            if (memory.Length - memory.Position > 0)
             {
                 MemoryStream ms = new MemoryStream();
 
-                ms.Write(m_memory.GetBuffer(), (int)m_memory.Position, (int)m_memory.Length - (int)m_memory.Position);
-                m_memory.Dispose();
+                ms.Write(memory.GetBuffer(), (int)memory.Position, (int)memory.Length - (int)memory.Position);
+                memory.Dispose();
 
-                m_memory = ms;
+                memory = ms;
             }
         }
 

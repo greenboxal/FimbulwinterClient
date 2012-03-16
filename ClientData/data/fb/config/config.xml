@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BgmVolume>1</BgmVolume>
+  <EffectVolume>1</EffectVolume>
+  <ScreenWidth>1280</ScreenWidth>
+  <ScreenHeight>768</ScreenHeight>
+  <LastLogin>greenbox</LastLogin>
+  <SaveLast>true</SaveLast>
+</Configuration>

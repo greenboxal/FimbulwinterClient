@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
-using FimbulwinterClient.Utils;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
@@ -23,7 +22,7 @@ namespace FimbulwinterClient.Network.Packets.Login
         }
     }
 
-    public class AcceptLogin : InPacket
+    public class LSAcceptLogin : InPacket
     {
         public int LoginID1 { get; set; }
         public int AccountID { get; set; }
