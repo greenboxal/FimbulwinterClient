@@ -29,7 +29,7 @@ namespace FimbulwinterClient.Screens
 
         void window_OnCreateChar(int obj)
         {
-
+            ROClient.Singleton.ChangeScreen(new CreateCharScreen());
         }
 
         public override void Update(SpriteBatch sb, GameTime gameTime)

@@ -118,6 +118,10 @@
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
+    <Compile Include="Content\RsmBone.cs" />
+    <Compile Include="Content\RsmMesh.cs" />
+    <Compile Include="Content\RsmMeshPart.cs" />
+    <Compile Include="Content\RsmModel.cs" />
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
@@ -138,7 +142,9 @@
     <Compile Include="GUI\System\TextBox.cs" />
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
+    <Compile Include="IO\ContentLoaders\RsmModelLoader.cs" />
     <Compile Include="Screens\CharSelectScreen.cs" />
+    <Compile Include="Screens\CreateCharScreen.cs" />
     <Compile Include="Screens\IGameScreen.cs" />
     <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
     <Compile Include="IO\ContentLoaders\SpriteActionLoader.cs" />
@@ -317,6 +323,7 @@
     <Compile Include="Screens\LoginScreen.cs" />
     <Compile Include="Screens\CharServerSelectScreen.cs" />
     <Compile Include="Screens\ServiceSelectScreen.cs" />
+    <Compile Include="Screens\TestScreen.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>

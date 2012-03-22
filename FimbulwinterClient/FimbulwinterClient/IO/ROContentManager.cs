@@ -34,6 +34,7 @@ namespace FimbulwinterClient.IO
             m_loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
             m_loaders.Add(typeof(Sprite), new SpriteLoader());
             m_loaders.Add(typeof(SpriteAction), new SpriteActionLoader());
+            m_loaders.Add(typeof(RsmModel), new RsmModelLoader());
         }
 
         private Dictionary<string, object> m_cache;

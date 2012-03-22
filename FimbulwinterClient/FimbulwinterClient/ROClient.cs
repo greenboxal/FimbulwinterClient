@@ -158,7 +158,7 @@ namespace FimbulwinterClient
 
             GUI.Utils.Init(GraphicsDevice);
 
-            ChangeScreen(new ServiceSelectScreen());
+            ChangeScreen(new TestScreen());
         }
 
         protected override void LoadContent()

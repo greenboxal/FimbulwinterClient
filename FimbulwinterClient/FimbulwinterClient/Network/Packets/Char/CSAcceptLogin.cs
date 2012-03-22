@@ -99,7 +99,7 @@ namespace FimbulwinterClient.Network.Packets.Char
                 cd.HeadMid = br.ReadInt16();
                 cd.HairColor= br.ReadInt16();
                 cd.ClothesColor = br.ReadInt16();
-                cd.Name = br.ReadCString(23);
+                cd.Name = br.ReadCString(24);
                 cd.Str = br.ReadByte();
                 cd.Agi = br.ReadByte();
                 cd.Vit = br.ReadByte();
@@ -108,7 +108,7 @@ namespace FimbulwinterClient.Network.Packets.Char
                 cd.Luk = br.ReadByte();
                 cd.Slot = br.ReadInt16();
                 cd.Rename = br.ReadInt16();
-                cd.MapName = br.ReadCString(15);
+                cd.MapName = br.ReadCString(16);
                 cd.DeleteDate = br.ReadInt32();
                 cd.Robe = br.ReadInt32();
 
