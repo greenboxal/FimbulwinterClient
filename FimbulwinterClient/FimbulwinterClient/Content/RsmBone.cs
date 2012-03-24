@@ -26,6 +26,7 @@ namespace FimbulwinterClient.Content
         public RsmBone[] Children
         {
             get { return children; }
+            set { children = value; }
         }
 
         private int index;

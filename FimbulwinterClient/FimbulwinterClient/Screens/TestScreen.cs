@@ -12,49 +12,59 @@ namespace FimbulwinterClient.Screens
     public class TestScreen : IGameScreen
     {
         RsmModel mdl;
-        Vector3 modelPosition = Vector3.Forward;
-        float modelRotation = 0.0f;
-
-        // Set the position of the camera in world space, for our view matrix.
-        Vector3 cameraPosition = new Vector3(0.0f, 25.0f, 500.0f);
-
-        float aspectRatio = 0;
+        float rx, ry, rz;
+        float cz;
 
         public TestScreen()
         {
-            mdl = ROClient.Singleton.ContentManager.LoadContent<RsmModel>("data/model/gld2/ÇÁ·Ð_¿©°ü.rsm");
-
-            aspectRatio = ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio;
+            mdl = ROClient.Singleton.ContentManager.LoadContent<RsmModel>("data/model/ÇÁ·ÐÅ×¶ó/µµ±¸Á¡.rsm");
+            cz = -250;
         }
 
         public void Draw(SpriteBatch sb, GameTime gameTime)
         {
-            Matrix[] transforms = new Matrix[mdl.Bones.Length];
+            Matrix worldMatrix = Matrix.CreateRotationX(rx) * Matrix.CreateRotationY(ry) * Matrix.CreateRotationZ(rz);
+            Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(5, 5, cz), Vector3.Zero, Vector3.Up);
 
-            mdl.CopyAbsoluteBoneTransformsTo(transforms);
+            Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+                MathHelper.ToRadians(45),
+                ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio,
+                1.0f, 10000.0f);
+            mdl.World = worldMatrix;
 
-            foreach (RsmMesh mesh in mdl.Meshes)
+            foreach (BasicEffect eff in mdl.Root.Effects)
             {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateRotationY(modelRotation)
-                        * Matrix.CreateTranslation(modelPosition);
-                    effect.View = Matrix.CreateLookAt(cameraPosition,
-                        Vector3.Zero, Vector3.Up);
-                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(
-                        MathHelper.ToRadians(45.0f), aspectRatio,
-                        1.0f, 10000.0f);
-                    effect.World = Matrix.Identity;
-                }
-
-                mesh.Draw();
+                eff.EnableDefaultLighting();
+                eff.View = viewMatrix;
+                eff.Projection = projectionMatrix;
             }
+
+            mdl.Draw(new Vector3(1.0f,1.0f,1.0f));
         }
 
+        float old = 0;
         public void Update(SpriteBatch sb, GameTime gameTime)
         {
-            modelRotation += 0.1f;
+            KeyboardState s = Keyboard.GetState();
+
+            if (s.IsKeyDown(Keys.A))
+                ry += 0.10f;
+            else if (s.IsKeyDown(Keys.D))
+                ry -= 0.10f;
+
+            if (s.IsKeyDown(Keys.W))
+                rz += 0.10f;
+            else if (s.IsKeyDown(Keys.S))
+                rz -= 0.10f;
+
+            if (s.IsKeyDown(Keys.Up))
+                cz += 0.10f;
+            else if (s.IsKeyDown(Keys.Down))
+                cz -= 0.10f;
+
+            MouseState m = Mouse.GetState();
+            rx += (m.ScrollWheelValue / 360) - old;
+            old = m.ScrollWheelValue / 360;
         }
 
         public void Dispose()
