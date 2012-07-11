@@ -13,8 +13,8 @@ namespace FimbulwinterClient.Network.Packets.Login
         public int Port { get; set; }
         public string Name { get; set; }
         public int Users { get; set; }
-        public int Type { get; set; }
-        public int New { get; set; }
+        public byte Type { get; set; }
+        public byte New { get; set; }
 
         public override string ToString()
         {
@@ -51,10 +51,11 @@ namespace FimbulwinterClient.Network.Packets.Login
 
                 csi.IP = new IPAddress(br.ReadBytes(4));
                 csi.Port = br.ReadInt16();
-                csi.Name = br.ReadCString(20);
-                csi.Users = br.ReadInt16();
-                csi.Type = br.ReadInt16();
-                csi.New = br.ReadInt16();
+                csi.Name = "Development";// br.ReadCString(20);
+                br.ReadBytes(20);
+                csi.Users = br.ReadInt32();
+                csi.Type = br.ReadByte();
+                csi.New = br.ReadByte();
 
                 Servers[i] = csi;
             }

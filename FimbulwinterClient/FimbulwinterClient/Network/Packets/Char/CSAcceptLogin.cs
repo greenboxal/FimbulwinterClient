@@ -59,7 +59,7 @@ namespace FimbulwinterClient.Network.Packets.Char
         public override bool Read(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
-            int numChars = (data.Length - 23) / 136;
+            int numChars = (data.Length - 23) / 144;
 
             MaxSlots = br.ReadByte();
             AvailableSlots = br.ReadByte();
@@ -99,7 +99,7 @@ namespace FimbulwinterClient.Network.Packets.Char
                 cd.HeadMid = br.ReadInt16();
                 cd.HairColor= br.ReadInt16();
                 cd.ClothesColor = br.ReadInt16();
-                cd.Name = br.ReadCString(24);
+                cd.Name = br.ReadCString(23);
                 cd.Str = br.ReadByte();
                 cd.Agi = br.ReadByte();
                 cd.Vit = br.ReadByte();
