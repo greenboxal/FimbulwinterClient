@@ -12,7 +12,6 @@ namespace FimbulwinterClient.GUI.System
     {
         private float dragDeltaX;
         private float dragDeltaY;
-        private bool dragging;
 
         public Texture2D FullImage { get; set; }
 
@@ -26,6 +25,11 @@ namespace FimbulwinterClient.GUI.System
         {
             int absX = (int)GetAbsX();
             int absY = (int)GetAbsY();
+
+
+            Color clr = Color.White;
+            if (Dragging)
+                clr = Color.White * 0.5f;
 
             if (FullImage == null)
             {
@@ -41,23 +45,22 @@ namespace FimbulwinterClient.GUI.System
                 Rectangle bMid = new Rectangle(absX + 3, absY + 17 + mMid.Height, (int)Size.X - 6, 28);
                 Rectangle bRight = new Rectangle(absX + bMid.Width + 3, absY + 17 + mMid.Height, 3, 28);
 
-                sb.Draw(FormSkin, tLeft, new Rectangle(0, 0, 14, 17), Color.White);
-                sb.Draw(FormSkin, tMid, new Rectangle(14, 0, 11, 17), Color.White);
-                sb.Draw(FormSkin, tRight, new Rectangle(25, 0, 3, 17), Color.White);
+                sb.Draw(FormSkin, tLeft, new Rectangle(0, 0, 14, 17), clr);
+                sb.Draw(FormSkin, tMid, new Rectangle(14, 0, 11, 17), clr);
+                sb.Draw(FormSkin, tRight, new Rectangle(25, 0, 3, 17), clr);
 
-                sb.Draw(FormSkin, mLeft, new Rectangle(0, 17, 1, 8), Color.White);
-                sb.Draw(FormSkin, mMid, new Rectangle(6, 20, 2, 2), Color.White);
-                sb.Draw(FormSkin, mRight, new Rectangle(27, 17, 1, 8), Color.White);
+                sb.Draw(FormSkin, mLeft, new Rectangle(0, 17, 1, 8), clr);
+                sb.Draw(FormSkin, mMid, new Rectangle(6, 20, 2, 2), clr);
+                sb.Draw(FormSkin, mRight, new Rectangle(27, 17, 1, 8), clr);
 
-                sb.Draw(FormSkin, bLeft, new Rectangle(0, 25, 3, 28), Color.White);
-                sb.Draw(FormSkin, bMid, new Rectangle(3, 25, 22, 28), Color.White);
-                sb.Draw(FormSkin, bRight, new Rectangle(25, 25, 3, 28), Color.White);
-
+                sb.Draw(FormSkin, bLeft, new Rectangle(0, 25, 3, 28), clr);
+                sb.Draw(FormSkin, bMid, new Rectangle(3, 25, 22, 28), clr);
+                sb.Draw(FormSkin, bRight, new Rectangle(25, 25, 3, 28), clr);
                 sb.DrawString(Arial10, this.Text, new Vector2(absX + 17, absY + 1), Color.Black);
             }
             else
             {
-                sb.Draw(FullImage, new Vector2(absX, absY), Color.White);
+                sb.Draw(FullImage, new Vector2(absX, absY), clr);
             }
 
             base.Draw(sb, gt);
@@ -65,12 +68,12 @@ namespace FimbulwinterClient.GUI.System
 
         public override void OnMouseUp(MouseButtons buttons, float x, float y)
         {
-            dragging = false;
+            Dragging = false;
         }
 
         public override void OnMouseMove(float x, float y)
         {
-            if (dragging)
+            if (Dragging)
             {
                 this.Position = new Vector2(GetAbsX() + x - dragDeltaX, GetAbsY() + y - dragDeltaY);
             }
@@ -78,7 +81,7 @@ namespace FimbulwinterClient.GUI.System
 
         public override void OnMouseDown(MouseButtons buttons, float x, float y)
         {
-            dragging = true;
+            Dragging = true;
             dragDeltaX = x;
             dragDeltaY = y;
         }

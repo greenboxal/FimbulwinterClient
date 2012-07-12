@@ -99,7 +99,7 @@ namespace FimbulwinterClient.Network.Packets.Char
                 cd.Accessory3 = br.ReadInt16();
                 cd.HairColor= br.ReadInt16();
                 cd.ClothesColor = br.ReadInt16();
-                cd.Name = br.ReadCString(23);
+                cd.Name = br.ReadCString(24);
                 cd.Str = br.ReadByte();
                 cd.Agi = br.ReadByte();
                 cd.Vit = br.ReadByte();

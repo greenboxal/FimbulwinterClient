@@ -20,7 +20,7 @@ namespace FimbulwinterClient.GUI
 
         private void InitializeComponent()
         {
-            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data/texture/À¯ÀúÀÎÅÍÆäÀÌ½º/login_interface/win_select2.bmp");
+            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\login_interface\\win_select2.bmp");
             this.Size = new Vector2(576, 358);
             this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - (576 / 2), GuiManager.Singleton.Client.Config.ScreenHeight / 2 - (358 / 2));
 
@@ -128,7 +128,7 @@ namespace FimbulwinterClient.GUI
             else
             {
                 lblName.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Name;
-                lblJob.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Job.ToString();
+                lblJob.Text = ROConst.ClassNames[ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Job];
                 lblLv.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseLevel.ToString();
                 lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Exp.ToString();
                 lblHP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].HP.ToString();

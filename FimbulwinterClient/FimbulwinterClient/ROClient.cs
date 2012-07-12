@@ -123,7 +123,7 @@ namespace FimbulwinterClient
 
             try
             {
-                Stream s = ContentManager.LoadContent<Stream>("data/fb/config/config.xml");
+                Stream s = ContentManager.LoadContent<Stream>("data\\fb\\config\\config.xml");
                 cfg = Configuration.FromStream(s);
                 cfg.Client = this;
                 s.Close();
@@ -135,7 +135,7 @@ namespace FimbulwinterClient
 
             cfg.ReadConfig();
 
-            //bgmManager = new BGMManager();
+            bgmManager = new BGMManager();
             effectManager = new EffectManager();
             luaManager = new LuaManager();
 

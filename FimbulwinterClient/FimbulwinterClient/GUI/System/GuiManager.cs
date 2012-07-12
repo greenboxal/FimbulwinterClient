@@ -72,7 +72,7 @@ namespace FimbulwinterClient.GUI.System
             m_controls = new List<Control>();
             m_deleteQueue = new Queue<Control>();
 
-            m_cursor = m_client.ContentManager.LoadContent<SpriteAction>("data/sprite/cursors.act");
+            m_cursor = m_client.ContentManager.LoadContent<SpriteAction>("data\\sprite\\cursors.act");
             m_cursor.Loop = true;
 
             InputManager im = (InputManager)m_client.Services.GetService(typeof(InputManager));

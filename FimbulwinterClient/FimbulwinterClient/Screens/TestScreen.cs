@@ -17,7 +17,7 @@ namespace FimbulwinterClient.Screens
 
         public TestScreen()
         {
-            mdl = ROClient.Singleton.ContentManager.LoadContent<RsmModel>("data/model/ÇÁ·ÐÅ×¶ó/µµ±¸Á¡.rsm");
+            mdl = ROClient.Singleton.ContentManager.LoadContent<RsmModel>("data\\model\\프론테라\\도구점.rsm");
             cz = -250;
         }
 

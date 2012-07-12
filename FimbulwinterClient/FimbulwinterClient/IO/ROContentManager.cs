@@ -71,7 +71,6 @@ namespace FimbulwinterClient.IO
                 return default(T);
             
             asset = asset.ToLower();
-            asset = System.Text.Encoding.GetEncoding("ISO-8859-1").GetString(System.Text.Encoding.GetEncoding("EUC-KR").GetBytes(asset));
             if (_cache.ContainsKey(asset))
             {
                 if (_cache[asset] != null)

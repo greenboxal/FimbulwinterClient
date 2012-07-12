@@ -50,4 +50,9 @@ public static class Utils
                 bw.Write((byte)0);
         }
     }
+
+    public static string Korean(this string text)
+    {
+        return System.Text.Encoding.GetEncoding("EUC-KR").GetString(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(text));
+    }
 }

@@ -16,7 +16,7 @@ namespace FimbulwinterClient.Screens
 
         public BaseLoginScreen()
         {
-            background = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data/fb/texture/login_screen.png");
+            background = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\fb\\texture\\login_screen.png");
             ROClient.Singleton.BgmManager.PlayBGM("01");
         }
 

@@ -14,7 +14,7 @@ namespace FimbulwinterClient.Lua
     public class LuaManager : GameComponent
     {
 
-        private const string lua_folder = "data/luafiles514/lua files";
+        private const string lua_folder = "data\\luafiles514\\lua files";
 
         private LuaInterface.Lua _luaparser;
         
@@ -22,6 +22,12 @@ namespace FimbulwinterClient.Lua
         public Dictionary<int, Tuple<string, string>> Accessories
         {
             get { return accessories; }
+        }
+
+        private Dictionary<int, Tuple<string, string>> robes;
+        public Dictionary<int, Tuple<string, string>> Robes
+        {
+            get { return robes; }
         }
 
         private Dictionary<int, Tuple<string, string>> npcIdentity;
@@ -36,6 +42,7 @@ namespace FimbulwinterClient.Lua
             _luaparser = new LuaInterface.Lua();
 
             LoadAccessory();
+            LoadRobe();
             LoadNpcIdentity();
         }
 
@@ -59,8 +66,8 @@ namespace FimbulwinterClient.Lua
 
         private void LoadAccessory()
         {
-            RunScript("datainfo/accessoryid.lub");
-            RunScript("datainfo/accname.lub");
+            RunScript("datainfo\\accessoryid.lub");
+            RunScript("datainfo\\accname.lub");
 
             accessories = new Dictionary<int, Tuple<string, string>>();
             var tbl = _luaparser.GetTable("ACCESSORY_IDs");
@@ -71,13 +78,30 @@ namespace FimbulwinterClient.Lua
             tbl = _luaparser.GetTable("AccNameTable");
             foreach (DictionaryEntry de in tbl)
                 if (accessories.ContainsKey(Convert.ToInt16(de.Key)))
-                    accessories[Convert.ToInt16(de.Key)] = new Tuple<string, string>(accessories[Convert.ToInt16(de.Key)].Item1, de.Value.ToString());
+                    accessories[Convert.ToInt16(de.Key)] = new Tuple<string, string>(accessories[Convert.ToInt16(de.Key)].Item1, de.Value.ToString().Korean());
+        }
+
+        private void LoadRobe()
+        {
+            RunScript("datainfo\\spriterobeid.lub");
+            RunScript("datainfo\\spriterobename.lub");
+
+            robes = new Dictionary<int, Tuple<string, string>>();
+            var tbl = _luaparser.GetTable("SPRITE_ROBE_IDs");
+            foreach (DictionaryEntry de in tbl)
+                if (!robes.ContainsKey(Convert.ToInt16(de.Value)))
+                    robes.Add(Convert.ToInt16(de.Value), new Tuple<string, string>(de.Key.ToString(), ""));
+
+            tbl = _luaparser.GetTable("RobeNameTable");
+            foreach (DictionaryEntry de in tbl)
+                if (robes.ContainsKey(Convert.ToInt16(de.Key)))
+                    robes[Convert.ToInt16(de.Key)] = new Tuple<string, string>(robes[Convert.ToInt16(de.Key)].Item1, de.Value.ToString().Korean());
         }
 
         private void LoadNpcIdentity()
         {
-            RunScript("datainfo/npcidentity.lub");
-            RunScript("datainfo/jobname.lub");
+            RunScript("datainfo\\npcidentity.lub");
+            RunScript("datainfo\\jobname.lub");
 
             npcIdentity = new Dictionary<int, Tuple<string, string>>();
             var tbl = _luaparser.GetTable("jobtbl");
@@ -88,7 +112,7 @@ namespace FimbulwinterClient.Lua
             tbl = _luaparser.GetTable("JobNameTable");
             foreach (DictionaryEntry de in tbl)
                 if (npcIdentity.ContainsKey(Convert.ToInt16(de.Key)))
-                    npcIdentity[Convert.ToInt16(de.Key)] = new Tuple<string, string>(npcIdentity[Convert.ToInt16(de.Key)].Item1, de.Value.ToString());
+                    npcIdentity[Convert.ToInt16(de.Key)] = new Tuple<string, string>(npcIdentity[Convert.ToInt16(de.Key)].Item1, de.Value.ToString().Korean());
         }
 
     }

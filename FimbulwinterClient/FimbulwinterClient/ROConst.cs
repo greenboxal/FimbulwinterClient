@@ -7,13 +7,14 @@ namespace FimbulwinterClient
 {
     public static class ROConst
     {
-        public static readonly string Humans = "ÀÎ°£Á·"; // 인간족
-        public static readonly string Accessories = "¾Ç¼¼»ç¸®"; // 악세사리
-        public static readonly string Monster = "¸ó½ºÅÍ"; // 몬스터
+        public static readonly string Humans = "인간족";
+        public static readonly string Robes = "로브";
+        public static readonly string Accessories = "악세사리";
+        public static readonly string Monster = "몬스터";
 
-        public static readonly string Body = "¸öÅë"; // 몸통
-        public static readonly string Head = "¸Ó¸®Åë"; // 머리통
-        public static readonly string[] Sex = new string[] { "¿©", "³²" }; // 여, 남
+        public static readonly string Body = "몸통"; // 몸통
+        public static readonly string Head = "머리통"; // 머리통
+        public static readonly string[] Sex = new string[] { "여", "남" }; // 여, 남
         
         public static readonly string novice = "\xC3\xCA\xBA\xB8\xC0\xDA";
         public static readonly string swordsman = "\xB0\xCB\xBB\xE7";
@@ -40,34 +41,41 @@ namespace FimbulwinterClient
         public static readonly string gm = "\x9D\xC4\xBF\xB5\xC0\xDA";
         public static readonly string mercenary = "\xBF\xEB\xBA\xB4";
 
+        public static readonly string genetic = "제네릭";
+
+        public static readonly Dictionary<int, string> ClassSprites;
         public static readonly Dictionary<int, string> ClassNames;
 
         static ROConst()
         {
+            ClassSprites = new Dictionary<int, string>();
+            ClassSprites.Add(0, novice);
+            ClassSprites.Add(1, swordsman);
+            ClassSprites.Add(2, magician);
+            ClassSprites.Add(3, archer);
+            ClassSprites.Add(4, acolyte);
+            ClassSprites.Add(5, merchant);
+            ClassSprites.Add(6, thief);
+            ClassSprites.Add(7, knight);
+            ClassSprites.Add(8, priest);
+            ClassSprites.Add(9, wizard);
+            ClassSprites.Add(10, blacksmith);
+            ClassSprites.Add(11, hunter);
+            ClassSprites.Add(12, assassin);
+            ClassSprites.Add(13, knight_mounted);
+            ClassSprites.Add(14, crusader);
+            ClassSprites.Add(15, monk);
+            ClassSprites.Add(16, sage);
+            ClassSprites.Add(17, rogue);
+            ClassSprites.Add(18, alchemist);
+            ClassSprites.Add(19, bard);
+            ClassSprites.Add(20, dancer);
+            ClassSprites.Add(21, gm);
+            ClassSprites.Add(22, mercenary);
+            ClassSprites.Add(4070, genetic);
+
             ClassNames = new Dictionary<int, string>();
-            ClassNames.Add(0, novice);
-            ClassNames.Add(1, swordsman);
-            ClassNames.Add(2, magician);
-            ClassNames.Add(3, archer);
-            ClassNames.Add(4, acolyte);
-            ClassNames.Add(5, merchant);
-            ClassNames.Add(6, thief);
-            ClassNames.Add(7, knight);
-            ClassNames.Add(8, priest);
-            ClassNames.Add(9, wizard);
-            ClassNames.Add(10, blacksmith);
-            ClassNames.Add(11, hunter);
-            ClassNames.Add(12, assassin);
-            ClassNames.Add(13, knight_mounted);
-            ClassNames.Add(14, crusader);
-            ClassNames.Add(15, monk);
-            ClassNames.Add(16, sage);
-            ClassNames.Add(17, rogue);
-            ClassNames.Add(18, alchemist);
-            ClassNames.Add(19, bard);
-            ClassNames.Add(20, dancer);
-            ClassNames.Add(21, gm);
-            ClassNames.Add(22, mercenary);
+            ClassNames.Add(4070, "Genetic");
         }
     }
 }

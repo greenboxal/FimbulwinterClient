@@ -115,7 +115,7 @@ namespace FimbulwinterClient.Config
         {
             _client.ContentManager.FileSystem.LoadGrf(@"data.grf");
 
-            using (Stream s = ROClient.Singleton.ContentManager.LoadContent<Stream>("data/fb/config/serverinfo.xml"))
+            using (Stream s = ROClient.Singleton.ContentManager.LoadContent<Stream>("data\\fb\\config\\serverinfo.xml"))
             {
                 _serversInfo = ServersInfo.FromStream(s);
                 s.Close();
@@ -126,7 +126,7 @@ namespace FimbulwinterClient.Config
         {
             XmlSerializer xs = new XmlSerializer(typeof(Configuration));
 
-            xs.Serialize(new FileStream("data/fb/config/config.xml", FileMode.Create), this);
+            xs.Serialize(new FileStream("data\\fb\\config\\config.xml", FileMode.Create), this);
         }
     }
 }

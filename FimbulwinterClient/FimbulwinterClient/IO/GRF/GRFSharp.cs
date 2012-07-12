@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Ionic.Zlib;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -332,6 +333,8 @@ namespace GRFSharp
                 while ((currentChar = (char)bodyReader.ReadByte()) != 0)
                     fileName += currentChar;
 
+                fileName = fileName.Korean();
+
                 int fileCompressedLength = 0,
                     fileCompressedLengthAligned = 0,
                     fileUncompressedLength = 0,
@@ -363,12 +366,12 @@ namespace GRFSharp
 
                 if (fileFlags == 2) // Do not add folders 
                 {
-                    OnFileReadComplete(new GRFEventArg(new GRFFile(System.Text.Encoding.Default.GetString(System.Text.Encoding.Default.GetBytes(fileName)),0,0,0,0,0,0,this)));
+                    OnFileReadComplete(new GRFEventArg(new GRFFile(fileName,0,0,0,0,0,0,this)));
                     continue;
                 }
 
                 GRFFile newGRFFile = new GRFFile(
-                    System.Text.Encoding.Default.GetString(System.Text.Encoding.Default.GetBytes(fileName)),
+                    fileName,
                     fileCompressedLength,
                     fileCompressedLengthAligned,
                     fileUncompressedLength,
@@ -505,15 +508,7 @@ namespace GRFSharp
 
         public GRFFile GetFile(string asset)
         {
-            asset = asset.Replace('/', '\\');
-
-            for (int i = 0; i < _GRFFiles.Count; i++)
-            {
-                if (string.Equals(asset, _GRFFiles[i].Name.ToLower(), StringComparison.CurrentCultureIgnoreCase))
-                    return _GRFFiles[i];
-            }
-
-            return null;
+            return _GRFFiles.FirstOrDefault(x => string.Equals(asset, x.Name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

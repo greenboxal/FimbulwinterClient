@@ -36,17 +36,20 @@ namespace FimbulwinterClient.GUI.System
 
             for (int i = 0; i < chars.Length; i++)
             {
-                bodies[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Body, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROConst.ClassNames[chars[i].Job], ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
-                heads[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}/{3}_{4}.act", ROConst.Humans, ROConst.Head, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], chars[i].Hair, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
+                bodies[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{2}\\{3}_{4}.act", ROConst.Humans, ROConst.Body, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROConst.ClassSprites[chars[i].Job], ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
+                heads[i] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{2}\\{3}_{4}.act", ROConst.Humans, ROConst.Head, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], chars[i].Hair, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex]));
 
                 // headgears
-                accessories[i] = new SpriteAction[3];
+                accessories[i] = new SpriteAction[4];
                 if (chars[i].Accessory > 0)
-                    accessories[i][0] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}_{1}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory].Item2));
+                    accessories[i][0] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{1}{2}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory].Item2));
                 if (chars[i].Accessory2 > 0)
-                    accessories[i][1] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}_{1}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory2].Item2));
+                    accessories[i][1] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{1}{2}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory2].Item2));
                 if (chars[i].Accessory3 > 0)
-                    accessories[i][2] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data/sprite/{0}/{1}/{2}_{1}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory3].Item2));
+                    accessories[i][2] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{1}{2}.act", ROConst.Accessories, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROClient.Singleton.LuaManager.Accessories[chars[i].Accessory3].Item2));
+
+                if (chars[i].Robe > 0)
+                    accessories[i][3] = ROClient.Singleton.ContentManager.LoadContent<SpriteAction>(string.Format("data\\sprite\\{0}\\{1}\\{2}\\{3}_{2}.act", ROConst.Robes, ROClient.Singleton.LuaManager.Robes[chars[i].Robe].Item2, ROConst.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], ROConst.ClassSprites[chars[i].Job]));
             }
         }
 
@@ -97,6 +100,9 @@ namespace FimbulwinterClient.GUI.System
                     {
                         if (chars[n].Slot == idx)
                         {
+                            if (accessories[n][3] != null)
+                                accessories[n][3].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), heads[n], true);
+
                             bodies[n].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), null, false);
                             heads[n].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), bodies[n], true);
 
