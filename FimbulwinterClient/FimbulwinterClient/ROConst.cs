@@ -7,10 +7,13 @@ namespace FimbulwinterClient
 {
     public static class ROConst
     {
-        public static readonly string Humans = "\xc0\xce\xb0\xa3\xc1\xb7";
-        public static readonly string Body = "\xb8\xf6\xc5\xeb";
-        public static readonly string Head = "\xb8\xd3\xb8\xae\xc5\xeb";
-        public static readonly string[] Sex = new string[] { "\xbf\xa9", "\xb3\xb2" };
+        public static readonly string Humans = "ÀÎ°£Á·"; // 인간족
+        public static readonly string Accessories = "¾Ç¼¼»ç¸®"; // 악세사리
+        public static readonly string Monster = "¸ó½ºÅÍ"; // 몬스터
+
+        public static readonly string Body = "¸öÅë"; // 몸통
+        public static readonly string Head = "¸Ó¸®Åë"; // 머리통
+        public static readonly string[] Sex = new string[] { "¿©", "³²" }; // 여, 남
         
         public static readonly string novice = "\xC3\xCA\xBA\xB8\xC0\xDA";
         public static readonly string swordsman = "\xB0\xCB\xBB\xE7";

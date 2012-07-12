@@ -128,9 +128,9 @@ namespace FimbulwinterClient.GUI
             else
             {
                 lblName.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Name;
-                lblJob.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Class.ToString();
+                lblJob.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Job.ToString();
                 lblLv.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseLevel.ToString();
-                lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseExp.ToString();
+                lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Exp.ToString();
                 lblHP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].HP.ToString();
                 lblSP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].SP.ToString();
                 lblMap.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].MapName;

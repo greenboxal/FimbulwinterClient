@@ -13,74 +13,74 @@ namespace FimbulwinterClient.Config
     {
         public const int MaxCharacters = 9;
 
-        private float m_bgmVolume;
+        private float _bgmVolume;
         public float BgmVolume
         {
-            get { return m_bgmVolume; }
+            get { return _bgmVolume; }
             set
             {
-                if (m_bgmVolume != value && BgmVolumeChanged != null)
+                if (_bgmVolume != value && BgmVolumeChanged != null)
                     BgmVolumeChanged(value);
 
-                m_bgmVolume = value; 
+                _bgmVolume = value; 
             }
         }
 
-        private float m_effectVolume;
+        private float _effectVolume;
         public float EffectVolume
         {
-            get { return m_effectVolume; }
+            get { return _effectVolume; }
             set 
             {
-                if (m_effectVolume != value && EffectVolumeChanged != null)
+                if (_effectVolume != value && EffectVolumeChanged != null)
                     EffectVolumeChanged(value);
 
-                m_effectVolume = value; 
+                _effectVolume = value; 
             }
         }
 
-        private int m_screenWidth;
+        private int _screenWidth;
         public int ScreenWidth
         {
-            get { return m_screenWidth; }
-            set { m_screenWidth = value; }
+            get { return _screenWidth; }
+            set { _screenWidth = value; }
         }
 
-        private int m_screenHeight;
+        private int _screenHeight;
         public int ScreenHeight
         {
-            get { return m_screenHeight; }
-            set { m_screenHeight = value; }
+            get { return _screenHeight; }
+            set { _screenHeight = value; }
         }
 
-        private string m_lastLogin;
+        private string _lastLogin;
         public string LastLogin
         {
-            get { return m_lastLogin; }
-            set { m_lastLogin = value; }
+            get { return _lastLogin; }
+            set { _lastLogin = value; }
         }
 
-        private bool m_saveLast;
+        private bool _saveLast;
         public bool SaveLast
         {
-            get { return m_saveLast; }
-            set { m_saveLast = value; }
+            get { return _saveLast; }
+            set { _saveLast = value; }
         }
 
-        private ServersInfo m_serversInfo;
+        private ServersInfo _serversInfo;
         [XmlIgnore]
         public ServersInfo ServersInfo
         {
-            get { return m_serversInfo; }
-            set { m_serversInfo = value; }
+            get { return _serversInfo; }
+            set { _serversInfo = value; }
         }
 
-        private ROClient m_client;
+        private ROClient _client;
         [XmlIgnore]
         public ROClient Client
         {
-            get { return m_client; }
-            set { m_client = value; }
+            get { return _client; }
+            set { _client = value; }
         }
 
         public event Action<float> BgmVolumeChanged;
@@ -88,20 +88,20 @@ namespace FimbulwinterClient.Config
 
         public Configuration()
         {
-            m_bgmVolume = 1.0f;
-            m_effectVolume = 1.0f;
+            _bgmVolume = 1.0f;
+            _effectVolume = 1.0f;
 
-            m_screenWidth = 1280;
-            m_screenHeight = 768;
+            _screenWidth = 1280;
+            _screenHeight = 768;
 
-            m_saveLast = false;
-            m_lastLogin = "";
+            _saveLast = false;
+            _lastLogin = "";
         }
 
         public Configuration(ROClient cl)
             : this()
         {
-            m_client = cl;
+            _client = cl;
         }
 
         public static Configuration FromStream(Stream s)
@@ -113,11 +113,11 @@ namespace FimbulwinterClient.Config
 
         public void ReadConfig()
         {
-            m_client.ContentManager.FileSystem.LoadGrf(@"D:\Games\Ragnarök\data.grf");
+            _client.ContentManager.FileSystem.LoadGrf(@"data.grf");
 
             using (Stream s = ROClient.Singleton.ContentManager.LoadContent<Stream>("data/fb/config/serverinfo.xml"))
             {
-                m_serversInfo = ServersInfo.FromStream(s);
+                _serversInfo = ServersInfo.FromStream(s);
                 s.Close();
             }
         }

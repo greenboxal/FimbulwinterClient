@@ -60,6 +60,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LuaInterface">
+      <HintPath>..\..\Deps\LuaInterface.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -118,6 +121,7 @@
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
+    <Compile Include="Content\Lub.cs" />
     <Compile Include="Content\RsmBone.cs" />
     <Compile Include="Content\RsmMesh.cs" />
     <Compile Include="Content\RsmMeshPart.cs" />
@@ -142,7 +146,9 @@
     <Compile Include="GUI\System\TextBox.cs" />
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
+    <Compile Include="IO\ContentLoaders\LubLoader.cs" />
     <Compile Include="IO\ContentLoaders\RsmModelLoader.cs" />
+    <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Screens\CharSelectScreen.cs" />
     <Compile Include="Screens\CreateCharScreen.cs" />
     <Compile Include="Screens\IGameScreen.cs" />

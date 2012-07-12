@@ -33,14 +33,9 @@ public static class Utils
         {
             byte b = br.ReadByte();
 
-            if (b == 0)
-                break;
-
-            str += (char)b;
+            if (b != 0)
+                str += (char)b;
         }
-
-        if (i < size)
-            br.ReadBytes(size - i);
 
         return str;
     }

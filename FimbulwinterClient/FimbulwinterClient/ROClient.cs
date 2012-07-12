@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using FimbulwinterClient.IO;
 using FimbulwinterClient.Audio;
+using FimbulwinterClient.Lua;
 using Nuclex.Input;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.Content;
@@ -66,6 +67,13 @@ namespace FimbulwinterClient
         {
             get { return effectManager; }
             set { effectManager = value; }
+        }
+
+        LuaManager luaManager;
+        public LuaManager LuaManager
+        {
+            get { return luaManager; }
+            set { luaManager = value; }
         }
 
         InputManager inputManager;
@@ -127,8 +135,9 @@ namespace FimbulwinterClient
 
             cfg.ReadConfig();
 
-            bgmManager = new BGMManager();
+            //bgmManager = new BGMManager();
             effectManager = new EffectManager();
+            luaManager = new LuaManager();
 
             inputManager = new Nuclex.Input.InputManager(Services, Window.Handle);
 
@@ -142,6 +151,7 @@ namespace FimbulwinterClient
             Services.AddService(typeof(GuiManager), guiManager);
             Services.AddService(typeof(EffectManager), effectManager);
             Services.AddService(typeof(BGMManager), bgmManager);
+            Services.AddService(typeof(LuaManager), luaManager);
 
             graphics.PreferredBackBufferWidth = cfg.ScreenWidth;
             graphics.PreferredBackBufferHeight = cfg.ScreenHeight;

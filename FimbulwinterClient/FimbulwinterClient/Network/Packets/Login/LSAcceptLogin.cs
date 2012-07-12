@@ -51,8 +51,7 @@ namespace FimbulwinterClient.Network.Packets.Login
 
                 csi.IP = new IPAddress(br.ReadBytes(4));
                 csi.Port = br.ReadInt16();
-                csi.Name = "Development";// br.ReadCString(20);
-                br.ReadBytes(20);
+                csi.Name = br.ReadCString(20);
                 csi.Users = br.ReadInt32();
                 csi.Type = br.ReadByte();
                 csi.New = br.ReadByte();
