@@ -425,12 +425,12 @@ namespace ROFormats
             {
                 Texture tex = new Texture();
 
-                tex.Name = br.ReadCString(40);
+                tex.Name = br.ReadCString(40).Korean();
 
                 textures[i] = tex;
             }
 
-            mainNode = br.ReadCString(40);
+            mainNode = br.ReadCString(40).Korean();
 
             int nodeCount = br.ReadInt32();
             nodes = new Node[nodeCount];
