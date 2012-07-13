@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Extensions;
 
 namespace GRFSharp
 {

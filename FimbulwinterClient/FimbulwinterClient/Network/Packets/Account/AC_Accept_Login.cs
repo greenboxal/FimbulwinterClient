@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
@@ -22,7 +23,11 @@ namespace FimbulwinterClient.Network.Packets.Login
         }
     }
 
-    public class LSAcceptLogin : InPacket
+    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_AC_ACCEPT_LOGIN,
+        size: MethodAttribute.packet_length_dynamic,
+        name: "AC_ACCEPT_LOGIN",
+        direction: MethodAttribute.packetdirection.pd_in)]
+    public class AC_Accept_Login : InPacket
     {
         public int LoginID1 { get; set; }
         public int AccountID { get; set; }
@@ -30,7 +35,7 @@ namespace FimbulwinterClient.Network.Packets.Login
         public byte Sex { get; set; }
         public CharServerInfo[] Servers { get; set; }
 
-        public override bool Read(byte[] data)
+        public bool Read(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
 

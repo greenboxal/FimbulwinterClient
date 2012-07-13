@@ -17,8 +17,8 @@ namespace FimbulwinterClient
             set { selectedServer = value; }
         }
 
-        LSAcceptLogin acceptedLogin;
-        public LSAcceptLogin LoginAccept
+        AC_Accept_Login acceptedLogin;
+        public AC_Accept_Login LoginAccept
         {
             get { return acceptedLogin; }
             set { acceptedLogin = value; }
@@ -31,8 +31,8 @@ namespace FimbulwinterClient
             set { selectedCharServer = value; }
         }
 
-        CSAcceptLogin charAccept;
-        public CSAcceptLogin CharAccept
+        HC_Accept_Enter charAccept;
+        public HC_Accept_Enter CharAccept
         {
             get { return charAccept; }
             set { charAccept = value; }

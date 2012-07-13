@@ -115,9 +115,7 @@ namespace FimbulwinterClient
         {
             Singleton = this;
             graphics = new GraphicsDeviceManager(this);
-
-            Window.Title = "Ragnarök - Fimbulwinter Client";
-
+            Window.Title = "Ragnarok Online";
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
 

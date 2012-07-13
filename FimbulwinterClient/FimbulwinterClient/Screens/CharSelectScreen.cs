@@ -38,7 +38,7 @@ namespace FimbulwinterClient.Screens
 
             if (gameTime.TotalGameTime.TotalSeconds % 12 < 1.0F)
             {
-                new CSPing((int)gameTime.TotalGameTime.TotalMilliseconds).Write(ROClient.Singleton.CurrentConnection.BinaryWriter);
+                new Ping((int)gameTime.TotalGameTime.TotalMilliseconds).Write(ROClient.Singleton.CurrentConnection.BinaryWriter);
             }
         }
     }

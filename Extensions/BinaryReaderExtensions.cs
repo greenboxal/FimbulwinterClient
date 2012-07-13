@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace ROFormats
+namespace Extensions
 {
-    public static class Utils
+    public static class BinaryReaderExtensions
     {
         public static string ReadCString(this BinaryReader br)
         {
@@ -46,21 +46,6 @@ namespace ROFormats
 
             return str;
         }
-
-        public static void WriteCString(this BinaryWriter bw, string str, int size)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if (i < str.Length)
-                    bw.Write((byte)str[i]);
-                else
-                    bw.Write((byte)0);
-            }
-        }
-
-        public static string Korean(this string text)
-        {
-            return System.Text.Encoding.GetEncoding("EUC-KR").GetString(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(text));
-        }
     }
 }
+

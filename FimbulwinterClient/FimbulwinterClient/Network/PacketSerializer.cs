@@ -49,14 +49,13 @@ namespace FimbulwinterClient.Network
         {
             packetSize = new Dictionary<ushort, PacketInfo>();
 
-            // Login
-            packetSize.Add(0x0069, new PacketInfo { Size = -1, Type = typeof(LSAcceptLogin) });
-            packetSize.Add(0x006A, new PacketInfo { Size = 23, Type = typeof(LSRejectLogin) });
-
-            // Char
-            packetSize.Add(0x006C, new PacketInfo { Size = 3, Type = typeof(CSRejectLogin) });
-            packetSize.Add(0x006B, new PacketInfo { Size = -1, Type = typeof(CSAcceptLogin) });
-            packetSize.Add(0x08B9, new PacketInfo { Size = 12, Type = typeof(CSPinCodeRequest) });
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(type => type.GetInterface("InPacket") != null))
+            {
+                object[] attributes = type.GetCustomAttributes(typeof(MethodAttribute), true); // get the attributes of the packet.
+                if (attributes.Length == 0) return;
+                MethodAttribute ma = (MethodAttribute)attributes[0];
+                packetSize.Add(ma.MethodId, new PacketInfo { Size = ma.Size, Type = type });
+            }
         }
 
         public PacketSerializer()

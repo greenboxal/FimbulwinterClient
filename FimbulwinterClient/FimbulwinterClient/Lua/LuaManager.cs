@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using LuaInterface;
 using System.IO;
 using FimbulwinterClient.Content;
+using Extensions;
 
 namespace FimbulwinterClient.Lua
 {

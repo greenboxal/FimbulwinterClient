@@ -31,8 +31,8 @@ namespace FimbulwinterClient.Screens
             }
 
             ROClient.Singleton.CurrentConnection = new Network.Connection();
-            ROClient.Singleton.CurrentConnection.PacketSerializer.PacketHooks[0x6B] = new Action<ushort, int, CSAcceptLogin>(packetLoginAccepted);
-            ROClient.Singleton.CurrentConnection.PacketSerializer.PacketHooks[0x6C] = new Action<ushort, int, CSRejectLogin>(packetLoginRejected);
+            ROClient.Singleton.CurrentConnection.PacketSerializer.PacketHooks[0x6B] = new Action<ushort, int, HC_Accept_Enter>(packetLoginAccepted);
+            ROClient.Singleton.CurrentConnection.PacketSerializer.PacketHooks[0x6C] = new Action<ushort, int, HC_Refuse_Enter>(packetLoginRejected);
 
             try
             {
@@ -47,21 +47,21 @@ namespace FimbulwinterClient.Screens
             ROClient.Singleton.CurrentConnection.PacketSerializer.BytesToSkip = 4; // Skip AID
             ROClient.Singleton.CurrentConnection.Start();
 
-            new CSLoginPacket(
+            new CH_Enter(
                 ROClient.Singleton.NetworkState.LoginAccept.AccountID,
                 ROClient.Singleton.NetworkState.LoginAccept.LoginID1,
                 ROClient.Singleton.NetworkState.LoginAccept.LoginID2,
                 ROClient.Singleton.NetworkState.LoginAccept.Sex).Write(ROClient.Singleton.CurrentConnection.BinaryWriter);
         }
 
-        void packetLoginAccepted(ushort cmd, int size, CSAcceptLogin pkt)
+        void packetLoginAccepted(ushort cmd, int size, HC_Accept_Enter pkt)
         {
             CloseWait();
             ROClient.Singleton.NetworkState.CharAccept = pkt;
             ROClient.Singleton.ChangeScreen(new CharSelectScreen());
         }
 
-        void packetLoginRejected(ushort cmd, int size, CSRejectLogin pkt)
+        void packetLoginRejected(ushort cmd, int size, HC_Refuse_Enter pkt)
         {
             CloseWait();
             MessageBox.ShowOk("Connection rejected.", ReenterScreen);

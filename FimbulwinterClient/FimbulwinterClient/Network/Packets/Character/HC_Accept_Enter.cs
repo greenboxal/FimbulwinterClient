@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
@@ -49,14 +50,18 @@ namespace FimbulwinterClient.Network.Packets.Char
         public int Robe;
     }
 
-    public class CSAcceptLogin : InPacket
+    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_HC_ACCEPT_ENTER,
+        size: MethodAttribute.packet_length_dynamic,
+        name: "HC_ACCEPT_ENTER",
+        direction: MethodAttribute.packetdirection.pd_in)]
+    public class HC_Accept_Enter : InPacket
     {
         public int MaxSlots { get; set; }
         public int AvailableSlots { get; set; }
         public int PremiumSlots { get; set; }
         public CSCharData[] Chars { get; set; }
 
-        public override bool Read(byte[] data)
+        public bool Read(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
             int numChars = (data.Length - 23) / 144;
