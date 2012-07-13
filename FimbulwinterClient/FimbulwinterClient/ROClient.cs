@@ -118,7 +118,7 @@ namespace FimbulwinterClient
             Window.Title = "Ragnarok Online";
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
-
+            Console.WriteLine(ROConst.Humans);
             try
             {
                 Stream s = ContentManager.LoadContent<Stream>("data\\fb\\config\\config.xml");

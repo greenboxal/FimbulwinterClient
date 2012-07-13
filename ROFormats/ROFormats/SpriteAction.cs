@@ -83,45 +83,45 @@ namespace ROFormats
             public List<Motion> Motions;
         }
 
-        private short m_version;
+        private short _version;
         public short Version
         {
-            get { return m_version; }
-            set { m_version = value; }
+            get { return _version; }
+            set { _version = value; }
         }
 
-        private Sprite m_sprite;
+        private Sprite _sprite;
         public Sprite Sprite
         {
-            get { return m_sprite; }
+            get { return _sprite; }
         }
 
-        private List<string> m_events;
+        private List<string> _events;
         public List<string> Events
         {
-            get { return m_events; }
+            get { return _events; }
         }
 
-        private List<Act> m_actions;
+        private List<Act> _actions;
         public List<Act> Actions
         {
-            get { return m_actions; }
+            get { return _actions; }
         }
 
-        private List<float> m_delays;
+        private List<float> _delays;
         public List<float> Delays
         {
-            get { return m_delays; }
-            set { m_delays = value; }
+            get { return _delays; }
+            set { _delays = value; }
         }
 
         public SpriteAction(Sprite spr)
         {
-            m_sprite = spr;
+            _sprite = spr;
 
-            m_events = new List<string>();
-            m_actions = new List<Act>();
-            m_delays = new List<float>();
+            _events = new List<string>();
+            _actions = new List<Act>();
+            _delays = new List<float>();
         }
 
         public bool Load(Stream s)
@@ -135,11 +135,11 @@ namespace ROFormats
                 return false;
             }
 
-            m_version = br.ReadInt16();
+            _version = br.ReadInt16();
 
-            if (m_version != 0x200 && m_version != 0x201 &&
-                m_version != 0x202 && m_version != 0x203 &&
-                m_version != 0x204 && m_version != 0x205)
+            if (_version != 0x200 && _version != 0x201 &&
+                _version != 0x202 && _version != 0x203 &&
+                _version != 0x204 && _version != 0x205)
             {
                 return false;
             }
@@ -192,7 +192,7 @@ namespace ROFormats
                                     sc.SpriteType = 0;
                                     sc.Size = new Point(0, 0);
 
-                                    if (m_version >= 0x200)
+                                    if (_version >= 0x200)
                                     {
                                         byte r = br.ReadByte();
                                         byte g = br.ReadByte();
@@ -201,7 +201,7 @@ namespace ROFormats
 
                                         sc.Mask = new Palette.Color(r, g, b, a);
 
-                                        if (m_version >= 0x204)
+                                        if (_version >= 0x204)
                                         {
                                             sc.Zoom.X = br.ReadSingle();
                                             sc.Zoom.Y = br.ReadSingle();
@@ -214,7 +214,7 @@ namespace ROFormats
                                         sc.Angle = br.ReadInt32();
                                         sc.SpriteType = br.ReadInt32();
 
-                                        if (m_version >= 0x205)
+                                        if (_version >= 0x205)
                                         {
                                             sc.Size.X = br.ReadInt32();
                                             sc.Size.Y = br.ReadInt32();
@@ -226,15 +226,15 @@ namespace ROFormats
                             }
 
                             mo.EventID = -1;
-                            if (m_version >= 0x200)
+                            if (_version >= 0x200)
                             {
                                 mo.EventID = br.ReadInt32();
 
-                                if (m_version == 0x200)
+                                if (_version == 0x200)
                                     mo.EventID = -1;
                             }
 
-                            if (m_version >= 0x203)
+                            if (_version >= 0x203)
                             {
                                 uint attachCount = br.ReadUInt32();
 
@@ -261,11 +261,11 @@ namespace ROFormats
                         }
                     }
 
-                    m_actions.Add(act);
+                    _actions.Add(act);
                 }
             }
 
-            if (m_version >= 0x201)
+            if (_version >= 0x201)
             {
                 uint eventCount = br.ReadUInt32();
 
@@ -273,18 +273,18 @@ namespace ROFormats
                 {
                     for (int i = 0; i < eventCount; i++)
                     {
-                        m_events.Add(br.ReadCString(40));
+                        _events.Add(br.ReadCString(40));
                     }
                 }
             }
 
-            if (m_version >= 0x202)
+            if (_version >= 0x202)
             {
-                if (m_events.Count > 0)
+                if (_events.Count > 0)
                 {
-                    for (int i = 0; i < m_events.Count; i++)
+                    for (int i = 0; i < _events.Count; i++)
                     {
-                        m_delays.Add(br.ReadSingle());
+                        _delays.Add(br.ReadSingle());
                     }
                 }
             }

@@ -10,34 +10,34 @@ namespace FimbulwinterClient.Config
     [Serializable]
     public class ServersInfo
     {
-        private List<ServerInfo> m_servers;
+        private List<ServerInfo> _servers;
 
         [XmlArray("Servers")]
         public List<ServerInfo> Servers
         {
-            get { return m_servers; }
-            set { m_servers = value; }
+            get { return _servers; }
+            set { _servers = value; }
         }
 
-        private string m_serviceType;
+        private string _serviceType;
         public string ServiceType
         {
-            get { return m_serviceType; }
-            set { m_serviceType = value; }
+            get { return _serviceType; }
+            set { _serviceType = value; }
         }
 
-        private string m_serverType;
+        private string _serverType;
         public string ServerType
         {
-            get { return m_serverType; }
-            set { m_serverType = value; }
+            get { return _serverType; }
+            set { _serverType = value; }
         }
 
         public ServersInfo()
         {
-            m_servers = new List<ServerInfo>();
-            m_serviceType = "";
-            m_serverType = "";
+            _servers = new List<ServerInfo>();
+            _serviceType = "";
+            _serverType = "";
         }
 
         public static ServersInfo FromStream(Stream s)

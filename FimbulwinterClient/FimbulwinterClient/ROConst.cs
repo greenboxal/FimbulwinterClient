@@ -7,41 +7,37 @@ namespace FimbulwinterClient
 {
     public static class ROConst
     {
-        public static readonly string Humans = "인간족";
-        public static readonly string Robes = "로브";
+        public static readonly string Humans      = "인간족";
+        public static readonly string Robes       = "로브";
         public static readonly string Accessories = "악세사리";
-        public static readonly string Monster = "몬스터";
+        public static readonly string Monster     = "몬스터";
 
-        public static readonly string Body = "몸통"; // 몸통
-        public static readonly string Head = "머리통"; // 머리통
-        public static readonly string[] Sex = new string[] { "여", "남" }; // 여, 남
+        public static readonly string Body = "몸통";
+        public static readonly string Head = "머리통";
+        public static readonly string[] Sex = new string[] { "여", "남" };
         
-        public static readonly string novice = "\xC3\xCA\xBA\xB8\xC0\xDA";
-        public static readonly string swordsman = "\xB0\xCB\xBB\xE7";
-        public static readonly string magician = "\xB8\xB6\xB9\xFD\xBB\xE7";
-        public static readonly string archer = "\xB1\xC3\xBC\xF6";
-        public static readonly string acolyte = "\xBC\xBA\xC1\xF7\x9F\xE0";
-        public static readonly string merchant = "\xBB\xF3\xC0\xCE";
-        public static readonly string thief = "\xB5\xB5\xB5\xCF";
-        public static readonly string knight = "\xB1\xE2\xBB\xE7";
-        public static readonly string priest = "\xC7\xC1\xB8\xAE\xBD\xBA\xC6\xAE";
-        public static readonly string wizard = "\xC0\xA7\xC0\xFA\xB5\xE5";
-        public static readonly string blacksmith = "\xC1\xA6\xC3\xB6";
-        public static readonly string hunter = "\xC7\xE5\xC5\xCD";
-        public static readonly string assassin = "\xBE\xEE\xBC\xBC\xBD\xC5";
-        public static readonly string knight_mounted = "\xC6\xE4\xC4\xDA\xC6\xE4\xC4\xDA\x5F\xB1\xE2\xBB\xE7";
-        public static readonly string crusader = "\xC5\xA9\xB7\xE7\xBC\xBC\xC0\xCC\xB4\xF5";
-        public static readonly string monk = "\xB8\xF9\xC5\xA9";
-        public static readonly string sage = "\xBC\xBC\xC0\xCC\xC1\xF6";
-        public static readonly string rogue = "\xB7\xCE\xB1\xD7";
-        public static readonly string alchemist = "\xBF\xAC\xB1\xDD\xBC\xFA\xBB\xE7";
-        public static readonly string bard = "\xB9\xD9\xB5\xE5";
-        public static readonly string dancer = "\xB9\xAB\xC8\xF1";
-        public static readonly string crusader_mounted = "\xBD\xC5\xC6\xE4\xC4\xDA\xC5\xA9\xB7\xE7\xBC\xBC\xC0\xCC\xB4\xF5";
-        public static readonly string gm = "\x9D\xC4\xBF\xB5\xC0\xDA";
-        public static readonly string mercenary = "\xBF\xEB\xBA\xB4";
-
-        public static readonly string genetic = "제네릭";
+        public static readonly string class_novice     = "초보자";
+        public static readonly string class_swordsman  = "초보자";
+        public static readonly string class_magician   = "초보자";
+        public static readonly string class_archer     = "초보자";
+        public static readonly string class_acolyte    = "초보자";
+        public static readonly string class_merchant   = "초보자";
+        public static readonly string class_thief      = "초보자";
+        public static readonly string class_knight     = "초보자";
+        public static readonly string class_priest     = "초보자";
+        public static readonly string class_wizard     = "초보자";
+        public static readonly string class_blacksmith = "초보자";
+        public static readonly string class_hunter     = "초보자";
+        public static readonly string class_assassin   = "초보자";
+        public static readonly string class_chicken    = "초보자";
+        public static readonly string class_crusader   = "초보자";
+        public static readonly string class_monk       = "초보자";
+        public static readonly string class_sage       = "초보자";
+        public static readonly string class_rogue      = "초보자";
+        public static readonly string class_alchemist  = "초보자";
+        public static readonly string class_bard       = "초보자";
+        public static readonly string class_dancer     = "초보자";
+        public static readonly string class_genetic    = "제네릭";
 
         public static readonly Dictionary<int, string> ClassSprites;
         public static readonly Dictionary<int, string> ClassNames;
@@ -49,33 +45,52 @@ namespace FimbulwinterClient
         static ROConst()
         {
             ClassSprites = new Dictionary<int, string>();
-            ClassSprites.Add(0, novice);
-            ClassSprites.Add(1, swordsman);
-            ClassSprites.Add(2, magician);
-            ClassSprites.Add(3, archer);
-            ClassSprites.Add(4, acolyte);
-            ClassSprites.Add(5, merchant);
-            ClassSprites.Add(6, thief);
-            ClassSprites.Add(7, knight);
-            ClassSprites.Add(8, priest);
-            ClassSprites.Add(9, wizard);
-            ClassSprites.Add(10, blacksmith);
-            ClassSprites.Add(11, hunter);
-            ClassSprites.Add(12, assassin);
-            ClassSprites.Add(13, knight_mounted);
-            ClassSprites.Add(14, crusader);
-            ClassSprites.Add(15, monk);
-            ClassSprites.Add(16, sage);
-            ClassSprites.Add(17, rogue);
-            ClassSprites.Add(18, alchemist);
-            ClassSprites.Add(19, bard);
-            ClassSprites.Add(20, dancer);
-            ClassSprites.Add(21, gm);
-            ClassSprites.Add(22, mercenary);
-            ClassSprites.Add(4070, genetic);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_NOVICE, class_novice);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_SWORDMAN, class_swordsman);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_MAGICIAN, class_magician);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_ARCHER, class_archer);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_ACOLYTE, class_acolyte);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_MERCHANT, class_merchant);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_THIEF, class_thief);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_KNIGHT, class_knight);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_PRIEST, class_priest);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_WIZARD, class_wizard);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_BLACKSMITH, class_blacksmith);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_HUNTER, class_hunter);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_ASSASSIN, class_assassin);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_CHICKEN, class_chicken);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_CRUSADER, class_crusader);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_MONK, class_monk);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_SAGE, class_sage);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_ROGUE, class_rogue);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_ALCHEMIST, class_alchemist);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_BARD, class_bard);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_DANCER, class_dancer);
+            ClassSprites.Add((int)Enums.Jobtbl.JT_GENETIC, class_genetic);
 
             ClassNames = new Dictionary<int, string>();
-            ClassNames.Add(4070, "Genetic");
+            ClassNames.Add((int)Enums.Jobtbl.JT_NOVICE, "Novice");
+            ClassNames.Add((int)Enums.Jobtbl.JT_SWORDMAN, "Swordman");
+            ClassNames.Add((int)Enums.Jobtbl.JT_MAGICIAN, "Magician");
+            ClassNames.Add((int)Enums.Jobtbl.JT_ARCHER, "Archer");
+            ClassNames.Add((int)Enums.Jobtbl.JT_ACOLYTE, "Acolyte");
+            ClassNames.Add((int)Enums.Jobtbl.JT_MERCHANT, "Merchant");
+            ClassNames.Add((int)Enums.Jobtbl.JT_THIEF, "Thief");
+            ClassNames.Add((int)Enums.Jobtbl.JT_KNIGHT, "Knight");
+            ClassNames.Add((int)Enums.Jobtbl.JT_PRIEST, "Priest");
+            ClassNames.Add((int)Enums.Jobtbl.JT_WIZARD, "Wizard");
+            ClassNames.Add((int)Enums.Jobtbl.JT_BLACKSMITH, class_blacksmith);
+            ClassNames.Add((int)Enums.Jobtbl.JT_HUNTER, "Hunter");
+            ClassNames.Add((int)Enums.Jobtbl.JT_ASSASSIN, "Assassin");
+            ClassNames.Add((int)Enums.Jobtbl.JT_CHICKEN, "Knight");
+            ClassNames.Add((int)Enums.Jobtbl.JT_CRUSADER, "Crusader");
+            ClassNames.Add((int)Enums.Jobtbl.JT_MONK, "Monk");
+            ClassNames.Add((int)Enums.Jobtbl.JT_SAGE, "Sage");
+            ClassNames.Add((int)Enums.Jobtbl.JT_ROGUE, "Rogue");
+            ClassNames.Add((int)Enums.Jobtbl.JT_ALCHEMIST, "Alchemist");
+            ClassNames.Add((int)Enums.Jobtbl.JT_BARD, "Bard");
+            ClassNames.Add((int)Enums.Jobtbl.JT_DANCER, "Dancer");
+            ClassNames.Add((int)Enums.Jobtbl.JT_GENETIC, "Genetic");
         }
     }
 }

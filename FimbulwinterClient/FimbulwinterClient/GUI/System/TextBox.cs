@@ -18,19 +18,19 @@ namespace FimbulwinterClient.GUI.System
         int caretPosition;
         int startDraw;
 
-        private string m_text;
+        private string _text;
         public override string Text
         {
             get
             {
-                return m_text;
+                return _text;
             }
             set
             {
-                m_text = value;
+                _text = value;
 
-                if (caretPosition > m_text.Length)
-                    caretPosition = m_text.Length;
+                if (caretPosition > _text.Length)
+                    caretPosition = _text.Length;
 
                 CheckPositions();
             }
@@ -38,7 +38,7 @@ namespace FimbulwinterClient.GUI.System
 
         public TextBox()
         {
-            m_text = "";
+            _text = "";
             rtext = "";
             TabStop = true;
         }
@@ -52,7 +52,7 @@ namespace FimbulwinterClient.GUI.System
                         if (caretPosition > 0)
                         {
                             caretPosition--;
-                            m_text = Text.Remove(caretPosition, 1);
+                            _text = Text.Remove(caretPosition, 1);
 
                             CheckPositions();
                         }
@@ -63,7 +63,7 @@ namespace FimbulwinterClient.GUI.System
                     {
                         if (caretPosition < Text.Length)
                         {
-                            m_text = Text.Remove(caretPosition, 1);
+                            _text = Text.Remove(caretPosition, 1);
 
                             CheckPositions();
                         }
@@ -130,7 +130,7 @@ namespace FimbulwinterClient.GUI.System
             if (char.IsControl(c))
                 return;
 
-            m_text = m_text.Insert(caretPosition, c.ToString());
+            _text = _text.Insert(caretPosition, c.ToString());
             caretPosition++;
 
             CheckPositions();

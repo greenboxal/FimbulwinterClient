@@ -8,21 +8,21 @@ namespace FimbulwinterClient.GUI.System
 {
     public class ControlCollection : List<Control>
     {
-        private Control m_owner;
+        private Control _owner;
         public Control Owner
         {
-            get { return m_owner; }
-            set { m_owner = value; }
+            get { return _owner; }
+            set { _owner = value; }
         }
 
         public ControlCollection(Control owner)
         {
-            m_owner = owner;
+            _owner = owner;
         }
 
         public new void Add(Control c)
         {
-            c.Parent = m_owner;
+            c.Parent = _owner;
 
             base.Add(c);
 

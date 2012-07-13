@@ -20,16 +20,16 @@ namespace ROFormats
             }
         }
 
-        private Color[] m_colors;
+        private Color[] _colors;
         public Color[] Colors
         {
-            get { return m_colors; }
-            set { m_colors = value; }
+            get { return _colors; }
+            set { _colors = value; }
         }
 
         public Palette()
         {
-            m_colors = new Color[256];
+            _colors = new Color[256];
         }
 
         public void Read(System.IO.BinaryReader br)
@@ -42,7 +42,7 @@ namespace ROFormats
 
                 br.ReadByte();
 
-                m_colors[i] = new Color(r, g, b, 0);
+                _colors[i] = new Color(r, g, b, 0);
             }
         }
     }

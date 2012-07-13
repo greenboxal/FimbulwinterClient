@@ -17,38 +17,38 @@ namespace ROFormats
 
         List<byte[]> palData = new List<byte[]>();
 
-        private short m_version;
+        private short _version;
         public short Version
         {
-            get { return m_version; }
-            set { m_version = value; }
+            get { return _version; }
+            set { _version = value; }
         }
 
-        private short m_palCount;
+        private short _palCount;
         public short PalCount
         {
-            get { return m_palCount; }
-            set { m_palCount = value; }
+            get { return _palCount; }
+            set { _palCount = value; }
         }
 
-        private short m_rgbaCount;
+        private short _rgbaCount;
         public short RgbaCount
         {
-            get { return m_rgbaCount; }
-            set { m_rgbaCount = value; }
+            get { return _rgbaCount; }
+            set { _rgbaCount = value; }
         }
 
-        private RawImage[] m_images;
+        private RawImage[] _images;
         public RawImage[] RawImages
         {
-            get { return m_images; }
-            set { m_images = value; }
+            get { return _images; }
+            set { _images = value; }
         }
 
-        private Palette m_palette;
+        private Palette _palette;
         public Palette Palette
         {
-            get { return m_palette; }
+            get { return _palette; }
         }
 
         public Sprite()
@@ -58,7 +58,7 @@ namespace ROFormats
 
         public virtual void SetPalette(Palette p)
         {
-            m_palette = p;
+            _palette = p;
 
             RemapPalette();
         }
@@ -73,23 +73,23 @@ namespace ROFormats
                 return false;
             }
 
-            m_version = br.ReadInt16();
+            _version = br.ReadInt16();
 
-            if (m_version != 0x100 && m_version != 0x101 &&
-                m_version != 0x200 && m_version != 0x201)
+            if (_version != 0x100 && _version != 0x101 &&
+                _version != 0x200 && _version != 0x201)
             {
                 return false;
             }
 
-            m_palCount = br.ReadInt16();
-            if (m_version >= 0x200)
-                m_rgbaCount = br.ReadInt16();
+            _palCount = br.ReadInt16();
+            if (_version >= 0x200)
+                _rgbaCount = br.ReadInt16();
 
             List<RawImage> images = new List<RawImage>();
 
-            if (m_palCount > 0)
+            if (_palCount > 0)
             {
-                for (int p = 0; p < m_palCount; p++)
+                for (int p = 0; p < _palCount; p++)
                 {
                     ushort w = br.ReadUInt16();
                     ushort h = br.ReadUInt16();
@@ -99,7 +99,7 @@ namespace ROFormats
                     {
                         byte[] data;
 
-                        if (m_version >= 0x201)
+                        if (_version >= 0x201)
                         {
                             data = new byte[pixelCount];
 
@@ -150,9 +150,9 @@ namespace ROFormats
                 }
             }
 
-            if (m_rgbaCount > 0)
+            if (_rgbaCount > 0)
             {
-                for (int p = 0; p < m_rgbaCount; p++)
+                for (int p = 0; p < _rgbaCount; p++)
                 {
                     ushort w = br.ReadUInt16();
                     ushort h = br.ReadUInt16();
@@ -171,12 +171,12 @@ namespace ROFormats
                 }
             }
 
-            m_images = images.ToArray();
+            _images = images.ToArray();
 
-            if (m_version >= 0x101)
+            if (_version >= 0x101)
             {
-                m_palette = new Palette();
-                m_palette.Read(br);
+                _palette = new Palette();
+                _palette.Read(br);
 
                 RemapPalette();
             }
@@ -189,14 +189,14 @@ namespace ROFormats
             for (int p = 0; p < palData.Count; p++)
             {
                 byte[] data = palData[p];
-                int w = m_images[p].Width;
-                int h = m_images[p].Height;
+                int w = _images[p].Width;
+                int h = _images[p].Height;
 
                 byte[] texData = new byte[w * h * 4];
                 for (int i = 0; i < texData.Length; i += 4)
                 {
                     byte idx = data[i / 4];
-                    ROFormats.Palette.Color c = m_palette.Colors[idx];
+                    ROFormats.Palette.Color c = _palette.Colors[idx];
 
                     if (idx == 0)
                     {
@@ -214,7 +214,7 @@ namespace ROFormats
                     }
                 }
 
-                m_images[p].RawData = texData;
+                _images[p].RawData = texData;
             }
         }
 
@@ -222,13 +222,13 @@ namespace ROFormats
         {
             if (type == 0)
             {
-                if (idx >= 0 && idx < m_palCount)
+                if (idx >= 0 && idx < _palCount)
                     return idx;
             }
             else if (type == 1)
             {
-                if (idx >= 0 && idx < m_rgbaCount)
-                    return idx + m_palCount;
+                if (idx >= 0 && idx < _rgbaCount)
+                    return idx + _palCount;
             }
 
             return -1;

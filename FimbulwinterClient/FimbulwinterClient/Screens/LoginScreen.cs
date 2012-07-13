@@ -15,13 +15,13 @@ namespace FimbulwinterClient.Screens
         public LoginScreen()
         {
             window = new LoginWindow();
-            window.GoBack += new Action(m_window_GoBack);
-            window.DoLogin += new Action<string, string>(m_window_DoLogin);
+            window.GoBack += new Action(window_GoBack);
+            window.DoLogin += new Action<string, string>(window_DoLogin);
 
             ROClient.Singleton.GuiManager.Controls.Add(window);
         }
 
-        void m_window_DoLogin(string user, string pass)
+        void window_DoLogin(string user, string pass)
         {
             ShowWait();
 
@@ -67,7 +67,7 @@ namespace FimbulwinterClient.Screens
             ROClient.Singleton.ChangeScreen(new LoginScreen());
         }
 
-        void m_window_GoBack()
+        void window_GoBack()
         {
             ROClient.Singleton.ChangeScreen(new ServiceSelectScreen());
         }

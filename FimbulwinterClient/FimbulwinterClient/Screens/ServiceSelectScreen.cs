@@ -14,12 +14,12 @@ namespace FimbulwinterClient.Screens
         public ServiceSelectScreen()
         {
             window = new ServiceSelectWindow();
-            window.ServerSelected += new Action<Config.ServerInfo>(m_window_ServerSelected);
+            window.ServerSelected += new Action<Config.ServerInfo>(window_ServerSelected);
 
             ROClient.Singleton.GuiManager.Controls.Add(window);
         }
 
-        void m_window_ServerSelected(ServerInfo obj)
+        void window_ServerSelected(ServerInfo obj)
         {
             ROClient.Singleton.NetworkState.SelectedServer = obj;
             ROClient.Singleton.ChangeScreen(new LoginScreen());
