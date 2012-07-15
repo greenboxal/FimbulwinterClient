@@ -11,15 +11,15 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>Arial</FontName>
+    <FontName>Gulim</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
-    <Size>10</Size>
+    <Size>8</Size>
 
-    <!-- 
+    <!--
     Spacing is a float value, measured in pixels. Modify this value to change
     the amount of spacing in between characters.
     -->
@@ -35,7 +35,7 @@ with.
     Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
     and "Bold, Italic", and are case sensitive.
     -->
-    <Style>Bold</Style>
+    <Style>Regular</Style>
 
     <!--
     If you uncomment this line, the default character will be substituted if you draw
@@ -51,9 +51,39 @@ with.
     See the documentation for more information.
     -->
     <CharacterRegions>
+      <!-- Ideographic Symbols and Punctuation -->
+      <CharacterRegion>
+        <Start>&#x3000;</Start>
+        <End>&#x303F;</End>
+      </CharacterRegion>
+
+      <!-- Hiragana -->
+      <CharacterRegion>
+        <Start>&#x3040;</Start>
+        <End>&#x309F;</End>
+      </CharacterRegion>
+
+      <!-- Katakana -->
+      <CharacterRegion>
+        <Start>&#x30A0;</Start>
+        <End>&#x30FF;</End>
+      </CharacterRegion>
+
+      <!-- kRO -->
+      <CharacterRegion>
+        <Start>&#xc120;</Start>
+        <End>&#xd400;</End>
+      </CharacterRegion>
+
+      <!-- Fullwidth Latin -->
+      <CharacterRegion>
+        <Start>&#xFF01;</Start>
+        <End>&#xFFE6;</End>
+      </CharacterRegion>
+      <!-- and/or the standard Latin set... -->
       <CharacterRegion>
         <Start>&#32;</Start>
-        <End>&#255;</End>
+        <End>&#126;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>
