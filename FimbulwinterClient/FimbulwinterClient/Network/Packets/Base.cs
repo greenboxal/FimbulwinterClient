@@ -6,24 +6,24 @@ using System.Text;
 namespace FimbulwinterClient.Network.Packets
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class MethodAttribute : Attribute
+    public class PackerHandlerAttribute : Attribute
     {
-        public const int packet_length_dynamic = -1;
-        public enum packetdirection
+        public const int VariableSize = -1;
+        public enum PacketDirection
         {
-            pd_none,
-            pd_in,
-            pd_out
+            None,
+            In,
+            Out
         }
 
         public ushort MethodId { get; private set; }
         public string Name { get; private set; }
         public int Size { get; private set; }
-        public packetdirection Direction { get; private set; }
+        public PacketDirection Direction { get; private set; }
 
-        public MethodAttribute(ushort methodId, string name, int size, packetdirection direction)
+        public PackerHandlerAttribute(PacketHeader methodId, string name, int size, PacketDirection direction)
         {
-            this.MethodId = methodId;
+            this.MethodId = (ushort)methodId;
             this.Name = name;
             this.Size = size;
             this.Direction = direction;

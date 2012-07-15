@@ -5,10 +5,10 @@ using System.Text;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
-    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_HC_REFUSE_ENTER,
-        size: 3,
-        name: "HC_REFUSE_ENTER",
-        direction: MethodAttribute.packetdirection.pd_in)]
+    [PackerHandler(PacketHeader.HEADER_HC_REFUSE_ENTER,
+        "HC_REFUSE_ENTER",
+        3,
+        PackerHandlerAttribute.PacketDirection.In)]
     public class HC_Refuse_Enter : InPacket
     {
         public byte Result { get; set; }

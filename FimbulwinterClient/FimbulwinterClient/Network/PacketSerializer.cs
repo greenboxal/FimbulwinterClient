@@ -52,9 +52,9 @@ namespace FimbulwinterClient.Network
 
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(type => type.GetInterface("InPacket") != null))
             {
-                object[] attributes = type.GetCustomAttributes(typeof(MethodAttribute), true); // get the attributes of the packet.
+                object[] attributes = type.GetCustomAttributes(typeof(PackerHandlerAttribute), true); // get the attributes of the packet.
                 if (attributes.Length == 0) return;
-                MethodAttribute ma = (MethodAttribute)attributes[0];
+                PackerHandlerAttribute ma = (PackerHandlerAttribute)attributes[0];
                 packetSize.Add(ma.MethodId, new PacketInfo { Size = ma.Size, Type = type });
             }
         }

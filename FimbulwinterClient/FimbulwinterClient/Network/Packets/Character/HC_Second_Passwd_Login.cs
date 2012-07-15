@@ -5,11 +5,10 @@ using System.Text;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
-
-    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_HC_SECOND_PASSWD_LOGIN,
-        size: 12,
-        name: "HC_SECOND_PASSWD_LOGIN",
-        direction: MethodAttribute.packetdirection.pd_in)]
+    [PackerHandler(PacketHeader.HEADER_HC_SECOND_PASSWD_LOGIN,
+        "HC_SECOND_PASSWD_LOGIN",
+        12,
+        PackerHandlerAttribute.PacketDirection.In)]
     public class HC_Second_Passwd_Login : InPacket
     {
         public bool Read(byte[] data)

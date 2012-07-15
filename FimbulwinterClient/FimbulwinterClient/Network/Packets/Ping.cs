@@ -10,7 +10,7 @@ namespace FimbulwinterClient.Network.Packets.Char
         private int time;
 
         public Ping(int ticks)
-            : base(Convert.ToUInt16(Enums.PacketHeader.HEADER_PING), 6)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_PING), 6)
         {
             time = ticks;
         }

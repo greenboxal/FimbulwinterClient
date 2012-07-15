@@ -11,7 +11,7 @@ namespace FimbulwinterClient.Network.Packets.Char
         private byte sex;
 
         public CH_Enter(int aid, int lig1, int lig2, byte sex)
-            : base(Convert.ToUInt16(Enums.PacketHeader.HEADER_CH_ENTER), 17)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_CH_ENTER), 17)
         {
             this.aid = aid;
             this.lig1 = lig1;

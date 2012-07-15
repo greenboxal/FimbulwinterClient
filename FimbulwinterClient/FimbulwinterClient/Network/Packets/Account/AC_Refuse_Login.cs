@@ -7,10 +7,10 @@ using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
-    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_AC_REFUSE_LOGIN,
-        size: 23,
-        name: "AC_REFUSE_LOGIN",
-        direction: MethodAttribute.packetdirection.pd_in)]
+    [PackerHandler(PacketHeader.HEADER_AC_REFUSE_LOGIN,
+        "AC_REFUSE_LOGIN",
+        23,
+        PackerHandlerAttribute.PacketDirection.In)]
     public class AC_Refuse_Login : InPacket
     {
         public int Result { get; set; }

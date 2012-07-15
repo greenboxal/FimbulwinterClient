@@ -50,10 +50,10 @@ namespace FimbulwinterClient.Network.Packets.Char
         public int Robe;
     }
 
-    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_HC_ACCEPT_ENTER,
-        size: MethodAttribute.packet_length_dynamic,
-        name: "HC_ACCEPT_ENTER",
-        direction: MethodAttribute.packetdirection.pd_in)]
+    [PackerHandler(PacketHeader.HEADER_HC_ACCEPT_ENTER,
+        "HC_ACCEPT_ENTER",
+        PackerHandlerAttribute.VariableSize,
+        PackerHandlerAttribute.PacketDirection.In)]
     public class HC_Accept_Enter : InPacket
     {
         public int MaxSlots { get; set; }

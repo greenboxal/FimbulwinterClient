@@ -15,7 +15,7 @@ namespace FimbulwinterClient.Network.Packets.Login
         private int type;
 
         public CA_Login(string login, string pw, int version, int servertype)
-            : base(Convert.ToUInt16(Enums.PacketHeader.HEADER_CA_LOGIN), 55)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_CA_LOGIN), 55)
         {
             this.login = login;
             this.pw = pw;

@@ -23,10 +23,10 @@ namespace FimbulwinterClient.Network.Packets.Login
         }
     }
 
-    [Method(methodId: (ushort)Enums.PacketHeader.HEADER_AC_ACCEPT_LOGIN,
-        size: MethodAttribute.packet_length_dynamic,
-        name: "AC_ACCEPT_LOGIN",
-        direction: MethodAttribute.packetdirection.pd_in)]
+    [PackerHandler(PacketHeader.HEADER_AC_ACCEPT_LOGIN,
+        "AC_ACCEPT_LOGIN",
+        PackerHandlerAttribute.VariableSize,
+        PackerHandlerAttribute.PacketDirection.In)]
     public class AC_Accept_Login : InPacket
     {
         public int LoginID1 { get; set; }
