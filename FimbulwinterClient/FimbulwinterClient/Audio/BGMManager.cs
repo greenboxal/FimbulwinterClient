@@ -53,7 +53,7 @@ namespace FimbulwinterClient.Audio
         public void PlayBGM(string name)
         {
             string fname = string.Format("BGM/{0}.mp3", name);
-
+            return;
             if (currentSound != fname && File.Exists(fname))
             {
                 RESULT result = system.createSound(fname, MODE.HARDWARE, ref sound);
