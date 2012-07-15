@@ -11,8 +11,6 @@ namespace FimbulwinterClient.Config
     [Serializable]
     public class Configuration
     {
-        public const int MaxCharacters = 9;
-
         private float _bgmVolume;
         public float BgmVolume
         {
@@ -113,6 +111,7 @@ namespace FimbulwinterClient.Config
 
         public void ReadConfig()
         {
+            _client.ContentManager.FileSystem.LoadGrf(@"rdata.grf");
             _client.ContentManager.FileSystem.LoadGrf(@"data.grf");
 
             using (Stream s = ROClient.Singleton.ContentManager.LoadContent<Stream>("data\\fb\\config\\serverinfo.xml"))

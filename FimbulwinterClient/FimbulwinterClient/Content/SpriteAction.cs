@@ -111,7 +111,7 @@ namespace FimbulwinterClient.Content
                     pos.Y += pmo.AttachPoints[0].Position.Y;
                 }
             }
-
+            
             for (int i = 0; i < mo.Clips.Count; i++)
                 _sprite.Draw(mo, i, sb, pos.X, pos.Y, ext);
         }

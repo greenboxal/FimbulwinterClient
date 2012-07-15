@@ -32,7 +32,7 @@ namespace FimbulwinterClient.GUI.System
             _items = new List<object>();
             _selectedIndex = -1;
 
-            lineHeight = (int)Arial10.MeasureString("A").Y;
+            lineHeight = (int)Gulim8.MeasureString("A").Y;
         }
 
         public override void Update(GameTime gt)
@@ -57,7 +57,7 @@ namespace FimbulwinterClient.GUI.System
                     Utils.DrawBackground(sb, Color.CornflowerBlue, absX, atY, (int)Size.X, (int)lineHeight);
                 }
 
-                sb.DrawString(Arial10, str, new Vector2(absX, atY), ForeColor);
+                sb.DrawString(Gulim8, str, new Vector2(absX, atY + 1), ForeColor);
 
                 atY += (int)lineHeight;
             }

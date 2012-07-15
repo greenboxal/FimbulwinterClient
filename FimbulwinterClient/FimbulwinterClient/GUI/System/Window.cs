@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -56,7 +57,8 @@ namespace FimbulwinterClient.GUI.System
                 sb.Draw(FormSkin, bLeft, new Rectangle(0, 25, 3, 28), clr);
                 sb.Draw(FormSkin, bMid, new Rectangle(3, 25, 22, 28), clr);
                 sb.Draw(FormSkin, bRight, new Rectangle(25, 25, 3, 28), clr);
-                sb.DrawString(Arial10, this.Text, new Vector2(absX + 17, absY + 1), Color.Black);
+                sb.DrawString(Gulim8, this.Text, new Vector2(absX + 18, absY + 4), Color.White);
+                sb.DrawString(Gulim8, this.Text, new Vector2(absX + 17, absY + 3), Color.Black);
             }
             else
             {
@@ -75,7 +77,13 @@ namespace FimbulwinterClient.GUI.System
         {
             if (Dragging)
             {
-                this.Position = new Vector2(GetAbsX() + x - dragDeltaX, GetAbsY() + y - dragDeltaY);
+                float px = GetAbsX() + x - dragDeltaX;
+                float py = GetAbsY() + y - dragDeltaY;
+                if (px < 0) px = 0;
+                if (py < 0) py = 0;
+                if (px + this.Size.X > ROClient.Singleton.Config.ScreenWidth) px = ROClient.Singleton.Config.ScreenWidth - this.Size.X;
+                if (py + this.Size.Y > ROClient.Singleton.Config.ScreenHeight) py = ROClient.Singleton.Config.ScreenHeight - this.Size.Y;
+                this.Position = new Vector2(px, py);
             }
         }
 

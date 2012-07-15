@@ -118,7 +118,7 @@ namespace FimbulwinterClient
             Window.Title = "Ragnarok Online";
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
-            Console.WriteLine(ROConst.Humans);
+
             try
             {
                 Stream s = ContentManager.LoadContent<Stream>("data\\fb\\config\\config.xml");
@@ -165,8 +165,8 @@ namespace FimbulwinterClient
             base.Initialize();
 
             GUI.Utils.Init(GraphicsDevice);
-            ChangeScreen(new TestScreen());
-            //ChangeScreen(new ServiceSelectScreen());
+            //ChangeScreen(new TestScreen());
+            ChangeScreen(new IngameScreen());
         }
 
         protected override void LoadContent()

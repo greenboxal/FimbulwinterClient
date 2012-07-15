@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -131,6 +132,7 @@ namespace FimbulwinterClient.Network
 
                     ConstructorInfo ci = packetSize[cmd].Type.GetConstructor(new Type[] { });
                     InPacket p = (InPacket)ci.Invoke(null);
+                    Debug.Print("Packet " + p.ToString());
 
                     if (!p.Read(data))
                     {

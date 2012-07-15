@@ -122,6 +122,7 @@
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
     <Compile Include="Content\Lub.cs" />
+    <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\RsmBone.cs" />
     <Compile Include="Content\RsmMesh.cs" />
     <Compile Include="Content\RsmMeshPart.cs" />
@@ -129,10 +130,15 @@
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
+    <Compile Include="GUI\Ingame\CharacterInfoWindow.cs" />
     <Compile Include="GUI\CharSelectWindow.cs" />
     <Compile Include="GUI\CharServerSelectWindow.cs" />
+    <Compile Include="GUI\Ingame\CollectionInfoWindow.cs" />
+    <Compile Include="GUI\Ingame\InventoryWindow.cs" />
+    <Compile Include="GUI\Ingame\QuickSlotWindow.cs" />
     <Compile Include="GUI\LoginWindow.cs" />
     <Compile Include="GUI\ServiceSelectWindow.cs" />
+    <Compile Include="GUI\System\Border.cs" />
     <Compile Include="GUI\System\Button.cs" />
     <Compile Include="GUI\System\CharBrowser.cs" />
     <Compile Include="GUI\System\CheckBox.cs" />
@@ -147,6 +153,7 @@
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
     <Compile Include="IO\ContentLoaders\LubLoader.cs" />
+    <Compile Include="IO\ContentLoaders\PaletteLoader.cs" />
     <Compile Include="IO\ContentLoaders\RsmModelLoader.cs" />
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Enums.cs" />
@@ -325,7 +332,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />
     <Compile Include="Config\Configuration.cs" />
-    <Compile Include="ROConst.cs" />
+    <Compile Include="Screens\IngameScreen.cs" />
+    <Compile Include="Statics.cs" />
     <Compile Include="RODirection.cs" />
     <Compile Include="Screens\BaseLoginScreen.cs" />
     <Compile Include="Screens\LoginScreen.cs" />

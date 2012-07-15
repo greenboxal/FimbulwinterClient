@@ -19,7 +19,7 @@ namespace FimbulwinterClient.Network.Packets.Login
 
         public override string ToString()
         {
-            return Name + " (" + Users + ")";
+            return Name + " (" + Users + " Player)";
         }
     }
 

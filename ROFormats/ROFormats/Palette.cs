@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace ROFormats
 {
@@ -32,7 +33,7 @@ namespace ROFormats
             _colors = new Color[256];
         }
 
-        public void Read(System.IO.BinaryReader br)
+        public virtual bool Load(BinaryReader br)
         {
             for (int i = 0; i < 256; i++)
             {
@@ -44,6 +45,7 @@ namespace ROFormats
 
                 _colors[i] = new Color(r, g, b, 0);
             }
+            return true;
         }
     }
 }

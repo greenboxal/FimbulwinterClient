@@ -124,6 +124,11 @@ namespace ROFormats
             _delays = new List<float>();
         }
 
+        public void SetPalette(Palette pal)
+        {
+            _sprite.SetPalette(pal);
+        }
+
         public bool Load(Stream s)
         {
             BinaryReader br = new BinaryReader(s);

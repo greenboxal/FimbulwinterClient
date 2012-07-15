@@ -176,7 +176,7 @@ namespace ROFormats
             if (_version >= 0x101)
             {
                 _palette = new Palette();
-                _palette.Read(br);
+                _palette.Load(br);
 
                 RemapPalette();
             }

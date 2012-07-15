@@ -54,8 +54,8 @@ namespace FimbulwinterClient.GUI.System
             sb.Draw(FormSkin, new Rectangle(absX + 5, absY, middleW, 20), new Rectangle(imgX + 6, imgY, 5, 20), clr);
             sb.Draw(FormSkin, new Rectangle(absX + 5 + middleW, absY, 5, 20), new Rectangle(imgX + 59, imgY, 5, 20), clr);
 
-            Vector2 textSize = Arial10.MeasureString(this.Text);
-            sb.DrawString(Arial10, this.Text, new Vector2((float)absX + (this.Size.X / 2) - (textSize.X / 2), absY + 3), ForeColor);
+            Vector2 textSize = Gulim8.MeasureString(this.Text);
+            sb.DrawString(Gulim8, this.Text, new Vector2((float)absX + (this.Size.X / 2) - (textSize.X / 2), absY + 3), ForeColor);
 
             base.Draw(sb, gt);
         }

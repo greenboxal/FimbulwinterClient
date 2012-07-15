@@ -191,7 +191,7 @@ namespace FimbulwinterClient.GUI.System
             Utils.DrawBackground(sb, Color.FromNonPremultiplied(192, 192, 192, 255), absX, absY, (int)Size.X, (int)Size.Y);
             Utils.DrawBackground(sb, BackColor, absX + 1, absY + 1, (int)Size.X - 2, (int)Size.Y - 2);
 
-            Vector2 textPosition = new Vector2(absX + 2, absY + 1);
+            Vector2 textPosition = new Vector2(absX + 3, absY + 4);
             sb.DrawString(
                   Font,
                   rtext,

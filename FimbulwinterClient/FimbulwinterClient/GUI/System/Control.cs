@@ -18,16 +18,16 @@ namespace FimbulwinterClient.GUI.System
             get { return Control.formSkin; }
         }
 
-        private static SpriteFont arial10;
-        public static SpriteFont Arial10
+        private static SpriteFont gulim8;
+        public static SpriteFont Gulim8
         {
-            get { return Control.arial10; }
+            get { return gulim8; }
         }
 
-        private static SpriteFont arial10B;
-        public static SpriteFont Arial10B
+        private static SpriteFont gulim8B;
+        public static SpriteFont Gulim8B
         {
-            get { return Control.arial10B; }
+            get { return gulim8B; }
         }
 
         private static SoundEffect tingSound;
@@ -154,11 +154,11 @@ namespace FimbulwinterClient.GUI.System
             if (formSkin == null)
                 formSkin = GuiManager.Singleton.Client.ContentManager.LoadContent<Texture2D>("data\\fb\\texture\\wndskin.png");
 
-            if (arial10 == null)
-                arial10 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\arial10");
+            if (gulim8 == null)
+                gulim8 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8");
 
-            if (arial10B == null)
-                arial10B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\arial10b");
+            if (gulim8B == null)
+                gulim8B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
 
             if (tingSound == null)
                 tingSound = GuiManager.Singleton.Client.ContentManager.LoadContent<SoundEffect>("data\\wav\\버튼소리.wav");
@@ -176,7 +176,7 @@ namespace FimbulwinterClient.GUI.System
             _tabStop = false;
 
             _zorder = 0;
-            _font = Arial10;
+            _font = Gulim8;
         }
 
         public virtual void Update(GameTime gt)
