@@ -18,16 +18,16 @@ namespace FimbulwinterClient.GUI.System
             get { return Control.formSkin; }
         }
 
-        private static SpriteFont arial10;
-        public static SpriteFont Arial10
+        private static SpriteFont gulim8;
+        public static SpriteFont Gulim8
         {
-            get { return Control.arial10; }
+            get { return gulim8; }
         }
 
-        private static SpriteFont arial10B;
-        public static SpriteFont Arial10B
+        private static SpriteFont gulim8B;
+        public static SpriteFont Gulim8B
         {
-            get { return Control.arial10B; }
+            get { return gulim8B; }
         }
 
         private static SoundEffect tingSound;
@@ -37,151 +37,158 @@ namespace FimbulwinterClient.GUI.System
             set { Control.tingSound = value; }
         }
 
-        private Control m_parent;
+        private Control _parent;
         public Control Parent
         {
-            get { return m_parent; }
-            set { m_parent = value; }
+            get { return _parent; }
+            set { _parent = value; }
         }
 
-        private ControlCollection m_controls;
+        private ControlCollection _controls;
         public ControlCollection Controls
         {
-            get { return m_controls; }
+            get { return _controls; }
         }
 
-        private bool m_enabled;
+        private bool _enabled;
         public bool Enabled
         {
-          get { return m_enabled; }
-          set { m_enabled = value; }
+          get { return _enabled; }
+          set { _enabled = value; }
         }
 
-        private bool m_visible;
+        private bool _visible;
         public bool Visible
         {
-          get { return m_visible; }
-          set { m_visible = value; }
+          get { return _visible; }
+          set { _visible = value; }
         }
 
-        private Vector2 m_position;
+        private Vector2 _position;
         public Vector2 Position
         {
-            get { return m_position; }
-            set { m_position = value; }
+            get { return _position; }
+            set { _position = value; }
         }
 
-        private Vector2 m_size;
+        private Vector2 _size;
         public Vector2 Size
         {
-            get { return m_size; }
-            set { m_size = value; }
+            get { return _size; }
+            set { _size = value; }
         }
 
-        private int m_handle;
+        private int _handle;
         public int Handle
         {
-            get { return m_handle; }
+            get { return _handle; }
         }
 
-        private string m_text;
+        private string _text;
         public virtual string Text
         {
-            get { return m_text; }
-            set { m_text = value; }
+            get { return _text; }
+            set { _text = value; }
         }
 
-        private Color m_foreColor;
+        private Color _foreColor;
         public Color ForeColor
         {
-            get { return m_foreColor; }
-            set { m_foreColor = value; }
+            get { return _foreColor; }
+            set { _foreColor = value; }
         }
 
-        private Color m_backColor;
+        private Color _backColor;
         public Color BackColor
         {
-            get { return m_backColor; }
-            set { m_backColor = value; }
+            get { return _backColor; }
+            set { _backColor = value; }
         }
 
-        private int m_zorder;
+        private int _zorder;
         public int ZOrder
         {
-            get { return m_zorder; }
-            set { m_zorder = value; if (m_parent != null) m_parent.Controls.SortByZOrder(); }
+            get { return _zorder; }
+            set { _zorder = value; if (_parent != null) _parent.Controls.SortByZOrder(); }
         }
 
-        private bool m_tabStop;
+        private bool _dragging;
+        public bool Dragging
+        {
+            get { return _dragging; }
+            set { _dragging = value; }
+        }
+
+        private bool _tabStop;
         public bool TabStop
         {
-            get { return m_tabStop; }
-            set { m_tabStop = value; }
+            get { return _tabStop; }
+            set { _tabStop = value; }
         }
 
-        private SpriteFont m_font;
+        private SpriteFont _font;
         public SpriteFont Font
         {
-            get { return m_font; }
-            set { m_font = value; }
+            get { return _font; }
+            set { _font = value; }
         }
 
         internal float GetAbsX()
         {
-            if (m_parent != null)
-                return m_parent.GetAbsX() + m_position.X;
+            if (_parent != null)
+                return _parent.GetAbsX() + _position.X;
             else
-                return m_position.X;
+                return _position.X;
         }
 
         internal float GetAbsY()
         {
-            if (m_parent != null)
-                return m_parent.GetAbsY() + m_position.Y;
+            if (_parent != null)
+                return _parent.GetAbsY() + _position.Y;
             else
-                return m_position.Y;
+                return _position.Y;
         }
 
         public Control()
         {
             if (formSkin == null)
-                formSkin = GuiManager.Singleton.Client.ContentManager.LoadContent<Texture2D>("data/fb/texture/wndskin.png");
+                formSkin = GuiManager.Singleton.Client.ContentManager.LoadContent<Texture2D>("data\\fb\\texture\\wndskin.png");
 
-            if (arial10 == null)
-                arial10 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb/arial10");
+            if (gulim8 == null)
+                gulim8 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8");
 
-            if (arial10B == null)
-                arial10B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb/arial10b");
+            if (gulim8B == null)
+                gulim8B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
 
             if (tingSound == null)
-                tingSound = GuiManager.Singleton.Client.ContentManager.LoadContent<SoundEffect>("data/wav/¹öÆ°¼Ò¸®.wav");
+                tingSound = GuiManager.Singleton.Client.ContentManager.LoadContent<SoundEffect>("data\\wav\\버튼소리.wav");
 
-            m_controls = new ControlCollection(this);
-            m_handle = GuiManager.Singleton.GetNewHandle();
+            _controls = new ControlCollection(this);
+            _handle = GuiManager.Singleton.GetNewHandle();
 
-            m_foreColor = Color.Black;
-            m_backColor = Color.White;
+            _foreColor = Color.Black;
+            _backColor = Color.White;
 
-            m_text = "";
+            _text = "";
 
-            m_visible = true;
-            m_enabled = true;
-            m_tabStop = false;
+            _visible = true;
+            _enabled = true;
+            _tabStop = false;
 
-            m_zorder = 0;
-            m_font = Arial10;
+            _zorder = 0;
+            _font = Gulim8;
         }
 
         public virtual void Update(GameTime gt)
         {
-            foreach (Control c in m_controls)
+            foreach (Control c in _controls)
                 if (c.Visible && c.Enabled)
                     c.Update(gt);
         }
 
         public virtual void Draw(SpriteBatch sb, GameTime gt)
         {
-            foreach (Control c in m_controls)
+            foreach (Control c in _controls)
                 if (c.Visible)
                     c.Draw(sb, gt);
         }
@@ -279,7 +286,7 @@ namespace FimbulwinterClient.GUI.System
 
         public override int GetHashCode()
         {
-            return m_handle;
+            return _handle;
         }
 
         public void Focus()

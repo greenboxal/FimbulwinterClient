@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
-    public class LSRejectLogin : InPacket
+    [PackerHandler(PacketHeader.HEADER_AC_REFUSE_LOGIN,
+        "AC_REFUSE_LOGIN",
+        23,
+        PackerHandlerAttribute.PacketDirection.In)]
+    public class AC_Refuse_Login : InPacket
     {
         public int Result { get; set; }
         public string Text { get; set; }
 
-        public override bool Read(byte[] data)
+        public bool Read(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
 

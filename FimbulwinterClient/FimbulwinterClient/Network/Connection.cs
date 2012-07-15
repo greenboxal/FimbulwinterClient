@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,69 +10,69 @@ namespace FimbulwinterClient.Network
 {
     public class Connection
     {
-        private TcpClient m_client;
+        private TcpClient _client;
         public TcpClient Client
         {
-            get { return m_client; }
+            get { return _client; }
         }
 
-        private NetworkStream m_ns;
+        private NetworkStream _ns;
         public NetworkStream Stream
         {
-            get { return m_ns; }
+            get { return _ns; }
         }
 
-        private BinaryWriter m_bw;
+        private BinaryWriter _bw;
         public BinaryWriter BinaryWriter
         {
-            get { return m_bw; }
+            get { return _bw; }
         }
 
-        private PacketSerializer m_pserial;
+        private PacketSerializer _pserial;
         public PacketSerializer PacketSerializer
         {
-          get { return m_pserial; }
-          set { m_pserial = value; }
+          get { return _pserial; }
+          set { _pserial = value; }
         }
 
         private byte[] receiveBuffer;
 
         public Connection()
         {
-            m_client = new TcpClient();
-            m_pserial = new PacketSerializer();
+            _client = new TcpClient();
+            _pserial = new PacketSerializer();
             receiveBuffer = new byte[16 * 1024];
         }
 
         public void Connect(string target, int port)
         {
-            if (m_client.Connected)
+            if (_client.Connected)
                 Disconnect();
 
-            m_client.Connect(target, port);
+            _client.Connect(target, port);
 
-            m_ns = m_client.GetStream();
-            m_bw = new BinaryWriter(m_ns);
+            _ns = _client.GetStream();
+            _bw = new BinaryWriter(_ns);
 
             Start();
         }
 
         public void Disconnect()
         {
-            if (m_client.Connected)
+            if (_client.Connected)
             {
                 try
                 {
-                    m_client.Close();
-                    m_client.Client.Dispose();
+                    _client.Close();
+                    _client.Client.Dispose();
                 }
                 catch
                 {
 
                 }
 
-                m_client = new TcpClient();
-                m_pserial.Reset();
+                _client = new TcpClient();
+                _pserial.Reset();
             }
         }
 
@@ -79,7 +80,7 @@ namespace FimbulwinterClient.Network
         {
             SocketError err;
 
-            m_client.Client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, out err, ReadComplete, null);
+            _client.Client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, out err, ReadComplete, null);
         }
 
         private void ReadComplete(IAsyncResult ar)
@@ -89,7 +90,7 @@ namespace FimbulwinterClient.Network
             int size = 0;
             try
             {
-                size = m_client.Client.EndReceive(ar, out err);
+                size = _client.Client.EndReceive(ar, out err);
             }
             catch
             {
@@ -103,7 +104,7 @@ namespace FimbulwinterClient.Network
             }
             else
             {
-                m_pserial.EnqueueBytes(receiveBuffer, size);
+                _pserial.EnqueueBytes(receiveBuffer, size);
             }
 
             Start();

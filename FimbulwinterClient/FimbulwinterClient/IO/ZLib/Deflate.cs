@@ -252,7 +252,7 @@ namespace Ionic.Zlib
         internal int match_length;    // length of best match
         internal int prev_match;      // previous match
         internal int match_available; // set if previous match exists
-        internal int strstart;        // start of string to insert into.....????
+        internal int strstart;        // start of string to insert into.....    ????
         internal int match_start;     // start of matching string
         internal int lookahead;       // number of valid bytes ahead in window
 

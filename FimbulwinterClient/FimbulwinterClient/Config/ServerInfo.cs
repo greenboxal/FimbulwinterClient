@@ -8,51 +8,51 @@ namespace FimbulwinterClient.Config
     [Serializable]
     public class ServerInfo
     {
-        private string m_displayName;
+        private string _displayName;
         public string DisplayName
         {
-            get { return m_displayName; }
-            set { m_displayName = value; }
+            get { return _displayName; }
+            set { _displayName = value; }
         }
 
-        private string m_description;
+        private string _description;
         public string Description
         {
-            get { return m_description; }
-            set { m_description = value; }
+            get { return _description; }
+            set { _description = value; }
         }
 
-        private string m_address;
+        private string _address;
         public string Address
         {
-            get { return m_address; }
-            set { m_address = value; }
+            get { return _address; }
+            set { _address = value; }
         }
 
-        private int m_port;
+        private int _port;
         public int Port
         {
-            get { return m_port; }
-            set { m_port = value; }
+            get { return _port; }
+            set { _port = value; }
         }
 
-        private int m_version;
+        private int _version;
         public int Version
         {
-            get { return m_version; }
-            set { m_version = value; }
+            get { return _version; }
+            set { _version = value; }
         }
 
-        private string m_registrationUrl;
+        private string _registrationUrl;
         public string RegistrationUrl
         {
-            get { return m_registrationUrl; }
-            set { m_registrationUrl = value; }
+            get { return _registrationUrl; }
+            set { _registrationUrl = value; }
         }
 
         public override string ToString()
         {
-            return m_displayName;
+            return _displayName;
         }
     }
 }

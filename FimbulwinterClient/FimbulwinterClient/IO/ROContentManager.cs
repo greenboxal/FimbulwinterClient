@@ -19,73 +19,75 @@ namespace FimbulwinterClient.IO
 
     public class ROContentManager : ContentManager
     {
-        private static Dictionary<Type, IContentLoader> m_loaders;
+        private static Dictionary<Type, IContentLoader> _loaders;
         public static Dictionary<Type, IContentLoader> Loaders
         {
-            get { return ROContentManager.m_loaders; }
+            get { return ROContentManager._loaders; }
         }
 
         static ROContentManager()
         {
-            m_loaders = new Dictionary<Type, IContentLoader>();
+            _loaders = new Dictionary<Type, IContentLoader>();
 
-            m_loaders.Add(typeof(Stream), new StreamLoader());
-            m_loaders.Add(typeof(Texture2D), new Texture2DLoader());
-            m_loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
-            m_loaders.Add(typeof(Sprite), new SpriteLoader());
-            m_loaders.Add(typeof(SpriteAction), new SpriteActionLoader());
-            m_loaders.Add(typeof(RsmModel), new RsmModelLoader());
+            _loaders.Add(typeof(Stream), new StreamLoader());
+            _loaders.Add(typeof(Texture2D), new Texture2DLoader());
+            _loaders.Add(typeof(SoundEffect), new SoundEffectLoader());
+            _loaders.Add(typeof(Sprite), new SpriteLoader());
+            _loaders.Add(typeof(SpriteAction), new SpriteActionLoader());
+            _loaders.Add(typeof(RsmModel), new RsmModelLoader());
+            _loaders.Add(typeof(Lub), new LubLoader());
+            _loaders.Add(typeof(Palette), new PaletteLoader());
         }
 
-        private Dictionary<string, object> m_cache;
+        private Dictionary<string, object> _cache;
         public Dictionary<string, object> Cache
         {
-            get { return m_cache; }
+            get { return _cache; }
         }
 
-        private ROFileSystem m_fs;
+        private ROFileSystem _fs;
         public ROFileSystem FileSystem
         {
-            get { return m_fs; }
+            get { return _fs; }
         }
 
-        private ROClient m_g;
+        private ROClient _game;
         public ROClient Game
         {
-            get { return m_g; }
-            set { m_g = value; }
+            get { return _game; }
+            set { _game = value; }
         }
 
         public ROContentManager(IServiceProvider isp, ROClient g)
             : base(isp)
         {
-            m_cache = new Dictionary<string, object>();
-            m_fs = new ROFileSystem();
-            m_g = g;
+            _cache = new Dictionary<string, object>();
+            _fs = new ROFileSystem();
+            _game = g;
         }
 
         public T LoadContent<T>(string asset)
         {
-            if (!m_loaders.ContainsKey(typeof(T)))
+            if (!_loaders.ContainsKey(typeof(T)))
                 return default(T);
             
             asset = asset.ToLower();
-            if (m_cache.ContainsKey(asset))
+            if (_cache.ContainsKey(asset))
             {
-                if (m_cache[asset] != null)
-                    return (T)m_cache[asset];
+                if (_cache[asset] != null)
+                    return (T)_cache[asset];
                 else
-                    m_cache.Remove(asset);
+                    _cache.Remove(asset);
             }
 
-            Stream fs = m_fs.LoadFile(asset);
+            Stream fs = _fs.LoadFile(asset);
 
             if (fs == null)
                 return default(T);
 
-            m_cache.Add(asset, m_loaders[typeof(T)].LoadContent(this, fs, asset));
+            _cache.Add(asset, _loaders[typeof(T)].LoadContent(this, fs, asset));
             
-            return (T)m_cache[asset];
+            return (T)_cache[asset];
         }
 
         public override T Load<T>(string assetName)
@@ -105,7 +107,7 @@ namespace FimbulwinterClient.IO
 
         public Stream GetStream(string asset)
         {
-            return m_fs.LoadFile(asset);
+            return _fs.LoadFile(asset);
         }
     }
 }

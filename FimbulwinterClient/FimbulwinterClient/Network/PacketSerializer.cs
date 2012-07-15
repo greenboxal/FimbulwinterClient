@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,14 +50,13 @@ namespace FimbulwinterClient.Network
         {
             packetSize = new Dictionary<ushort, PacketInfo>();
 
-            // Login
-            packetSize.Add(0x0069, new PacketInfo { Size = -1, Type = typeof(LSAcceptLogin) });
-            packetSize.Add(0x006A, new PacketInfo { Size = 23, Type = typeof(LSRejectLogin) });
-
-            // Char
-            packetSize.Add(0x006C, new PacketInfo { Size = 3, Type = typeof(CSRejectLogin) });
-            packetSize.Add(0x006B, new PacketInfo { Size = -1, Type = typeof(CSAcceptLogin) });
-            packetSize.Add(0x08B9, new PacketInfo { Size = 12, Type = typeof(CSPinCodeRequest) });
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(type => type.GetInterface("InPacket") != null))
+            {
+                object[] attributes = type.GetCustomAttributes(typeof(PackerHandlerAttribute), true); // get the attributes of the packet.
+                if (attributes.Length == 0) return;
+                PackerHandlerAttribute ma = (PackerHandlerAttribute)attributes[0];
+                packetSize.Add(ma.MethodId, new PacketInfo { Size = ma.Size, Type = type });
+            }
         }
 
         public PacketSerializer()
@@ -132,6 +132,7 @@ namespace FimbulwinterClient.Network
 
                     ConstructorInfo ci = packetSize[cmd].Type.GetConstructor(new Type[] { });
                     InPacket p = (InPacket)ci.Invoke(null);
+                    Debug.Print("Packet " + p.ToString());
 
                     if (!p.Read(data))
                     {

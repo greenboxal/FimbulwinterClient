@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
 using Nuclex.Input.Devices;
@@ -13,69 +14,69 @@ namespace FimbulwinterClient.GUI.System
 {
     public class GuiManager : DrawableGameComponent
     {
-        private static GuiManager m_singleton;
+        private static GuiManager _singleton;
         public static GuiManager Singleton
         {
-            get { return GuiManager.m_singleton; }
+            get { return GuiManager._singleton; }
         }
 
-        private ROClient m_client;
+        private ROClient _client;
         public ROClient Client
         {
-            get { return m_client; }
+            get { return _client; }
         }
 
-        private List<Control> m_controls;
+        private List<Control> _controls;
         public List<Control> Controls
         {
-            get { return m_controls; }
+            get { return _controls; }
         }
 
 
-        private Control m_activeControl;
+        private Control _activeControl;
         public Control ActiveControl
         {
-            get { return m_activeControl; }
-            set { m_activeControl = value; }
+            get { return _activeControl; }
+            set { _activeControl = value; }
         }
 
-        SpriteAction m_cursor;
+        SpriteAction _cursor;
         public SpriteAction Cursor
         {
-            get { return m_cursor; }
-            set { m_cursor = value; }
+            get { return _cursor; }
+            set { _cursor = value; }
         }
 
-        private Queue<Control> m_deleteQueue;
+        private Queue<Control> _deleteQueue;
         private SpriteBatch spriteBatch;
 
         float mouseX;
         float mouseY;
 
-        private Control m_hoverControl;
-        private Control m_downControl;
-        private MouseButtons m_downButtons;
+        private Control _hoverControl;
+        private Control _downControl;
+        private MouseButtons _downButtons;
 
         public GuiManager(ROClient roc)
             : base(roc)
         {
-            m_client = roc;
+            _client = roc;
 
-            m_singleton = this;
+            _singleton = this;
         }
 
         public override void Initialize()
         {
             base.Initialize();
 
-            spriteBatch = new SpriteBatch(m_client.GraphicsDevice);
-            m_controls = new List<Control>();
-            m_deleteQueue = new Queue<Control>();
+            spriteBatch = new SpriteBatch(_client.GraphicsDevice);
+            _controls = new List<Control>();
+            _deleteQueue = new Queue<Control>();
 
-            m_cursor = m_client.ContentManager.LoadContent<SpriteAction>("data/sprite/cursors.act");
-            m_cursor.Loop = true;
+            _cursor = _client.ContentManager.LoadContent<SpriteAction>("data\\sprite\\cursors.act");
+            _cursor.Loop = true;
 
-            InputManager im = (InputManager)m_client.Services.GetService(typeof(InputManager));
+            InputManager im = (InputManager)_client.Services.GetService(typeof(InputManager));
 
             IMouse mouse = im.GetMouse();
             mouse.MouseButtonPressed += new MouseButtonDelegate(mouse_MouseButtonPressed);
@@ -91,16 +92,16 @@ namespace FimbulwinterClient.GUI.System
 
         void kb_CharacterEntered(char character)
         {
-            if (m_activeControl != null && character == '\t' && !m_activeControl.HandleTab())
+            if (_activeControl != null && character == '\t' && !_activeControl.HandleTab())
             {
-                if (m_activeControl.Parent != null)
+                if (_activeControl.Parent != null)
                 {
-                    Control parent = m_activeControl.Parent;
+                    Control parent = _activeControl.Parent;
                     int cIdx = -1;
 
                     for (int i = 0; i < parent.Controls.Count; i++)
                     {
-                        if (parent.Controls[i] == m_activeControl)
+                        if (parent.Controls[i] == _activeControl)
                         {
                             cIdx = i;
                             break;
@@ -135,26 +136,52 @@ namespace FimbulwinterClient.GUI.System
                 }
             }
 
-            if (m_activeControl != null)
-                m_activeControl.OnKeyPress(character);
+            if (_activeControl != null)
+                _activeControl.OnKeyPress(character);
         }
 
         void kb_KeyReleased(Keys key)
         {
-            if (m_activeControl != null)
-                m_activeControl.OnKeyUp(key);
+            if (key == Keys.PrintScreen)
+                MakeScreenshot();
+            if (_activeControl != null)
+                _activeControl.OnKeyUp(key);
+        }
+
+        private static int _counter;
+        void MakeScreenshot()
+        {
+            int w = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferWidth;
+            int h = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+            Draw(new GameTime());
+            int[] backBuffer = new int[w * h];
+            ROClient.Singleton.GraphicsDevice.GetBackBufferData(backBuffer);
+
+            //copy into a texture 
+            Texture2D texture = new Texture2D(ROClient.Singleton.GraphicsDevice, w, h, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+            texture.SetData(backBuffer);
+            
+            //save to disk 
+            Stream stream = File.OpenWrite(_counter + ".jpg");
+
+            texture.SaveAsJpeg(stream, w, h);
+            stream.Dispose();
+
+            texture.Dispose();
+            _counter++;
         }
 
         void kb_KeyPressed(Keys key)
         {
-            if (m_activeControl != null)
-                m_activeControl.OnKeyDown(key);
+            if (_activeControl != null)
+                _activeControl.OnKeyDown(key);
         }
 
         void mouse_MouseWheelRotated(float ticks)
         {
-            if (m_activeControl != null)
-                m_activeControl.OnMouseWheel(ticks);
+            if (_activeControl != null)
+                _activeControl.OnMouseWheel(ticks);
         }
 
         void mouse_MouseMoved(float x, float y)
@@ -162,72 +189,72 @@ namespace FimbulwinterClient.GUI.System
             mouseX = x;
             mouseY = y;
 
-            if ((m_downButtons & MouseButtons.Left) != 0 && m_downControl != null)
+            if ((_downButtons & MouseButtons.Left) != 0 && _downControl != null)
             {
-                m_hoverControl.OnMouseMove(mouseX - m_hoverControl.GetAbsX(), mouseY - m_hoverControl.GetAbsY());
+                _hoverControl.OnMouseMove(mouseX - _hoverControl.GetAbsX(), mouseY - _hoverControl.GetAbsY());
             }
             else
             {
-                Control c = GetControlByPosition(m_controls, null, 0, 0, (int)mouseX, (int)mouseY);
+                Control c = GetControlByPosition(_controls, null, 0, 0, (int)mouseX, (int)mouseY);
 
-                if (m_hoverControl != c)
+                if (_hoverControl != c)
                 {
-                    if (m_hoverControl != null)
-                        m_hoverControl.OnMouseLeave();
+                    if (_hoverControl != null)
+                        _hoverControl.OnMouseLeave();
 
-                    m_hoverControl = c;
+                    _hoverControl = c;
 
-                    if (m_hoverControl != null)
-                        m_hoverControl.OnMouseHover();
+                    if (_hoverControl != null)
+                        _hoverControl.OnMouseHover();
                 }
 
-                if (m_hoverControl != null)
-                    m_hoverControl.OnMouseMove(mouseX - m_hoverControl.GetAbsX(), mouseY - m_hoverControl.GetAbsY());
+                if (_hoverControl != null)
+                    _hoverControl.OnMouseMove(mouseX - _hoverControl.GetAbsX(), mouseY - _hoverControl.GetAbsY());
             }
         }
 
         void mouse_MouseButtonReleased(MouseButtons buttons)
         {
-            Control c = GetControlByPosition(m_controls, null, 0, 0, (int)mouseX, (int)mouseY);
+            Control c = GetControlByPosition(_controls, null, 0, 0, (int)mouseX, (int)mouseY);
 
-            if (m_downControl != null)
+            if (_downControl != null)
             {
-                m_downControl.OnMouseUp(buttons, mouseX - m_downControl.GetAbsX(), mouseY - m_downControl.GetAbsY());
+                _downControl.OnMouseUp(buttons, mouseX - _downControl.GetAbsX(), mouseY - _downControl.GetAbsY());
 
-                if (m_downControl == c && (m_downButtons & buttons) != 0)
+                if (_downControl == c && (_downButtons & buttons) != 0)
                 {
-                    m_downControl.OnClick(m_downButtons & buttons, mouseX - m_downControl.GetAbsX(), mouseY - m_downControl.GetAbsY());
+                    _downControl.OnClick(_downButtons & buttons, mouseX - _downControl.GetAbsX(), mouseY - _downControl.GetAbsY());
                 }
             }
 
-            m_downButtons &= ~buttons;
+            _downButtons &= ~buttons;
         }
 
         void mouse_MouseButtonPressed(MouseButtons buttons)
         {
-            SetActiveControl(GetControlByPosition(m_controls, null, 0, 0, (int)mouseX, (int)mouseY));
+            SetActiveControl(GetControlByPosition(_controls, null, 0, 0, (int)mouseX, (int)mouseY));
 
-            if (m_activeControl != null)
-                m_activeControl.OnMouseDown(buttons, mouseX - m_activeControl.GetAbsX(), mouseY - m_activeControl.GetAbsY());
+            if (_activeControl != null)
+                _activeControl.OnMouseDown(buttons, mouseX - _activeControl.GetAbsX(), mouseY - _activeControl.GetAbsY());
 
-            m_downControl = m_activeControl;
-            m_downButtons |= buttons;
+            _downControl = _activeControl;
+            _downButtons |= buttons;
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            while (m_deleteQueue.Count > 0)
-                m_controls.Remove(m_deleteQueue.Dequeue());
+            while (_deleteQueue.Count > 0)
+                _controls.Remove(_deleteQueue.Dequeue());
 
-            for (int i = 0; i < m_controls.Count; i++)
+            for (int i = 0; i < _controls.Count; i++)
             {
-                if (m_controls[i].Visible && m_controls[i].Enabled)
-                    m_controls[i].Update(gameTime);
+                if (_controls[i].Visible && _controls[i].Enabled)
+                    _controls[i].Update(gameTime);
             }
 
-            m_cursor.Update(gameTime);
+            _cursor.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
@@ -235,13 +262,13 @@ namespace FimbulwinterClient.GUI.System
             base.Draw(gameTime);
 
             spriteBatch.Begin();
-            for (int i = 0; i < m_controls.Count; i++)
+            for (int i = 0; i < _controls.Count; i++)
             {
-                if (m_controls[i].Visible)
-                    m_controls[i].Draw(spriteBatch, gameTime);
+                if (_controls[i].Visible)
+                    _controls[i].Draw(spriteBatch, gameTime);
             }
 
-            m_cursor.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null, false);
+            _cursor.Draw(spriteBatch, new Point((int)mouseX, (int)mouseY), null, false);
             spriteBatch.End();
         }
 
@@ -263,22 +290,22 @@ namespace FimbulwinterClient.GUI.System
             return c;
         }
 
-        private int m_handlePointer;
+        private int _handlePointer;
         public int GetNewHandle()
         {
-            return ++m_handlePointer;
+            return ++_handlePointer;
         }
 
         public void EnqueueRemove(Window window)
         {
-            m_deleteQueue.Enqueue(window);
+            _deleteQueue.Enqueue(window);
         }
 
         public void SetActiveControl(Control c)
         {
-            m_activeControl = c;
+            _activeControl = c;
 
-            Control tmp = m_activeControl;
+            Control tmp = _activeControl;
             while (tmp != null && tmp.Parent != null)
             {
                 tmp = tmp.Parent;
@@ -286,10 +313,10 @@ namespace FimbulwinterClient.GUI.System
 
             if (tmp != null)
             {
-                if (m_controls.Contains(tmp))
+                if (_controls.Contains(tmp))
                 {
-                    m_controls.Remove(tmp);
-                    m_controls.Add(tmp);
+                    _controls.Remove(tmp);
+                    _controls.Add(tmp);
                 }
             }
         }

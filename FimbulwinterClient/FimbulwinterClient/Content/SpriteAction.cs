@@ -10,51 +10,51 @@ namespace FimbulwinterClient.Content
 {
     public class SpriteAction : ROFormats.SpriteAction
     {
-        private Sprite m_sprite;
+        private Sprite _sprite;
         public Sprite XnaSprite
         {
-            get { return m_sprite; }
+            get { return _sprite; }
         }
 
-        private float m_delay;
+        private float _delay;
         public float Delay
         {
-            get { return m_delay; }
-            set { m_delay = value; }
+            get { return _delay; }
+            set { _delay = value; }
         }
 
-        private int m_action;
+        private int _action;
         public int Action
         {
-            get { return m_action; }
-            set { m_action = value; m_frame = 0; m_delay = 0; }
+            get { return _action; }
+            set { _action = value; _frame = 0; _delay = 0; }
         }
 
-        private int m_frame;
+        private int _frame;
         public int Frame
         {
-            get { return m_frame; }
-            set { m_frame = value; }
+            get { return _frame; }
+            set { _frame = value; }
         }
 
-        private bool m_loop;
+        private bool _loop;
         public bool Loop
         {
-            get { return m_loop; }
-            set { m_loop = value; }
+            get { return _loop; }
+            set { _loop = value; }
         }
 
-        private bool m_playing;
+        private bool _playing;
         public bool Playing
         {
-            get { return m_playing; }
-            set { m_playing = value; }
+            get { return _playing; }
+            set { _playing = value; }
         }
 
         public SpriteAction(Sprite spr)
             : base(spr)
         {
-            m_sprite = spr;
+            _sprite = spr;
         }
 
         public float GetDelay(int i)
@@ -67,26 +67,26 @@ namespace FimbulwinterClient.Content
 
         public void Update(GameTime gt)
         {
-            m_delay += (int)gt.ElapsedGameTime.TotalMilliseconds;
+            _delay += (int)gt.ElapsedGameTime.TotalMilliseconds;
 
-            float d = GetDelay(m_action) * 25;
-            while (m_delay > d)
+            float d = GetDelay(_action) * 25;
+            while (_delay > d)
             {
-                m_delay -= d;
-                m_frame++;
+                _delay -= d;
+                _frame++;
             }
 
-            Act act = Actions[m_action];
-            if (m_frame >= act.Motions.Count)
+            Act act = Actions[_action];
+            if (_frame >= act.Motions.Count)
             {
-                if (m_loop)
+                if (_loop)
                 {
-                    m_frame = m_frame % act.Motions.Count;
+                    _frame = _frame % act.Motions.Count;
                 }
                 else
                 {
-                    m_playing = false;
-                    m_frame = act.Motions.Count - 1;
+                    _playing = false;
+                    _frame = act.Motions.Count - 1;
                 }
             }
         }
@@ -98,12 +98,12 @@ namespace FimbulwinterClient.Content
 
         public void Draw(SpriteBatch sb, Microsoft.Xna.Framework.Point pos, SpriteAction parent, bool ext)
         {
-            Act act = Actions[m_action];
-            Motion mo = act.Motions[m_frame];
+            Act act = Actions[_action];
+            Motion mo = act.Motions[_frame];
 
             if (parent != null)
             {
-                Motion pmo = parent.Actions[m_action].Motions[m_frame];
+                Motion pmo = parent.Actions[_action].Motions[_frame];
 
                 if (pmo.AttachPoints.Count > 0)
                 {
@@ -111,9 +111,9 @@ namespace FimbulwinterClient.Content
                     pos.Y += pmo.AttachPoints[0].Position.Y;
                 }
             }
-
+            
             for (int i = 0; i < mo.Clips.Count; i++)
-                m_sprite.Draw(mo, i, sb, pos.X, pos.Y, ext);
+                _sprite.Draw(mo, i, sb, pos.X, pos.Y, ext);
         }
     }
 }

@@ -5,12 +5,12 @@ using System.Text;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
-    public class CSPing : OutPacket
+    public class Ping : OutPacket
     {
         private int time;
 
-        public CSPing(int ticks)
-            : base(0x187, 6)
+        public Ping(int ticks)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_PING), 6)
         {
             time = ticks;
         }

@@ -77,7 +77,7 @@ namespace FimbulwinterClient.Content
 
             textures = new Texture2D[mdl.Textures.Length];
             for (int i = 0; i < mdl.Textures.Length; i++)
-                textures[i] = contentManager.LoadContent<Texture2D>("data/texture/" + mdl.Textures[i].Name);
+                textures[i] = contentManager.LoadContent<Texture2D>("data\\texture\\" + mdl.Textures[i].Name);
 
             meshes = new RsmMesh[mdl.Nodes.Length];
             bones = new RsmBone[mdl.Nodes.Length];

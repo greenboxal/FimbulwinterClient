@@ -61,15 +61,15 @@ namespace FimbulwinterClient.GUI
 
             lblLogin = new Label();
             lblLogin.Text = "Username";
-            lblLogin.Position = new Vector2(25, 31);
+            lblLogin.Position = new Vector2(23, 33);
             lblLogin.ForeColor = Color.FromNonPremultiplied(90, 111, 153, 255);
-            lblLogin.Font = Control.Arial10B;
+            lblLogin.Font = Control.Gulim8B;
 
             lblPassword = new Label();
             lblPassword.Text = "Password";
-            lblPassword.Position = new Vector2(28, 62);
+            lblPassword.Position = new Vector2(23, 64);
             lblPassword.ForeColor = Color.FromNonPremultiplied(90, 111, 153, 255);
-            lblPassword.Font = Control.Arial10B;
+            lblPassword.Font = Control.Gulim8B;
 
             ckSave = new CheckBox();
             ckSave.Position = new Vector2(232, 33);

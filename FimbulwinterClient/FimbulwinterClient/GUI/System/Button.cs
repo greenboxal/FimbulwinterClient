@@ -46,12 +46,16 @@ namespace FimbulwinterClient.GUI.System
 
             int middleW = (int)Size.X - 10;
 
-            sb.Draw(FormSkin, new Rectangle(absX, absY, 5, 20), new Rectangle(imgX, imgY, 5, 20), Color.White);
-            sb.Draw(FormSkin, new Rectangle(absX + 5, absY, middleW, 20), new Rectangle(imgX + 6, imgY, 5, 20), Color.White);
-            sb.Draw(FormSkin, new Rectangle(absX + 5 + middleW, absY, 5, 20), new Rectangle(imgX + 59, imgY, 5, 20), Color.White);
+            Color clr = Color.White;
+            if (Parent.Dragging)
+                clr = Color.White * 0.5f;
 
-            Vector2 textSize = Arial10.MeasureString(this.Text);
-            sb.DrawString(Arial10, this.Text, new Vector2((float)absX + (this.Size.X / 2) - (textSize.X / 2), absY + 3), ForeColor);
+            sb.Draw(FormSkin, new Rectangle(absX, absY, 5, 20), new Rectangle(imgX, imgY, 5, 20), clr);
+            sb.Draw(FormSkin, new Rectangle(absX + 5, absY, middleW, 20), new Rectangle(imgX + 6, imgY, 5, 20), clr);
+            sb.Draw(FormSkin, new Rectangle(absX + 5 + middleW, absY, 5, 20), new Rectangle(imgX + 59, imgY, 5, 20), clr);
+
+            Vector2 textSize = Gulim8.MeasureString(this.Text);
+            sb.DrawString(Gulim8, this.Text, new Vector2((float)absX + (this.Size.X / 2) - (textSize.X / 2), absY + 3), ForeColor);
 
             base.Draw(sb, gt);
         }

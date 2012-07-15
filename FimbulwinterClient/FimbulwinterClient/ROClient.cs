@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using FimbulwinterClient.IO;
 using FimbulwinterClient.Audio;
+using FimbulwinterClient.Lua;
 using Nuclex.Input;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.Content;
@@ -68,6 +69,13 @@ namespace FimbulwinterClient
             set { effectManager = value; }
         }
 
+        LuaManager luaManager;
+        public LuaManager LuaManager
+        {
+            get { return luaManager; }
+            set { luaManager = value; }
+        }
+
         InputManager inputManager;
         public InputManager InputManager
         {
@@ -107,15 +115,13 @@ namespace FimbulwinterClient
         {
             Singleton = this;
             graphics = new GraphicsDeviceManager(this);
-
-            Window.Title = "Ragnarök - Fimbulwinter Client";
-
+            Window.Title = "Ragnarok Online";
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
 
             try
             {
-                Stream s = ContentManager.LoadContent<Stream>("data/fb/config/config.xml");
+                Stream s = ContentManager.LoadContent<Stream>("data\\fb\\config\\config.xml");
                 cfg = Configuration.FromStream(s);
                 cfg.Client = this;
                 s.Close();
@@ -129,6 +135,7 @@ namespace FimbulwinterClient
 
             bgmManager = new BGMManager();
             effectManager = new EffectManager();
+            luaManager = new LuaManager();
 
             inputManager = new Nuclex.Input.InputManager(Services, Window.Handle);
 
@@ -142,6 +149,7 @@ namespace FimbulwinterClient
             Services.AddService(typeof(GuiManager), guiManager);
             Services.AddService(typeof(EffectManager), effectManager);
             Services.AddService(typeof(BGMManager), bgmManager);
+            Services.AddService(typeof(LuaManager), luaManager);
 
             graphics.PreferredBackBufferWidth = cfg.ScreenWidth;
             graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
@@ -157,8 +165,8 @@ namespace FimbulwinterClient
             base.Initialize();
 
             GUI.Utils.Init(GraphicsDevice);
-
-            ChangeScreen(new TestScreen());
+            //ChangeScreen(new TestScreen());
+            ChangeScreen(new IngameScreen());
         }
 
         protected override void LoadContent()

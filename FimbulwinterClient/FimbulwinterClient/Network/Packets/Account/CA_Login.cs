@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Login
 {
-    public class LSPlainTextLogin : OutPacket
+    public class CA_Login : OutPacket
     {
         private string login;
         private string pw;
         private int version;
         private int type;
 
-        public LSPlainTextLogin(string login, string pw, int version, int servertype)
-            : base(0x64, 55)
+        public CA_Login(string login, string pw, int version, int servertype)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_CA_LOGIN), 55)
         {
             this.login = login;
             this.pw = pw;

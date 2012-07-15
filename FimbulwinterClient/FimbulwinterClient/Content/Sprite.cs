@@ -10,32 +10,32 @@ namespace FimbulwinterClient.Content
 {
     public class Sprite : ROFormats.Sprite
     {
-        private Texture2D[] m_images;
+        private Texture2D[] _images;
         public Texture2D[] Images
         {
-            get { return m_images; }
-            set { m_images = value; }
+            get { return _images; }
+            set { _images = value; }
         }
 
-        private GraphicsDevice m_gd;
+        private GraphicsDevice _gd;
 
         public bool Load(GraphicsDevice gd, Stream s)
         {
             bool res;
 
-            m_gd = gd;
+            _gd = gd;
             res = base.Load(s);
 
             if (!res)
                 return false;
 
-            m_images = new Texture2D[RawImages.Length];
+            _images = new Texture2D[RawImages.Length];
 
             if (RgbaCount > 0)
             {
                 for (int i = PalCount; i < RawImages.Length; i++)
                 {
-                    m_images[i] = new Texture2D(m_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
+                    _images[i] = new Texture2D(_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
                 }
             }
 
@@ -55,8 +55,8 @@ namespace FimbulwinterClient.Content
         {
             for (int i = 0; i < PalCount; i++)
             {
-                m_images[i] = new Texture2D(m_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
-                m_images[i].SetData(RawImages[i].RawData);
+                _images[i] = new Texture2D(_gd, RawImages[i].Width, RawImages[i].Height, false, SurfaceFormat.Color);
+                _images[i].SetData(RawImages[i].RawData);
             }
         }
 
@@ -69,8 +69,8 @@ namespace FimbulwinterClient.Content
                 return;
 
             float w, h;
-            w = m_images[idx].Width;
-            h = m_images[idx].Height;
+            w = _images[idx].Width;
+            h = _images[idx].Height;
 
             w *= sc.Zoom.X;
             h *= sc.Zoom.Y;
@@ -87,7 +87,7 @@ namespace FimbulwinterClient.Content
                 (int)w,
                 (int)h);
 
-            sb.Draw(m_images[idx], r, null, new Color(mo.Clips[i].Mask.R, mo.Clips[i].Mask.G, mo.Clips[i].Mask.B, mo.Clips[i].Mask.A), 
+            sb.Draw(_images[idx], r, null, new Color(mo.Clips[i].Mask.R, mo.Clips[i].Mask.G, mo.Clips[i].Mask.B, mo.Clips[i].Mask.A), 
                 (float)(Math.PI * mo.Clips[i].Angle / 180.0F), default(Vector2), 
                 SpriteEffects.None, 0);
         }

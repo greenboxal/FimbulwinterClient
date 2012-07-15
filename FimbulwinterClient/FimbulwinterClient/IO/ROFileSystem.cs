@@ -9,15 +9,15 @@ namespace FimbulwinterClient.IO
 {
     public class ROFileSystem
     {
-        private List<GRF> m_grfFiles;
+        private List<GRF> _grfFiles;
         public List<GRF> GrfFiles
         {
-            get { return m_grfFiles; }
+            get { return _grfFiles; }
         }
 
         public ROFileSystem()
         {
-            m_grfFiles = new List<GRF>();
+            _grfFiles = new List<GRF>();
         }
 
         public Stream LoadFile(string asset)
@@ -28,13 +28,13 @@ namespace FimbulwinterClient.IO
             }
             else
             {
-                for (int i = 0; i < m_grfFiles.Count; i++)
+                for (int i = 0; i < _grfFiles.Count; i++)
                 {
-                    GRFFile f = m_grfFiles[i].GetFile(asset);
+                    GRFFile f = _grfFiles[i].GetFile(asset);
 
                     if (f != null)
                     {
-                        byte[] data = m_grfFiles[i].GetDataFromFile(f);
+                        byte[] data = _grfFiles[i].GetDataFromFile(f);
 
                         return new MemoryStream(data);
                     }
@@ -52,7 +52,7 @@ namespace FimbulwinterClient.IO
             GRF grf = new GRF();
             grf.Open(path);
 
-            m_grfFiles.Add(grf);
+            _grfFiles.Add(grf);
         }
     }
 }

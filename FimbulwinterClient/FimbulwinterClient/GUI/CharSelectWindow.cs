@@ -20,14 +20,15 @@ namespace FimbulwinterClient.GUI
 
         private void InitializeComponent()
         {
-            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data/texture/À¯ÀúÀÎÅÍÆäÀÌ½º/login_interface/win_select2.bmp");
+            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\login_interface\\win_select2.bmp");
             this.Size = new Vector2(576, 358);
             this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - (576 / 2), GuiManager.Singleton.Client.Config.ScreenHeight / 2 - (358 / 2));
 
-            cbChars = new CharBrowser(ROClient.Singleton.NetworkState.CharAccept.Chars);
+            cbChars = new CharBrowser(ROClient.Singleton.NetworkState.CharAccept.Chars, ROClient.Singleton.NetworkState.CharAccept.MaxSlots, ROClient.Singleton.NetworkState.CharAccept.PremiumSlots, ROClient.Singleton.NetworkState.CharAccept.AvailableSlots);
             cbChars.Position = new Vector2(60, 43);
-            cbChars.Size = new Vector2(421, 120);
+            cbChars.Size = new Vector2(457, 138);
             cbChars.SelectedIndexChanged += new Action(cbChars_SelectedIndexChanged);
+            cbChars.PageChanged += new Action<int, int>(cbChars_PageChanged);
             cbChars.OnSelect += new Action(cbChars_OnSelect);
 
             btnAction = new Button();
@@ -43,56 +44,95 @@ namespace FimbulwinterClient.GUI
             btnCancel.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(btnCancel_Clicked);
 
             lblName = new Label();
-            lblName.Position = new Vector2(66, 204);
+            lblName.Position = new Vector2(70, 206);
             this.Controls.Add(lblName);
 
             lblJob = new Label();
-            lblJob.Position = new Vector2(66, 220);
+            lblJob.Position = new Vector2(70, 222);
             this.Controls.Add(lblJob);
 
             lblLv = new Label();
-            lblLv.Position = new Vector2(66, 236);
+            lblLv.Position = new Vector2(70, 238);
             this.Controls.Add(lblLv);
 
             lblEXP = new Label();
-            lblEXP.Position = new Vector2(66, 252);
+            lblEXP.Position = new Vector2(70, 254);
             this.Controls.Add(lblEXP);
 
             lblHP = new Label();
-            lblHP.Position = new Vector2(66, 268);
+            lblHP.Position = new Vector2(70, 270);
             this.Controls.Add(lblHP);
 
             lblSP = new Label();
-            lblSP.Position = new Vector2(66, 284);
+            lblSP.Position = new Vector2(70, 286);
             this.Controls.Add(lblSP);
 
             lblMap = new Label();
-            lblMap.Position = new Vector2(66, 300);
+            lblMap.Position = new Vector2(70, 302);
             this.Controls.Add(lblMap);
 
             lblStr = new Label();
-            lblStr.Position = new Vector2(210, 204);
+            lblStr.Position = new Vector2(214, 206);
             this.Controls.Add(lblStr);
 
             lblAgi = new Label();
-            lblAgi.Position = new Vector2(210, 220);
+            lblAgi.Position = new Vector2(214, 222);
             this.Controls.Add(lblAgi);
 
             lblVit = new Label();
-            lblVit.Position = new Vector2(210, 236);
+            lblVit.Position = new Vector2(214, 238);
             this.Controls.Add(lblVit);
 
             lblInt = new Label();
-            lblInt.Position = new Vector2(210, 252);
+            lblInt.Position = new Vector2(214, 254);
             this.Controls.Add(lblInt);
 
             lblDex = new Label();
-            lblDex.Position = new Vector2(210, 268);
+            lblDex.Position = new Vector2(214, 270);
             this.Controls.Add(lblDex);
 
             lblLuk = new Label();
-            lblLuk.Position = new Vector2(210, 284);
+            lblLuk.Position = new Vector2(214, 286);
             this.Controls.Add(lblLuk);
+
+            Texture2D scrollleft = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp"); ;
+            ibScrollLeft = new ImageButton(scrollleft, scrollleft, scrollleft);
+            ibScrollLeft.Size = new Vector2(13, 13);
+            ibScrollLeft.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollLeft_Clicked);
+            ibScrollLeft.Position = new Vector2(45, 110);
+            this.Controls.Add(ibScrollLeft);
+
+            Texture2D scrollright = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp"); ;
+            ibScrollRight = new ImageButton(scrollright, scrollright, scrollright);
+            ibScrollRight.Size = new Vector2(13, 13);
+            ibScrollRight.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollRight_Clicked);
+            ibScrollRight.Position = new Vector2(519, 110);
+            this.Controls.Add(ibScrollRight);
+
+            lblPage = new Label();
+            lblPage.Position = new Vector2(276, 187);
+            lblPage.Text = "1";
+            lblPage.ForeColor = new Color(255, 58, 123, 255);
+            lblPage.Font = Gulim8B;
+            this.Controls.Add(lblPage);
+
+            lblPage2 = new Label();
+            lblPage2.Position = new Vector2(282, 187);
+            lblPage2.Text =  " / " + (int)(ROClient.Singleton.NetworkState.CharAccept.MaxSlots / 3);
+            lblPage2.Font = Gulim8B;
+            lblPage2.ForeColor = new Color(99, 99, 99, 255);
+            this.Controls.Add(lblPage2);
+
+            borCharacters = new Border();
+            borCharacters.Position = new Vector2(422, 195);
+            borCharacters.Size = new Vector2(144, 20);
+            this.Controls.Add(borCharacters);
+
+            lblCharacters = new Label();
+            lblCharacters.Position = new Vector2(439, 200);
+            lblCharacters.Text = ROClient.Singleton.NetworkState.CharAccept.Chars.Count() + " / " + (int)(ROClient.Singleton.NetworkState.CharAccept.AvailableSlots);
+            lblCharacters.Font = Gulim8B;
+            this.Controls.Add(lblCharacters);
 
             this.Controls.Add(cbChars);
             this.Controls.Add(btnAction);
@@ -119,21 +159,50 @@ namespace FimbulwinterClient.GUI
             }
         }
 
+        void ibScrollLeft_Clicked(Nuclex.Input.MouseButtons arg1, float arg2, float arg3)
+        {
+            cbChars.GoLeftOnce();
+        }
+
+        void ibScrollRight_Clicked(Nuclex.Input.MouseButtons arg1, float arg2, float arg3)
+        {
+            cbChars.GoRightOnce();
+        }
+
+        void cbChars_PageChanged(int page, int maxpages) {
+            lblPage.Text = string.Format("{0}", page);
+        }
+
         void cbChars_SelectedIndexChanged()
         {
             if (cbChars.SelectedIndex == -1)
             {
                 btnAction.Text = "create";
+
+                lblName.Text = string.Empty;
+                lblJob.Text = string.Empty;
+                lblLv.Text = string.Empty;
+                lblEXP.Text = string.Empty;
+                lblHP.Text = string.Empty;
+                lblSP.Text = string.Empty;
+                lblMap.Text = string.Empty;
+
+                lblStr.Text = string.Empty;
+                lblAgi.Text = string.Empty;
+                lblVit.Text = string.Empty;
+                lblInt.Text = string.Empty;
+                lblDex.Text = string.Empty;
+                lblLuk.Text = string.Empty;
             }
             else
             {
                 lblName.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Name;
-                lblJob.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Class.ToString();
+                lblJob.Text = Statics.ClassNames[ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Job];
                 lblLv.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseLevel.ToString();
-                lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].BaseExp.ToString();
+                lblEXP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Exp.ToString();
                 lblHP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].HP.ToString();
                 lblSP.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].SP.ToString();
-                lblMap.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].MapName;
+                lblMap.Text = Statics.MapNames[ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].MapName];
 
                 lblStr.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Str.ToString();
                 lblAgi.Text = ROClient.Singleton.NetworkState.CharAccept.Chars[cbChars.SelectedIndex].Agi.ToString();
@@ -144,6 +213,13 @@ namespace FimbulwinterClient.GUI
 
                 btnAction.Text = "enter";
             }
+        }
+
+        public override void OnKeyDown(Microsoft.Xna.Framework.Input.Keys key)
+        {
+            cbChars.OnKeyDown(key);
+
+            base.OnKeyDown(key);
         }
 
         void cbChars_OnSelect()
@@ -174,5 +250,14 @@ namespace FimbulwinterClient.GUI
         Label lblInt;
         Label lblDex;
         Label lblLuk;
+
+        Label lblPage;
+        Label lblPage2;
+
+        Border borCharacters;
+        Label lblCharacters;
+
+        ImageButton ibScrollLeft;
+        ImageButton ibScrollRight;
     }
 }

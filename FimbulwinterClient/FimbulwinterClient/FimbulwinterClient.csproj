@@ -60,6 +60,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LuaInterface">
+      <HintPath>..\..\Deps\LuaInterface.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -118,6 +121,8 @@
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
+    <Compile Include="Content\Lub.cs" />
+    <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\RsmBone.cs" />
     <Compile Include="Content\RsmMesh.cs" />
     <Compile Include="Content\RsmMeshPart.cs" />
@@ -125,10 +130,15 @@
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
+    <Compile Include="GUI\Ingame\CharacterInfoWindow.cs" />
     <Compile Include="GUI\CharSelectWindow.cs" />
     <Compile Include="GUI\CharServerSelectWindow.cs" />
+    <Compile Include="GUI\Ingame\CollectionInfoWindow.cs" />
+    <Compile Include="GUI\Ingame\InventoryWindow.cs" />
+    <Compile Include="GUI\Ingame\QuickSlotWindow.cs" />
     <Compile Include="GUI\LoginWindow.cs" />
     <Compile Include="GUI\ServiceSelectWindow.cs" />
+    <Compile Include="GUI\System\Border.cs" />
     <Compile Include="GUI\System\Button.cs" />
     <Compile Include="GUI\System\CharBrowser.cs" />
     <Compile Include="GUI\System\CheckBox.cs" />
@@ -142,7 +152,12 @@
     <Compile Include="GUI\System\TextBox.cs" />
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
+    <Compile Include="IO\ContentLoaders\LubLoader.cs" />
+    <Compile Include="IO\ContentLoaders\PaletteLoader.cs" />
     <Compile Include="IO\ContentLoaders\RsmModelLoader.cs" />
+    <Compile Include="Lua\LuaManager.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Network\Packets\Base.cs" />
     <Compile Include="Screens\CharSelectScreen.cs" />
     <Compile Include="Screens\CreateCharScreen.cs" />
     <Compile Include="Screens\IGameScreen.cs" />
@@ -176,14 +191,14 @@
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketSerializer.cs" />
-    <Compile Include="Network\Packets\Char\CSAcceptLogin.cs" />
-    <Compile Include="Network\Packets\Char\CSRejectLogin.cs" />
-    <Compile Include="Network\Packets\Char\CSPinCodeRequest.cs" />
-    <Compile Include="Network\Packets\Char\CSPing.cs" />
-    <Compile Include="Network\Packets\Login\LSAcceptLogin.cs" />
-    <Compile Include="Network\Packets\Char\CSLoginPacket.cs" />
-    <Compile Include="Network\Packets\Login\LSPlainTextLogin.cs" />
-    <Compile Include="Network\Packets\Login\LSRejectLogin.cs" />
+    <Compile Include="Network\Packets\Character\HC_Accept_Enter.cs" />
+    <Compile Include="Network\Packets\Character\HC_Refuse_Enter.cs" />
+    <Compile Include="Network\Packets\Character\HC_Second_Passwd_Login.cs" />
+    <Compile Include="Network\Packets\Ping.cs" />
+    <Compile Include="Network\Packets\Account\AC_Accept_Login.cs" />
+    <Compile Include="Network\Packets\Character\CH_Enter.cs" />
+    <Compile Include="Network\Packets\Account\CA_Login.cs" />
+    <Compile Include="Network\Packets\Account\AC_Refuse_Login.cs" />
     <Compile Include="Nuclex\Input\CollectionHelper.cs" />
     <Compile Include="Nuclex\Input\ControllerDetector.cs" />
     <Compile Include="Nuclex\Input\ControllerEventArgs.cs" />
@@ -317,20 +332,24 @@
     <Compile Include="Program.cs" />
     <Compile Include="ROClient.cs" />
     <Compile Include="Config\Configuration.cs" />
-    <Compile Include="ROConst.cs" />
+    <Compile Include="Screens\IngameScreen.cs" />
+    <Compile Include="Statics.cs" />
     <Compile Include="RODirection.cs" />
     <Compile Include="Screens\BaseLoginScreen.cs" />
     <Compile Include="Screens\LoginScreen.cs" />
     <Compile Include="Screens\CharServerSelectScreen.cs" />
     <Compile Include="Screens\ServiceSelectScreen.cs" />
     <Compile Include="Screens\TestScreen.cs" />
-    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\Extensions.csproj">
+      <Project>{DBEDEFD4-E8CC-43D8-92DF-C1FE4EEC8148}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ROFormats\ROFormats\ROFormats.csproj">
       <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>
       <Name>ROFormats</Name>

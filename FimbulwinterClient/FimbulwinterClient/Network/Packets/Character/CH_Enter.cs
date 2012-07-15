@@ -5,13 +5,13 @@ using System.Text;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
-    public class CSLoginPacket : OutPacket
+    public class CH_Enter : OutPacket
     {
         private int aid, lig1, lig2;
         private byte sex;
 
-        public CSLoginPacket(int aid, int lig1, int lig2, byte sex)
-            : base(0x65, 17)
+        public CH_Enter(int aid, int lig1, int lig2, byte sex)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_CH_ENTER), 17)
         {
             this.aid = aid;
             this.lig1 = lig1;

@@ -39,13 +39,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fb\Arial10.spritefont">
-      <Name>Arial10</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="fb\SuaveSheet.png">
       <Name>SuaveSheet</Name>
       <Importer>TextureImporter</Importer>
@@ -53,8 +46,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fb\Arial10b.spritefont">
-      <Name>Arial10b</Name>
+    <Compile Include="fb\Gulim8.spritefont">
+      <Name>Gulim8</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="fb\Gulim8b.spritefont">
+      <Name>Gulim8b</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>

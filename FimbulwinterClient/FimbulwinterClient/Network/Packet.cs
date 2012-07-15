@@ -6,9 +6,9 @@ using System.IO;
 
 namespace FimbulwinterClient.Network
 {
-    public abstract class InPacket
+    public interface InPacket
     {
-        public abstract bool Read(byte[] data);
+        bool Read(byte[] data);
     }
 
     public abstract class OutPacket

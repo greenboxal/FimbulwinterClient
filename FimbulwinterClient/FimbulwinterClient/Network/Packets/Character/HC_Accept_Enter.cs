@@ -3,36 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Extensions;
 
 namespace FimbulwinterClient.Network.Packets.Char
 {
     public struct CSCharData
     {
-        public int CharID;
-        public int BaseExp;
+        public int GID;
+        public int Exp;
         public int Zeny;
         public int JobExp;
         public int JobLevel;
-        public int Opt1;
-        public int Opt2;
-        public int Option;
-        public int Karma;
-        public int Manner;
+        public int BodyState;
+        public int HealthState;
+        public int EffectState;
+        public int Virtue;
+        public int Honor;
         public short StatusPoint;
         public int HP;
         public int MaxHP;
         public short SP;
         public short MaxSP;
         public short Speed;
-        public short Class;
+        public short Job;
         public short Hair;
         public short Weapon;
         public short BaseLevel;
         public short SkillPoint;
-        public short HeadLow;
+        public short Accessory;
         public short Shield;
-        public short HeadTop;
-        public short HeadMid;
+        public short Accessory2;
+        public short Accessory3;
         public short HairColor;
         public short ClothesColor;
         public string Name;
@@ -49,17 +50,21 @@ namespace FimbulwinterClient.Network.Packets.Char
         public int Robe;
     }
 
-    public class CSAcceptLogin : InPacket
+    [PackerHandler(PacketHeader.HEADER_HC_ACCEPT_ENTER,
+        "HC_ACCEPT_ENTER",
+        PackerHandlerAttribute.VariableSize,
+        PackerHandlerAttribute.PacketDirection.In)]
+    public class HC_Accept_Enter : InPacket
     {
         public int MaxSlots { get; set; }
         public int AvailableSlots { get; set; }
         public int PremiumSlots { get; set; }
         public CSCharData[] Chars { get; set; }
 
-        public override bool Read(byte[] data)
+        public bool Read(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
-            int numChars = (data.Length - 23) / 136;
+            int numChars = (data.Length - 23) / 144;
 
             MaxSlots = br.ReadByte();
             AvailableSlots = br.ReadByte();
@@ -72,31 +77,31 @@ namespace FimbulwinterClient.Network.Packets.Char
             {
                 CSCharData cd = new CSCharData();
                 
-                cd.CharID = br.ReadInt32();
-                cd.BaseExp = br.ReadInt32();
+                cd.GID = br.ReadInt32();
+                cd.Exp = br.ReadInt32();
                 cd.Zeny = br.ReadInt32();
                 cd.JobExp = br.ReadInt32();
                 cd.JobLevel = br.ReadInt32();
-                cd.Opt1 = br.ReadInt32();
-                cd.Opt2 = br.ReadInt32();
-                cd.Option = br.ReadInt32();
-                cd.Karma = br.ReadInt32();
-                cd.Manner = br.ReadInt32();
+                cd.BodyState = br.ReadInt32();
+                cd.HealthState = br.ReadInt32();
+                cd.EffectState = br.ReadInt32();
+                cd.Virtue = br.ReadInt32();
+                cd.Honor = br.ReadInt32();
                 cd.StatusPoint = br.ReadInt16();
                 cd.HP = br.ReadInt32();
                 cd.MaxHP = br.ReadInt32();
                 cd.SP = br.ReadInt16();
                 cd.MaxSP = br.ReadInt16();
                 cd.Speed = br.ReadInt16();
-                cd.Class = br.ReadInt16();
+                cd.Job = br.ReadInt16();
                 cd.Hair = br.ReadInt16();
                 cd.Weapon = br.ReadInt16();
                 cd.BaseLevel = br.ReadInt16();
                 cd.SkillPoint = br.ReadInt16();
-                cd.HeadLow = br.ReadInt16();
+                cd.Accessory = br.ReadInt16();
                 cd.Shield = br.ReadInt16();
-                cd.HeadTop = br.ReadInt16();
-                cd.HeadMid = br.ReadInt16();
+                cd.Accessory2 = br.ReadInt16();
+                cd.Accessory3 = br.ReadInt16();
                 cd.HairColor= br.ReadInt16();
                 cd.ClothesColor = br.ReadInt16();
                 cd.Name = br.ReadCString(24);

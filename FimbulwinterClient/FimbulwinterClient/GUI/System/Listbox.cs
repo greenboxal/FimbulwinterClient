@@ -9,18 +9,18 @@ namespace FimbulwinterClient.GUI.System
 {
     public class Listbox : Control
     {
-        private List<object> m_items;
+        private List<object> _items;
         public List<object> Items
         {
-            get { return m_items; }
-            set { m_items = value; }
+            get { return _items; }
+            set { _items = value; }
         }
 
-        private int m_selectedIndex;
+        private int _selectedIndex;
         public int SelectedIndex
         {
-            get { return m_selectedIndex; }
-            set { m_selectedIndex = value; }
+            get { return _selectedIndex; }
+            set { _selectedIndex = value; }
         }
 
         private int drawStart = 0;
@@ -29,10 +29,10 @@ namespace FimbulwinterClient.GUI.System
 
         public Listbox()
         {
-            m_items = new List<object>();
-            m_selectedIndex = -1;
+            _items = new List<object>();
+            _selectedIndex = -1;
 
-            lineHeight = (int)Arial10.MeasureString("A").Y;
+            lineHeight = (int)Gulim8.MeasureString("A").Y;
         }
 
         public override void Update(GameTime gt)
@@ -48,16 +48,16 @@ namespace FimbulwinterClient.GUI.System
             int absY = (int)GetAbsY();
 
             int atY = absY;
-            for (int i = drawStart; i < drawCount && i < m_items.Count; i++)
+            for (int i = drawStart; i < drawCount && i < _items.Count; i++)
             {
-                string str = m_items[i].ToString();
+                string str = _items[i].ToString();
 
-                if (i == m_selectedIndex)
+                if (i == _selectedIndex)
                 {
                     Utils.DrawBackground(sb, Color.CornflowerBlue, absX, atY, (int)Size.X, (int)lineHeight);
                 }
 
-                sb.DrawString(Arial10, str, new Vector2(absX, atY), ForeColor);
+                sb.DrawString(Gulim8, str, new Vector2(absX, atY + 1), ForeColor);
 
                 atY += (int)lineHeight;
             }
@@ -72,7 +72,7 @@ namespace FimbulwinterClient.GUI.System
             {
                 if (y >= atY && y < atY + lineHeight)
                 {
-                    m_selectedIndex = i;
+                    _selectedIndex = i;
                     break;
                 }
 
