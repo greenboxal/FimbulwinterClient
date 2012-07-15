@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
 using Nuclex.Input.Devices;
@@ -141,8 +142,34 @@ namespace FimbulwinterClient.GUI.System
 
         void kb_KeyReleased(Keys key)
         {
+            if (key == Keys.PrintScreen)
+                MakeScreenshot();
             if (_activeControl != null)
                 _activeControl.OnKeyUp(key);
+        }
+
+        private static int _counter;
+        void MakeScreenshot()
+        {
+            int w = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferWidth;
+            int h = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+            Draw(new GameTime());
+            int[] backBuffer = new int[w * h];
+            ROClient.Singleton.GraphicsDevice.GetBackBufferData(backBuffer);
+
+            //copy into a texture 
+            Texture2D texture = new Texture2D(ROClient.Singleton.GraphicsDevice, w, h, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+            texture.SetData(backBuffer);
+            
+            //save to disk 
+            Stream stream = File.OpenWrite(_counter + ".jpg");
+
+            texture.SaveAsJpeg(stream, w, h);
+            stream.Dispose();
+
+            texture.Dispose();
+            _counter++;
         }
 
         void kb_KeyPressed(Keys key)
