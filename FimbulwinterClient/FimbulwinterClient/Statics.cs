@@ -45,6 +45,7 @@ namespace FimbulwinterClient
 
         public static readonly string class_knight_h = "로드나이트";
         public static readonly string class_priest_h = "성투사2";
+        public static readonly string class_blacksmith_h = "화이트스미스";
         public static readonly string class_assassin_h = "어쌔신크로스";
         public static readonly string class_hunter_h = "스나이퍼";
         public static readonly string class_rogue_h = "스토커";
@@ -146,6 +147,7 @@ namespace FimbulwinterClient
                 _classSprites.Add((int)Jobtbl.JT_GENETIC, class_genetic);
                 _classSprites.Add((int)Jobtbl.JT_OBORO, class_oboro);
                 _classSprites.Add((int)Jobtbl.JT_ALCHEMIST_H, class_alchemist_h);
+                _classSprites.Add((int)Jobtbl.JT_BLACKSMITH_H, class_blacksmith_h);
 
                 // temp
                 int g_serviceType = 2;

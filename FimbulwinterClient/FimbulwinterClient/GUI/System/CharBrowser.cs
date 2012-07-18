@@ -148,8 +148,9 @@ namespace FimbulwinterClient.GUI.System
                     {
                         if (_chars[n].Slot == idx)
                         {
+                            // Important: accessories and robe needs to be positioned by body, not head!
                             if (_accessories[n][3] != null)
-                                _accessories[n][3].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), _heads[n], true);
+                                _accessories[n][3].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), _bodies[n], true);
 
                             _bodies[n].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), null, false);
                             _heads[n].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), _bodies[n], true);
@@ -157,7 +158,7 @@ namespace FimbulwinterClient.GUI.System
                             // add headgears
                             for (int x = 0; x < 3; x++ )
                                 if (_accessories[n][x] != null)
-                                    _accessories[n][x].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), _heads[n], true);
+                                    _accessories[n][x].Draw(sb, new Point(absX + DrawSprX[i], absY + 115), _bodies[n], true);
 
                             break;
                         }
