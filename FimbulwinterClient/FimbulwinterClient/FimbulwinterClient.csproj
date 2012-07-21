@@ -333,6 +333,7 @@
     <Compile Include="ROClient.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Screens\IngameScreen.cs" />
+    <Compile Include="Screens\TestMap.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="RODirection.cs" />
     <Compile Include="Screens\BaseLoginScreen.cs" />

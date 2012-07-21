@@ -52,34 +52,34 @@ with.
     -->
     <CharacterRegions>
       <!-- Ideographic Symbols and Punctuation -->
-      <CharacterRegion>
+      <!--<CharacterRegion>
         <Start>&#x3000;</Start>
         <End>&#x303F;</End>
-      </CharacterRegion>
+      </CharacterRegion>-->
 
       <!-- Hiragana -->
-      <CharacterRegion>
+      <!--<CharacterRegion>
         <Start>&#x3040;</Start>
         <End>&#x309F;</End>
-      </CharacterRegion>
+      </CharacterRegion>-->
 
       <!-- Katakana -->
-      <CharacterRegion>
+      <!--<CharacterRegion>
         <Start>&#x30A0;</Start>
         <End>&#x30FF;</End>
-      </CharacterRegion>
+      </CharacterRegion>-->
 
       <!-- kRO -->
-      <CharacterRegion>
+      <!--<CharacterRegion>
         <Start>&#xc120;</Start>
         <End>&#xd400;</End>
-      </CharacterRegion>
+      </CharacterRegion>-->
 
       <!-- Fullwidth Latin -->
-      <CharacterRegion>
+      <!--<CharacterRegion>
         <Start>&#xFF01;</Start>
         <End>&#xFFE6;</End>
-      </CharacterRegion>
+      </CharacterRegion>-->
       <!-- and/or the standard Latin set... -->
       <CharacterRegion>
         <Start>&#32;</Start>

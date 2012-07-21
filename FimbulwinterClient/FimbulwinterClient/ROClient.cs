@@ -165,8 +165,8 @@ namespace FimbulwinterClient
             base.Initialize();
 
             GUI.Utils.Init(GraphicsDevice);
-            //ChangeScreen(new TestScreen());
-            ChangeScreen(new IngameScreen());
+            ChangeScreen(new TestMap());
+            //ChangeScreen(new IngameScreen());
         }
 
         protected override void LoadContent()
