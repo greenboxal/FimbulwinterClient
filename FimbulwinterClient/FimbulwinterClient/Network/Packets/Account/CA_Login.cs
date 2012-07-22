@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using Extensions;
 
-namespace FimbulwinterClient.Network.Packets.Login
+namespace FimbulwinterClient.Network.Packets.Account
 {
     public class CA_Login : OutPacket
     {

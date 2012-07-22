@@ -6,8 +6,8 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using FimbulwinterClient.Network.Packets;
-using FimbulwinterClient.Network.Packets.Char;
-using FimbulwinterClient.Network.Packets.Login;
+using FimbulwinterClient.Network.Packets.Character;
+using FimbulwinterClient.Network.Packets.Account;
 
 namespace FimbulwinterClient.Network
 {

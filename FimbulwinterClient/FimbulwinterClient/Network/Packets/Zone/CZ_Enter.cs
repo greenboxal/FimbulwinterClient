@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FimbulwinterClient.Network.Packets.Character
+namespace FimbulwinterClient.Network.Packets.Zone
 {
-    public class CH_Enter : OutPacket
+    public class CZ_Enter : OutPacket
     {
-        private int aid, lig1, lig2;
+        private int aid, gid, auth;
         private byte sex;
 
-        public CH_Enter(int aid, int lig1, int lig2, byte sex)
-            : base(Convert.ToUInt16(PacketHeader.HEADER_CH_ENTER), 17)
+        public CZ_Enter(int aid, int gid, int auth, byte sex)
+            : base(Convert.ToUInt16(PacketHeader.HEADER_CZ_ENTER), 13)
         {
             this.aid = aid;
-            this.lig1 = lig1;
-            this.lig2 = lig2;
+            this.gid = gid;
+            this.auth = auth;
             this.sex = sex;
         }
 
@@ -24,9 +24,9 @@ namespace FimbulwinterClient.Network.Packets.Character
             base.Write(bw);
 
             bw.Write(aid);
-            bw.Write(lig1);
-            bw.Write(lig2);
-            bw.Write((short)0);
+            bw.Write(gid);
+            bw.Write(auth);
+            bw.Write(0);
             bw.Write(sex);
             bw.Flush();
 

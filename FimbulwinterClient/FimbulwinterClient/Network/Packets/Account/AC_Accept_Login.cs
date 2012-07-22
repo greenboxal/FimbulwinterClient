@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using Extensions;
 
-namespace FimbulwinterClient.Network.Packets.Login
+namespace FimbulwinterClient.Network.Packets.Account
 {
     public struct CharServerInfo
     {

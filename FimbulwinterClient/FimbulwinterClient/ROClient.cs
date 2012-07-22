@@ -19,8 +19,8 @@ using FimbulwinterClient.GUI.System;
 using System.IO;
 using FimbulwinterClient.Network;
 using FimbulwinterClient.Network.Packets;
-using FimbulwinterClient.Network.Packets.Char;
-using FimbulwinterClient.Network.Packets.Login;
+using FimbulwinterClient.Network.Packets.Character;
+using FimbulwinterClient.Network.Packets.Account;
 using FimbulwinterClient.Screens;
 using FimbulwinterClient.Config;
 
@@ -171,7 +171,7 @@ namespace FimbulwinterClient
 
             GUI.Utils.Init(GraphicsDevice);
             ChangeScreen(new ServiceSelectScreen());
-            //ChangeScreen(new IngameScreen());
+            //ChangeScreen(new TestMap("prontera.gnd"));
         }
 
         void kb_KeyReleased(Keys key)

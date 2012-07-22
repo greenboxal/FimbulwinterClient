@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FimbulwinterClient.Network.Packets.Char
+namespace FimbulwinterClient.Network.Packets.Character
 {
     [PackerHandler(PacketHeader.HEADER_HC_REFUSE_ENTER,
         "HC_REFUSE_ENTER",

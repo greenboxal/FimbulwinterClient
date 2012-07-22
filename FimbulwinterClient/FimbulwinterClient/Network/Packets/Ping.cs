@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FimbulwinterClient.Network.Packets.Char
+namespace FimbulwinterClient.Network.Packets
 {
     public class Ping : OutPacket
     {

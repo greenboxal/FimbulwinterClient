@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FimbulwinterClient.GUI;
-using FimbulwinterClient.Network.Packets.Login;
+using FimbulwinterClient.Network.Packets.Account;
 using FimbulwinterClient.GUI.System;
 
 namespace FimbulwinterClient.Screens

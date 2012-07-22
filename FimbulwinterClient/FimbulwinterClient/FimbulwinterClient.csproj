@@ -162,6 +162,10 @@
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Network\Packets\Base.cs" />
+    <Compile Include="Network\Packets\Character\CH_Select_Char.cs" />
+    <Compile Include="Network\Packets\Character\HC_Notify_Zonesvr.cs" />
+    <Compile Include="Network\Packets\Zone\CZ_Enter.cs" />
+    <Compile Include="Network\Packets\Zone\ZC_Accept_Enter2.cs" />
     <Compile Include="Screens\CharSelectScreen.cs" />
     <Compile Include="Screens\ControlTestScreen.cs" />
     <Compile Include="Screens\CreateCharScreen.cs" />

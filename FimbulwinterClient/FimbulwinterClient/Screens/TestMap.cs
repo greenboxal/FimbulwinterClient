@@ -54,8 +54,11 @@ namespace FimbulwinterClient.Screens
         const float moveSpeed = 150.0f;
         MouseState originalMouseState;
 
-        public TestMap()
+        private string _mapname;
+
+        public TestMap(string mapname)
         {
+            _mapname = mapname;
             ROClient.Singleton.GuiManager.Controls.Add(new QuickSlotWindow());
             ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
 
@@ -74,7 +77,7 @@ namespace FimbulwinterClient.Screens
         List<Tile> tiles;
         private void SetUpVertices()
         {
-            System.IO.Stream f = ROClient.Singleton.ContentManager.LoadContent<System.IO.Stream>("data\\lighthalzen.gnd");
+            System.IO.Stream f = ROClient.Singleton.ContentManager.LoadContent<System.IO.Stream>(System.IO.Path.Combine("data\\", _mapname));
             using (System.IO.BinaryReader br = new System.IO.BinaryReader(f))
             {
                 var header = br.ReadBytes(4);
@@ -281,7 +284,7 @@ namespace FimbulwinterClient.Screens
                 pass.Apply();
             }
             ROClient.Singleton.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, vertexBuffer.VertexCount);
-
+            
             foreach (KeyValuePair<Texture2D, VertexBuffer> vb in vertexBuffers)
             {
                 effect.Parameters["xTexture"].SetValue(vb.Key);

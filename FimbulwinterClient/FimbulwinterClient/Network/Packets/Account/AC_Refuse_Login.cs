@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using Extensions;
 
-namespace FimbulwinterClient.Network.Packets.Login
+namespace FimbulwinterClient.Network.Packets.Account
 {
     [PackerHandler(PacketHeader.HEADER_AC_REFUSE_LOGIN,
         "AC_REFUSE_LOGIN",
