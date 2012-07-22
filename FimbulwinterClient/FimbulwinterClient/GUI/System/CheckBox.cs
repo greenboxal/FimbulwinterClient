@@ -21,6 +21,9 @@ namespace FimbulwinterClient.GUI.System
             int absX = (int)GetAbsX();
             int absY = (int)GetAbsY();
 
+            Vector2 textSize = Gulim8.MeasureString(Text);
+            this.Size = new Vector2(12 + textSize.X, textSize.Y);
+
             base.Draw(sb, gt);
 
             if (Checked)
@@ -32,7 +35,7 @@ namespace FimbulwinterClient.GUI.System
                 sb.Draw(FormSkin, new Rectangle(absX, absY, 10, 10), new Rectangle(95, 0, 10, 10), Color.White);
             }
 
-            sb.DrawString(Font, Text, new Vector2(absX + 12, absY - 4), ForeColor);
+            sb.DrawString(Font, Text, new Vector2(absX + 12, absY), ForeColor);
         }
 
         public override void OnClick(Nuclex.Input.MouseButtons buttons, float x, float y)

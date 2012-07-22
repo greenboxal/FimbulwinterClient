@@ -47,6 +47,8 @@ namespace FimbulwinterClient.GUI.System
             int absX = (int)GetAbsX();
             int absY = (int)GetAbsY();
 
+            Utils.DrawBackground(sb, Color.FromNonPremultiplied(247, 247, 247, 255), absX, absY, (int)Size.X, (int)Size.Y);
+
             int atY = absY;
             for (int i = drawStart; i < drawCount && i < _items.Count; i++)
             {
@@ -54,7 +56,7 @@ namespace FimbulwinterClient.GUI.System
 
                 if (i == _selectedIndex)
                 {
-                    Utils.DrawBackground(sb, Color.CornflowerBlue, absX, atY, (int)Size.X, (int)lineHeight);
+                    Utils.DrawBackground(sb, Color.FromNonPremultiplied(206, 222, 255, 255), absX, atY, (int)Size.X, (int)lineHeight);
                 }
 
                 sb.DrawString(Gulim8, str, new Vector2(absX, atY + 1), ForeColor);
@@ -85,6 +87,14 @@ namespace FimbulwinterClient.GUI.System
         public override void OnKeyDown(Microsoft.Xna.Framework.Input.Keys key)
         {
             base.OnKeyDown(key);
+
+            if (key == Microsoft.Xna.Framework.Input.Keys.Down)
+                if (_selectedIndex < _items.Count - 1)
+                    _selectedIndex++;
+
+            if (key == Microsoft.Xna.Framework.Input.Keys.Up)
+                if (_selectedIndex > 0)
+                    _selectedIndex--;
 
             if (key == Microsoft.Xna.Framework.Input.Keys.Enter)
                 if (OnActivate != null)
