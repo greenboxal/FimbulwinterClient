@@ -130,6 +130,7 @@
     <Compile Include="Content\SpriteAction.cs" />
     <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
+    <Compile Include="GUI\ControlWindow.cs" />
     <Compile Include="GUI\Ingame\CharacterInfoWindow.cs" />
     <Compile Include="GUI\CharSelectWindow.cs" />
     <Compile Include="GUI\CharServerSelectWindow.cs" />
@@ -137,9 +138,12 @@
     <Compile Include="GUI\Ingame\InventoryWindow.cs" />
     <Compile Include="GUI\Ingame\QuickSlotWindow.cs" />
     <Compile Include="GUI\LoginWindow.cs" />
+    <Compile Include="GUI\NewCharWindow.cs" />
     <Compile Include="GUI\ServiceSelectWindow.cs" />
+    <Compile Include="GUI\System\ArrowSelector.cs" />
     <Compile Include="GUI\System\Border.cs" />
     <Compile Include="GUI\System\Button.cs" />
+    <Compile Include="GUI\System\Character.cs" />
     <Compile Include="GUI\System\CharBrowser.cs" />
     <Compile Include="GUI\System\CheckBox.cs" />
     <Compile Include="GUI\System\Control.cs" />
@@ -159,6 +163,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Network\Packets\Base.cs" />
     <Compile Include="Screens\CharSelectScreen.cs" />
+    <Compile Include="Screens\ControlTestScreen.cs" />
     <Compile Include="Screens\CreateCharScreen.cs" />
     <Compile Include="Screens\IGameScreen.cs" />
     <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
