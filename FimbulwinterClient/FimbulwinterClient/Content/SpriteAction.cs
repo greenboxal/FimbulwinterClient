@@ -96,7 +96,7 @@ namespace FimbulwinterClient.Content
 
         }
 
-        public void Draw(SpriteBatch sb, Microsoft.Xna.Framework.Point pos, SpriteAction parent, bool ext)
+        public void Draw(SpriteBatch sb, Microsoft.Xna.Framework.Point pos, SpriteAction parent, bool ext, SpriteEffects se = SpriteEffects.None    )
         {
             Act act = Actions[_action];
             Motion mo = act.Motions[_frame];
@@ -113,7 +113,7 @@ namespace FimbulwinterClient.Content
             }
             
             for (int i = 0; i < mo.Clips.Count; i++)
-                _sprite.Draw(mo, i, sb, pos.X, pos.Y, ext);
+                _sprite.Draw(mo, i, sb, pos.X, pos.Y, ext, se);
         }
     }
 }

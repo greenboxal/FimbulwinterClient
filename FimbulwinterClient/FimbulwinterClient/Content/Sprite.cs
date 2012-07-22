@@ -60,7 +60,7 @@ namespace FimbulwinterClient.Content
             }
         }
 
-        public void Draw(SpriteAction.Motion mo, int i, SpriteBatch sb, int x, int y, bool ext)
+        public void Draw(SpriteAction.Motion mo, int i, SpriteBatch sb, int x, int y, bool ext, SpriteEffects se = SpriteEffects.None)
         {
             SpriteAction.SpriteClip sc = mo.Clips[i];
             int idx = GetIndex(sc.SpriteNumber, sc.SpriteType);
@@ -88,8 +88,8 @@ namespace FimbulwinterClient.Content
                 (int)h);
 
             sb.Draw(_images[idx], r, null, new Color(mo.Clips[i].Mask.R, mo.Clips[i].Mask.G, mo.Clips[i].Mask.B, mo.Clips[i].Mask.A), 
-                (float)(Math.PI * mo.Clips[i].Angle / 180.0F), default(Vector2), 
-                SpriteEffects.None, 0);
+                (float)(Math.PI * mo.Clips[i].Angle / 180.0F), default(Vector2),
+                se, 0);
         }
     }
 }
