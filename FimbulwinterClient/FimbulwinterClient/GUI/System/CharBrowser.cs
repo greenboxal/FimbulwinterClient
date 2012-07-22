@@ -50,6 +50,12 @@ namespace FimbulwinterClient.GUI.System
                     _bodies[i].SetPalette(pal);
                 }
 
+                if (_chars[i].HairColor != 0)
+                {
+                    ROFormats.Palette pal = ROClient.Singleton.ContentManager.LoadContent<Palette>(string.Format("data\\palette\\{0}\\{0}{1}_{2}_{3}.pal", Statics.Palette_Head, _chars[i].Hair, Statics.Sex[ROClient.Singleton.NetworkState.LoginAccept.Sex], _chars[i].HairColor));
+                    _heads[i].SetPalette(pal);
+                }
+
                 // headgears
                 _accessories[i] = new SpriteAction[4];
                 if (_chars[i].Accessory > 0)

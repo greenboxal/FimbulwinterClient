@@ -27,9 +27,16 @@ namespace FimbulwinterClient.Screens
             
         }
 
+        NewCharWindow newCharWindow;
         void window_OnCreateChar(int obj)
         {
-            ROClient.Singleton.ChangeScreen(new CreateCharScreen());
+            if (ROClient.Singleton.GuiManager.Controls.Contains(newCharWindow))
+            {
+                // bring to front
+                return;
+            }
+            newCharWindow = new NewCharWindow();
+            ROClient.Singleton.GuiManager.Controls.Add(newCharWindow);
         }
 
         public override void Update(SpriteBatch sb, GameTime gameTime)

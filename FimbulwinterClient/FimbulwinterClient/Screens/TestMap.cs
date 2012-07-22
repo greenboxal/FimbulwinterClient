@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.Content;
 using Microsoft.Xna.Framework.Input;
 using Extensions;
+using FimbulwinterClient.GUI;
+using FimbulwinterClient.GUI.Ingame;
 
 namespace FimbulwinterClient.Screens
 {
@@ -40,7 +42,6 @@ namespace FimbulwinterClient.Screens
     {
         VertexBuffer vertexBuffer;
         Dictionary<Texture2D, VertexBuffer> vertexBuffers;
-        Texture2D streetTexture;
 
         Effect effect;
         Matrix viewMatrix;
@@ -55,11 +56,13 @@ namespace FimbulwinterClient.Screens
 
         public TestMap()
         {
+            ROClient.Singleton.GuiManager.Controls.Add(new QuickSlotWindow());
+            ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
+
             Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
             originalMouseState = Mouse.GetState();
 
             effect = ROClient.Singleton.Content.Load<Effect>("Effect2");
-            streetTexture = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\gld2\\gld2_ald_bottom02.bmp");
             SetUpVertices();
         }
 
@@ -123,8 +126,9 @@ namespace FimbulwinterClient.Screens
 
             Dictionary<int, Texture2D> textureCache = new Dictionary<int, Texture2D>();
             Dictionary<Texture2D, List<VertexPositionNormalTexture>> vertices = new Dictionary<Texture2D, List<VertexPositionNormalTexture>>();
+            Dictionary<Texture2D, List<VertexPositionTexture>> vpt = new Dictionary<Texture2D, List<VertexPositionTexture>>();
             List<VertexPositionNormalColor> vertices_notexture = new List<VertexPositionNormalColor>();
-            cameraPosition = new Vector3(6, 6, width * 10);
+            cameraPosition = new Vector3(150, 150, width * 10);
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -165,14 +169,17 @@ namespace FimbulwinterClient.Screens
             }
 
             vertexBuffers = new Dictionary<Texture2D, VertexBuffer>();
+            //vertexBuffers2 = new Dictionary<Texture2D, VertexBuffer>();
             foreach (KeyValuePair<Texture2D, List<VertexPositionNormalTexture>> v in vertices)
             {
                 vertexBuffer = new VertexBuffer(ROClient.Singleton.GraphicsDevice, VertexPositionNormalTexture.VertexDeclaration, v.Value.ToArray().Length, BufferUsage.WriteOnly);
                 vertexBuffer.SetData(v.Value.ToArray());
                 vertexBuffers.Add(v.Key, vertexBuffer);
             }
+
             if (vertices_notexture.Count > 0)
             {
+                vertexBuffer.Dispose();
                 vertexBuffer = new VertexBuffer(ROClient.Singleton.GraphicsDevice, VertexPositionNormalColor.VertexDeclaration, vertices_notexture.ToArray().Length, BufferUsage.WriteOnly);
                 vertexBuffer.SetData(vertices_notexture.ToArray());
             }
@@ -259,7 +266,7 @@ namespace FimbulwinterClient.Screens
             Matrix worldMatrix = Matrix.Identity;
 
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 20000.0f);
-
+            
             effect.Parameters["xWorld"].SetValue(worldMatrix);
             effect.Parameters["xView"].SetValue(viewMatrix);
             effect.Parameters["xProjection"].SetValue(projectionMatrix);
@@ -267,17 +274,13 @@ namespace FimbulwinterClient.Screens
             effect.Parameters["xEnableLighting"].SetValue(true);
             effect.Parameters["xAmbient"].SetValue(0.4f);
             effect.Parameters["xLightDirection"].SetValue(new Vector3(-0.5f, -1, -0.5f));
-
-
-            effect.Parameters["xTexture"].SetValue(streetTexture);
+            
             ROClient.Singleton.GraphicsDevice.SetVertexBuffer(vertexBuffer);
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
             }
             ROClient.Singleton.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, vertexBuffer.VertexCount);
-
-
 
             foreach (KeyValuePair<Texture2D, VertexBuffer> vb in vertexBuffers)
             {

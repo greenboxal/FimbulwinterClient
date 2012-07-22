@@ -12,6 +12,7 @@ using FimbulwinterClient.IO;
 using FimbulwinterClient.Audio;
 using FimbulwinterClient.Lua;
 using Nuclex.Input;
+using Nuclex.Input.Devices;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.Content;
 using FimbulwinterClient.GUI.System;
@@ -49,7 +50,7 @@ namespace FimbulwinterClient
             get { return cfg; }
             set { cfg = value; }
         }
-        
+
         public ROContentManager ContentManager
         {
             get { return (ROContentManager)Content; }
@@ -164,9 +165,19 @@ namespace FimbulwinterClient
         {
             base.Initialize();
 
+            InputManager im = (InputManager)Services.GetService(typeof(InputManager));
+            IKeyboard kb = im.GetKeyboard();
+            kb.KeyReleased += new KeyDelegate(kb_KeyReleased);
+
             GUI.Utils.Init(GraphicsDevice);
-            ChangeScreen(new TestMap());
+            ChangeScreen(new ServiceSelectScreen());
             //ChangeScreen(new IngameScreen());
+        }
+
+        void kb_KeyReleased(Keys key)
+        {
+            if (key == Keys.PrintScreen)
+                MakeScreenshot();
         }
 
         protected override void LoadContent()
@@ -176,7 +187,7 @@ namespace FimbulwinterClient
 
         protected override void UnloadContent()
         {
-            
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -185,6 +196,32 @@ namespace FimbulwinterClient
                 screen.Update(spriteBatch, gameTime);
 
             base.Update(gameTime);
+        }
+
+        private static int _counter;
+        void MakeScreenshot()
+        {
+            int w = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferWidth;
+            int h = ROClient.Singleton.GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+            Draw(new GameTime());
+
+            int[] backBuffer = new int[w * h];
+            ROClient.Singleton.GraphicsDevice.GetBackBufferData(backBuffer);
+
+            //copy into a texture 
+            Texture2D texture = new Texture2D(ROClient.Singleton.GraphicsDevice, w, h, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+            texture.SetData(backBuffer);
+
+            //save to disk 
+            if (!System.IO.Directory.Exists("ScreenShot")) System.IO.Directory.CreateDirectory("ScreenShot");
+            Stream stream = File.OpenWrite(System.IO.Path.Combine("ScreenShot", "screen" + _counter + ".png"));
+
+            texture.SaveAsPng(stream, w, h);
+            stream.Dispose();
+
+            texture.Dispose();
+            _counter++;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -204,171 +241,5 @@ namespace FimbulwinterClient
 
             this.screen = screen;
         }
-
-        /*public void ChangeLoginState(ROLoginState s)
-        {
-            if (state != ROClientState.Login)
-                ChangeState(ROClientState.Login);
-
-            if (s == ROLoginState.ServiceSelect)
-            {
-                ServiceSelectWindow w = new ServiceSelectWindow(cfg);
-                w.ServerSelected += new Action<ServerInfo>(w_ServerSelected);
-                guiManager.Controls.Add(w);
-            }
-            else if (s == ROLoginState.Login)
-            {
-                LoginWindow l = new LoginWindow(cfg);
-                l.GoBack += new Action(l_GoBack);
-                l.DoLogin += new Action<string, string>(l_DoLogin);
-                guiManager.Controls.Add(l);
-            }
-            else if (s == ROLoginState.CharServerSelect)
-            {
-                CharServerSelectWindow c = new CharServerSelectWindow(cfg, acceptedLogin.Servers);
-                c.ServerSelected += new Action<CharServerInfo>(c_ServerSelected);
-                guiManager.Controls.Add(c);
-            }
-            else if (s == ROLoginState.CharSelect)
-            {
-                CharSelectWindow c = new CharSelectWindow();
-                guiManager.Controls.Add(c);
-            }
-            
-            loginState = s;
-        }
-
-        public void ChangeState(ROClientState s)
-        {
-            if (s == ROClientState.Login)
-            {
-                bgmManager.PlayBGM("01");
-            }
-
-            state = s;
-        }
-
-        public void OpenServerWaitDialog()
-        {
-            currentWait = MessageBox.ShowMessage("Please wait...");
-            currentWait.Position = new Vector2(cfg.ScreenWidth / 2 - 140, cfg.ScreenHeight - 140 - 120);
-        }
-
-        public void CloseWaitDlg()
-        {
-            if (currentWait != null)
-            {
-                currentWait.Close();
-                currentWait = null;
-            }
-        }
-
-        void PacketSerializer_InvalidPacket()
-        {
-            MessageBox.ShowOk("Invalid packet received.", backToLogin);
-        }
-
-        void PacketSerializer_PacketReceived(ushort arg1, int arg2, InPacket arg3)
-        {
-            if (state == ROClientState.Login)
-            {
-                if (loginState == ROLoginState.Login)
-                {
-                    if (arg1 == 0x69)
-                    {
-                        acceptedLogin = (LSAcceptLogin)arg3;
-
-                        CloseWaitDlg();
-
-                        ChangeLoginState(ROLoginState.CharServerSelect);
-                    }
-                    else if (arg1 == 0x6a)
-                    {
-                        LSRejectLogin rl = (LSRejectLogin)arg3;
-
-                        MessageBox.ShowOk(rl.Text, backToLogin);
-                    }
-                }
-                else if (loginState == ROLoginState.CharServerSelect)
-                {
-                    if (arg1 == 0x6c)
-                    {
-                        CloseWaitDlg();
-                        MessageBox.ShowOk("Rejected from server.", backToLogin);
-                    }
-                    else if (arg1 == 0x6b)
-                    {
-                        charAccept = (CSAcceptLogin)arg3;
-
-                        CloseWaitDlg();
-
-                        ChangeLoginState(ROLoginState.CharSelect);
-                    }
-                }
-            }
-        }
-
-        void currentConnection_Disconnected()
-        {
-            currentConnection = null;
-            MessageBox.ShowOk("Disconnected from server.", backToLogin);
-        }
-
-        void backToLogin(int res)
-        {
-            CloseWaitDlg();
-
-            ChangeLoginState(ROLoginState.Login);
-        }
-
-        void w_ServerSelected(ServerInfo obj)
-        {
-            selectedSInfo = obj;
-            ChangeLoginState(ROLoginState.Login);
-        }
-
-        void l_GoBack()
-        {
-            ChangeLoginState(ROLoginState.ServiceSelect);
-        }
-
-        void l_DoLogin(string arg1, string arg2)
-        {
-            OpenServerWaitDialog();
-
-            currentConnection = new Connection();
-            currentConnection.Disconnected += new Action(currentConnection_Disconnected);
-            currentConnection.PacketSerializer.PacketReceived += new Action<ushort, int, InPacket>(PacketSerializer_PacketReceived);
-            currentConnection.PacketSerializer.InvalidPacket += new Action(PacketSerializer_InvalidPacket);
-            try
-            {
-                currentConnection.Connect(selectedSInfo.Address, selectedSInfo.Port);
-            }
-            catch
-            {
-                MessageBox.ShowOk("Could not connect to server.", backToLogin);
-                return;
-            }
-
-            currentConnection.SendPacket(new LSPlainTextLogin(arg1, arg2, selectedSInfo.Version, 14));
-        }
-
-        void c_ServerSelected(CharServerInfo csi)
-        {
-            currentConnection.Disconnect(); 
-            try
-            {
-                currentConnection.Connect(csi.IP.ToString(), csi.Port);
-            }
-            catch
-            {
-                MessageBox.ShowOk("Could not connect to server.", backToLogin);
-                return;
-            }
-
-            CSLoginPacket cslp = new CSLoginPacket(acceptedLogin.AccountID, acceptedLogin.LoginID1, acceptedLogin.LoginID2, acceptedLogin.Sex);
-            currentConnection.PacketSerializer.BytesToSkip = 4; // Skip AID
-            currentConnection.SendPacket(cslp);
-        }*/
     }
 }

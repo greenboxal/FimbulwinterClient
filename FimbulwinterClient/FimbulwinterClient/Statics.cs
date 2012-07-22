@@ -15,6 +15,7 @@ namespace FimbulwinterClient
         public static readonly string Monster = "몬스터";
 
         public static readonly string Palette_Body = "몸";
+        public static readonly string Palette_Head = "머리";
 
         public static readonly string Body = "몸통";
         public static readonly string Head = "머리통";
