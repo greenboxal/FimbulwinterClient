@@ -176,7 +176,7 @@
     <Compile Include="IO\ContentLoaders\SpriteActionLoader.cs" />
     <Compile Include="IO\ContentLoaders\SpriteLoader.cs" />
     <Compile Include="IO\ContentLoaders\StreamLoader.cs" />
-    <Compile Include="IO\GRF\Texture2DLoader.cs" />
+    <Compile Include="IO\ContentLoaders\Texture2DLoader.cs" />
     <Compile Include="IO\ROContentManager.cs" />
     <Compile Include="IO\GRF\DES.cs" />
     <Compile Include="IO\GRF\GRFEventArg.cs" />

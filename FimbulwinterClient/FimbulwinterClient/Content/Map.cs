@@ -403,16 +403,16 @@ namespace FimbulwinterClient.Content
                         {
                             Surface t = _surfaces[c.TileUp];
 
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[0], (_height - y) * 10), c.Normal[1], new Vector2(t.U[0], 1 - t.V[0])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), c.Normal[2], new Vector2(t.U[2], 3 - t.V[2])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), c.Normal[3], new Vector2(t.U[1], 1 - t.V[1])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[3], (_height - y) * 10 - 10), c.Normal[4], new Vector2(t.U[3], 1 - t.V[3])));
+                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[0], (_height - y) * 10), c.Normal[1], new Vector2(t.U[0], t.V[0])));
+                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), c.Normal[3], new Vector2(t.U[2], t.V[2])));
+                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), c.Normal[2], new Vector2(t.U[1], t.V[1])));
+                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[3], (_height - y) * 10 - 10), c.Normal[4], new Vector2(t.U[3], t.V[3])));
                         }
                         else
                         {
                             vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.Height[0], (_height - y) * 10), Color.White, c.Normal[1]));
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), Color.White, c.Normal[2]));
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), Color.White, c.Normal[3]));
+                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), Color.White, c.Normal[3]));
+                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), Color.White, c.Normal[2]));
                             vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.Height[3], (_height - y) * 10 - 10), Color.White, c.Normal[4]));
                         }
                     }
