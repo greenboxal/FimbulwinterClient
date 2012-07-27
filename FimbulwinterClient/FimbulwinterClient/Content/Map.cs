@@ -115,16 +115,10 @@ namespace FimbulwinterClient.Content
 
             public class Surface
             {
-                private float[] _u;
-                public float[] U
+                private Vector2[] _texCoord;
+                public Vector2[] TexCoord
                 {
-                    get { return _u; }
-                }
-
-                private float[] _v;
-                public float[] V
-                {
-                    get { return _v; }
+                    get { return _texCoord; }
                 }
 
                 private int _texture;
@@ -153,17 +147,17 @@ namespace FimbulwinterClient.Content
 
                 public void Load(Ground owner, BinaryReader br)
                 {
-                    _u = new float[4];
-                    _u[0] = br.ReadSingle();
-                    _u[1] = br.ReadSingle();
-                    _u[2] = br.ReadSingle();
-                    _u[3] = br.ReadSingle();
+                    _texCoord = new Vector2[4];
 
-                    _v = new float[4];
-                    _v[0] = br.ReadSingle();
-                    _v[1] = br.ReadSingle();
-                    _v[2] = br.ReadSingle();
-                    _v[3] = br.ReadSingle();
+                    _texCoord[0].X = br.ReadSingle();
+                    _texCoord[1].X = br.ReadSingle();
+                    _texCoord[2].X = br.ReadSingle();
+                    _texCoord[3].X = br.ReadSingle();
+
+                    _texCoord[0].Y = br.ReadSingle();
+                    _texCoord[1].Y = br.ReadSingle();
+                    _texCoord[2].Y = br.ReadSingle();
+                    _texCoord[3].Y = br.ReadSingle();
 
                     _texture = br.ReadInt16();
                     _lightmap = br.ReadInt16();
@@ -413,11 +407,11 @@ namespace FimbulwinterClient.Content
                 }
 
                 VertexPositionNormalTexture[] vertexdata = new VertexPositionNormalTexture[objectCount * 4];
-                List<short>[] indexdata = new List<short>[_textures.Length];
+                List<int>[] indexdata = new List<int>[_textures.Length];
 
                 for (int i = 0; i < indexdata.Length; i++)
                 {
-                    indexdata[i] = new List<short>();
+                    indexdata[i] = new List<int>();
                 }
 
                 int cur_surface = 0;
@@ -456,18 +450,18 @@ namespace FimbulwinterClient.Content
                     }
                 }
 
-                _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionNormalTexture), vertexdata.Length, BufferUsage.None);
+                _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionNormalTexture), vertexdata.Length, BufferUsage.WriteOnly);
                 _vertices.SetData(vertexdata);
 
                 _indexes = new IndexBuffer[_textures.Length];
                 for (int i = 0; i < _indexes.Length; i++)
                 {
-                    _indexes[i] = new IndexBuffer(_graphicsDevice, IndexElementSize.SixteenBits, sizeof(short) * indexdata[i].Count, BufferUsage.None);
+                    _indexes[i] = new IndexBuffer(_graphicsDevice, typeof(int), indexdata[i].Count, BufferUsage.WriteOnly);
                     _indexes[i].SetData(indexdata[i].ToArray());
                 }
             }
 
-            private void SetupSurface(VertexPositionNormalTexture[] vertexdata, List<short> indexdata, int surface_id, int current_surface, int x, int y, int type)
+            private void SetupSurface(VertexPositionNormalTexture[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
             {
                 float xoffset = -1.0F * (float)_width * _zoom / 2.0F;
                 float yoffset = -1.0F * (float)_height * _zoom / 2.0F;
@@ -478,13 +472,6 @@ namespace FimbulwinterClient.Content
                 Surface surface = _surfaces[surface_id];
 
                 Vector3[] position = new Vector3[4];
-                Vector3[] normal = new Vector3[4];
-                Vector2[] tex = new Vector2[4];
-
-                tex[0] = new Vector2(surface.U[0], surface.V[0]);
-                tex[1] = new Vector2(surface.U[1], surface.V[1]);
-                tex[2] = new Vector2(surface.U[2], surface.V[2]);
-                tex[3] = new Vector2(surface.U[3], surface.V[3]);
 
                 switch (type)
                 {
@@ -496,10 +483,10 @@ namespace FimbulwinterClient.Content
                             float x1 = (float)(x + 1) * _zoom + xoffset;
                             float y1 = (float)(y + 1) * _zoom + yoffset;
 
-                            position[0] = new Vector3(x0, cell.Height[0], y0);
-                            position[1] = new Vector3(x1, cell.Height[1], y0);
-                            position[2] = new Vector3(x0, cell.Height[2], y1);
-                            position[3] = new Vector3(x1, cell.Height[3], y1);
+                            position[0] = new Vector3(x0, -cell.Height[0], y0);
+                            position[1] = new Vector3(x1, -cell.Height[1], y0);
+                            position[2] = new Vector3(x0, -cell.Height[2], y1);
+                            position[3] = new Vector3(x1, -cell.Height[3], y1);
                         }
                         break;
                     case 1:
@@ -511,55 +498,51 @@ namespace FimbulwinterClient.Content
 
                             float yy = (float)(y + 1) * _zoom + yoffset;
 
-                            position[0] = new Vector3(x0, cell.Height[2], yy);
-                            position[1] = new Vector3(x1, cell.Height[3], yy);
-                            position[2] = new Vector3(x0, cell2.Height[0], yy);
-                            position[3] = new Vector3(x1, cell2.Height[1], yy);
+                            position[0] = new Vector3(x0, -cell.Height[2], yy);
+                            position[1] = new Vector3(x1, -cell.Height[3], yy);
+                            position[2] = new Vector3(x0, -cell2.Height[0], yy);
+                            position[3] = new Vector3(x1, -cell2.Height[1], yy);
                         }
                         break;
                     case 2:
                         {
-                            Cell cell2 = _cells[(y + 1) * _width + x];
+                            Cell cell2 = _cells[y * _width + x + 1];
 
                             float xx = (float)x * _zoom + xoffset;
 
                             float y0 = (float)y * _zoom + yoffset;
                             float y1 = (float)(y + 1) * _zoom + yoffset;
 
-                            position[0] = new Vector3(xx, cell.Height[3], y1);
-                            position[1] = new Vector3(xx, cell.Height[1], y0);
-                            position[2] = new Vector3(xx, cell2.Height[2], y1);
-                            position[3] = new Vector3(xx, cell2.Height[0], y0);
+                            position[0] = new Vector3(xx, -cell.Height[3], y1);
+                            position[1] = new Vector3(xx, -cell.Height[1], y0);
+                            position[2] = new Vector3(xx, -cell2.Height[2], y1);
+                            position[3] = new Vector3(xx, -cell2.Height[0], y0);
                         }
                         break;
                 }
 
-                for (int i = 0; i < 4; i++)
-                    normal[i] = cell.Normal[i + 1];
+                vertexdata[idx + 0] = new VertexPositionNormalTexture(position[0], cell.Normal[1], surface.TexCoord[0]);
+                vertexdata[idx + 1] = new VertexPositionNormalTexture(position[1], cell.Normal[2], surface.TexCoord[1]);
+                vertexdata[idx + 2] = new VertexPositionNormalTexture(position[2], cell.Normal[3], surface.TexCoord[2]);
+                vertexdata[idx + 3] = new VertexPositionNormalTexture(position[3], cell.Normal[4], surface.TexCoord[3]);
 
-                vertexdata[idx + 0] = new VertexPositionNormalTexture(position[0], normal[0], tex[0]);
-                vertexdata[idx + 1] = new VertexPositionNormalTexture(position[1], normal[1], tex[1]);
-                vertexdata[idx + 2] = new VertexPositionNormalTexture(position[2], normal[2], tex[2]);
-                vertexdata[idx + 3] = new VertexPositionNormalTexture(position[3], normal[3], tex[3]);
-
-                indexdata.Add((short)(idx + 0));
-                indexdata.Add((short)(idx + 1));
-                indexdata.Add((short)(idx + 2));
-                indexdata.Add((short)(idx + 2));
-                indexdata.Add((short)(idx + 1));
-                indexdata.Add((short)(idx + 3));
+                indexdata.Add(idx + 0);
+                indexdata.Add(idx + 1);
+                indexdata.Add(idx + 2);
+                indexdata.Add(idx + 2);
+                indexdata.Add(idx + 1);
+                indexdata.Add(idx + 3);
             }
 
             public void Draw(Effect effect)
             {
-                effect.CurrentTechnique = effect.Techniques["Textured"];
-
+                _graphicsDevice.RasterizerState = RasterizerState.CullNone;
                 _graphicsDevice.SetVertexBuffer(_vertices);
 
                 for (int i = 0; i < _textures.Length; i++)
                 {
                     _graphicsDevice.Indices = _indexes[i];
-                    effect.Parameters["xTexture"].SetValue(_textures[i]);
+                    effect.Parameters["Texture"].SetValue(_textures[i]);
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
@@ -603,29 +586,5 @@ namespace FimbulwinterClient.Content
         {
             _ground.Draw(worldEffect);
         }
-    }
-
-    public struct VertexPositionNormalColor
-    {
-        public Vector3 Position;
-        public Color Color;
-        public Vector3 Normal;
-        public Vector2 TexturePosition;
-
-        public VertexPositionNormalColor(Vector3 position, Color color, Vector3 normal)
-        {
-            Position = position;
-            Color = color;
-            Normal = normal;
-            TexturePosition = new Vector2(0.0f, 0.0f);
-        }
-
-        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-             (
-                  new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                  new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-                  new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                  new VertexElement(sizeof(float) * 7, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-             );
     }
 }

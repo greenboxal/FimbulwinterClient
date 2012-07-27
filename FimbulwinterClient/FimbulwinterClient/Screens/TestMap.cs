@@ -16,13 +16,13 @@ namespace FimbulwinterClient.Screens
 {
     class TestMap : IGameScreen
     {
-        Effect effect;
+        BasicEffect effect;
         Matrix viewMatrix;
         Matrix projectionMatrix;
 
         Vector3 cameraPosition = new Vector3(6, 6, 1200);
-        float leftrightRot = MathHelper.PiOver2;
-        float updownRot = -MathHelper.Pi / 10.0f;
+        float leftrightRot;
+        float updownRot;
         const float rotationSpeed = 0.3f;
         const float moveSpeed = 150.0f;
         MouseState originalMouseState;
@@ -37,10 +37,13 @@ namespace FimbulwinterClient.Screens
             //ROClient.Singleton.GuiManager.Controls.Add(new QuickSlotWindow());
             //ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
 
+            leftrightRot = MathHelper.ToRadians(90);
+            updownRot = -MathHelper.Pi / _map.GroundInfo.Zoom;
+
             Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
             originalMouseState = Mouse.GetState();
 
-            effect = ROClient.Singleton.Content.Load<Effect>("Effect2");
+            effect = new BasicEffect(ROClient.Singleton.GraphicsDevice);
         }
 
         public void Draw(SpriteBatch sb, GameTime gameTime)
@@ -54,15 +57,19 @@ namespace FimbulwinterClient.Screens
 
             Matrix worldMatrix = Matrix.Identity;
 
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 20000.0f);
-            
-            effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xView"].SetValue(viewMatrix);
-            effect.Parameters["xProjection"].SetValue(projectionMatrix);
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 5000.0F);
 
-            effect.Parameters["xEnableLighting"].SetValue(true);
-            effect.Parameters["xAmbient"].SetValue(0.4f);
-            effect.Parameters["xLightDirection"].SetValue(new Vector3(-0.5f, -1, -0.5f));
+            effect.World = worldMatrix;
+            effect.View = viewMatrix;
+            effect.Projection = projectionMatrix;
+
+            effect.TextureEnabled = true;
+            effect.LightingEnabled = true;
+
+            effect.AmbientLightColor = new Vector3(0.4F);
+
+            effect.DirectionalLight0.Enabled = true;
+            effect.DirectionalLight0.Direction = new Vector3(-0.5f, -1, -0.5f);
 
             _map.Draw(effect);
         }
