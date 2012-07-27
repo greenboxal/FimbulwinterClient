@@ -16,9 +16,6 @@ namespace FimbulwinterClient.Screens
 {
     class TestMap : IGameScreen
     {
-        VertexBuffer vertexBuffer;
-        Dictionary<Texture2D, VertexBuffer> vertexBuffers;
-
         Effect effect;
         Matrix viewMatrix;
         Matrix projectionMatrix;
@@ -54,8 +51,6 @@ namespace FimbulwinterClient.Screens
             sb.Begin();
             sb.DrawString(sf, string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", cameraPosition.X, cameraPosition.Y, cameraPosition.Y, cameraFinalTarget.X, cameraFinalTarget.Y, cameraFinalTarget.Z), new Vector2(10, 10), Color.White);
             sb.End();
-
-            effect.CurrentTechnique = effect.Techniques["Textured"];
 
             Matrix worldMatrix = Matrix.Identity;
 

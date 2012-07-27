@@ -219,10 +219,16 @@ namespace FimbulwinterClient.Content
                 get { return _cells; }
             }
 
-            private VertexBuffer[] _vertices;
-            public VertexBuffer[] Vertices
+            private VertexBuffer _vertices;
+            public VertexBuffer Vertices
             {
                 get { return _vertices; }
+            }
+
+            private IndexBuffer[] _indexes;
+            public IndexBuffer[] Indexes
+            {
+                get { return _indexes; }
             }
 
             private GraphicsDevice _graphicsDevice;
@@ -384,71 +390,183 @@ namespace FimbulwinterClient.Content
                 }
             }
 
+            private int objectCount;
             private void SetupVertices()
             {
-                List<VertexPositionNormalTexture>[] vertices = new List<VertexPositionNormalTexture>[_textures.Length];
-                List<VertexPositionNormalColor> vertices_notexture = new List<VertexPositionNormalColor>();
-
-                for (int i = 0; i < vertices.Length; i++)
-                    vertices[i] = new List<VertexPositionNormalTexture>();
+                objectCount = 0;
 
                 for (int x = 0; x < _width; x++)
                 {
                     for (int y = 0; y < _height; y++)
                     {
-                        int i = y * _width + x;
-                        Cell c = _cells[i];
+                        int idx = y * _width + x;
 
-                        if (c.TileUp > -1 && c.TileUp < _surfaces.Length)
-                        {
-                            Surface t = _surfaces[c.TileUp];
+                        if (_cells[idx].TileUp != -1)
+                            objectCount++;
 
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[0], (_height - y) * 10), c.Normal[1], new Vector2(t.U[0], t.V[0])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), c.Normal[3], new Vector2(t.U[2], t.V[2])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), c.Normal[2], new Vector2(t.U[1], t.V[1])));
-                            vertices[t.Texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.Height[3], (_height - y) * 10 - 10), c.Normal[4], new Vector2(t.U[3], t.V[3])));
-                        }
-                        else
-                        {
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.Height[0], (_height - y) * 10), Color.White, c.Normal[1]));
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.Height[2], (_height - y) * 10 - 10), Color.White, c.Normal[3]));
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.Height[1], (_height - y) * 10), Color.White, c.Normal[2]));
-                            vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.Height[3], (_height - y) * 10 - 10), Color.White, c.Normal[4]));
-                        }
+                        if (_cells[idx].TileSide != -1)
+                            objectCount++;
+
+                        if (_cells[idx].TileOtherSide != -1)
+                            objectCount++;
                     }
                 }
-                
-                _vertices = new VertexBuffer[_textures.Length + 1];
 
-                _vertices[0] = new VertexBuffer(_graphicsDevice, VertexPositionNormalColor.VertexDeclaration, vertices_notexture.Count, BufferUsage.None);
-                _vertices[0].SetData(vertices_notexture.ToArray());
+                VertexPositionNormalTexture[] vertexdata = new VertexPositionNormalTexture[objectCount * 4];
+                List<short>[] indexdata = new List<short>[_textures.Length];
 
-                for (int i = 0; i < vertices.Length; i++)
+                for (int i = 0; i < indexdata.Length; i++)
                 {
-                    if (vertices[i].Count > 0)
+                    indexdata[i] = new List<short>();
+                }
+
+                int cur_surface = 0;
+                for (int x = 0; x < _width; x++)
+                {
+                    for (int y = 0; y < _height; y++)
                     {
-                        _vertices[i + 1] = new VertexBuffer(_graphicsDevice, VertexPositionNormalTexture.VertexDeclaration, vertices[i].Count, BufferUsage.None);
-                        _vertices[i + 1].SetData(vertices[i].ToArray());
+                        int idx = y * _width + x;
+
+                        if (_cells[idx].TileUp != -1)
+                        {
+                            int tid = _surfaces[_cells[idx].TileUp].Texture;
+
+                            SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 0);
+
+                            cur_surface++;
+                        }
+
+                        if (_cells[idx].TileSide != -1)
+                        {
+                            int tid = _surfaces[_cells[idx].TileSide].Texture;
+
+                            SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 1);
+
+                            cur_surface++;
+                        }
+
+                        if (_cells[idx].TileOtherSide != -1)
+                        {
+                            int tid = _surfaces[_cells[idx].TileOtherSide].Texture;
+
+                            SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 2);
+
+                            cur_surface++;
+                        }
                     }
                 }
+
+                _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionNormalTexture), vertexdata.Length, BufferUsage.None);
+                _vertices.SetData(vertexdata);
+
+                _indexes = new IndexBuffer[_textures.Length];
+                for (int i = 0; i < _indexes.Length; i++)
+                {
+                    _indexes[i] = new IndexBuffer(_graphicsDevice, IndexElementSize.SixteenBits, sizeof(short) * indexdata[i].Count, BufferUsage.None);
+                    _indexes[i].SetData(indexdata[i].ToArray());
+                }
+            }
+
+            private void SetupSurface(VertexPositionNormalTexture[] vertexdata, List<short> indexdata, int surface_id, int current_surface, int x, int y, int type)
+            {
+                float xoffset = -1.0F * (float)_width * _zoom / 2.0F;
+                float yoffset = -1.0F * (float)_height * _zoom / 2.0F;
+
+                int idx = current_surface * 4;
+                int cell_idx = y * _width + x;
+                Cell cell = _cells[cell_idx];
+                Surface surface = _surfaces[surface_id];
+
+                Vector3[] position = new Vector3[4];
+                Vector3[] normal = new Vector3[4];
+                Vector2[] tex = new Vector2[4];
+
+                tex[0] = new Vector2(surface.U[0], surface.V[0]);
+                tex[1] = new Vector2(surface.U[1], surface.V[1]);
+                tex[2] = new Vector2(surface.U[2], surface.V[2]);
+                tex[3] = new Vector2(surface.U[3], surface.V[3]);
+
+                switch (type)
+                {
+                    case 0:
+                        {
+                            float x0 = (float)x * _zoom + xoffset;
+                            float y0 = (float)y * _zoom + yoffset;
+
+                            float x1 = (float)(x + 1) * _zoom + xoffset;
+                            float y1 = (float)(y + 1) * _zoom + yoffset;
+
+                            position[0] = new Vector3(x0, cell.Height[0], y0);
+                            position[1] = new Vector3(x1, cell.Height[1], y0);
+                            position[2] = new Vector3(x0, cell.Height[2], y1);
+                            position[3] = new Vector3(x1, cell.Height[3], y1);
+                        }
+                        break;
+                    case 1:
+                        {
+                            Cell cell2 = _cells[(y + 1) * _width + x];
+
+                            float x0 = (float)x * _zoom + xoffset;
+                            float x1 = (float)(x + 1) * _zoom + xoffset;
+
+                            float yy = (float)(y + 1) * _zoom + yoffset;
+
+                            position[0] = new Vector3(x0, cell.Height[2], yy);
+                            position[1] = new Vector3(x1, cell.Height[3], yy);
+                            position[2] = new Vector3(x0, cell2.Height[0], yy);
+                            position[3] = new Vector3(x1, cell2.Height[1], yy);
+                        }
+                        break;
+                    case 2:
+                        {
+                            Cell cell2 = _cells[(y + 1) * _width + x];
+
+                            float xx = (float)x * _zoom + xoffset;
+
+                            float y0 = (float)y * _zoom + yoffset;
+                            float y1 = (float)(y + 1) * _zoom + yoffset;
+
+                            position[0] = new Vector3(xx, cell.Height[3], y1);
+                            position[1] = new Vector3(xx, cell.Height[1], y0);
+                            position[2] = new Vector3(xx, cell2.Height[2], y1);
+                            position[3] = new Vector3(xx, cell2.Height[0], y0);
+                        }
+                        break;
+                }
+
+                for (int i = 0; i < 4; i++)
+                    normal[i] = cell.Normal[i + 1];
+
+                vertexdata[idx + 0] = new VertexPositionNormalTexture(position[0], normal[0], tex[0]);
+                vertexdata[idx + 1] = new VertexPositionNormalTexture(position[1], normal[1], tex[1]);
+                vertexdata[idx + 2] = new VertexPositionNormalTexture(position[2], normal[2], tex[2]);
+                vertexdata[idx + 3] = new VertexPositionNormalTexture(position[3], normal[3], tex[3]);
+
+                indexdata.Add((short)(idx + 0));
+                indexdata.Add((short)(idx + 1));
+                indexdata.Add((short)(idx + 2));
+                indexdata.Add((short)(idx + 2));
+                indexdata.Add((short)(idx + 1));
+                indexdata.Add((short)(idx + 3));
             }
 
             public void Draw(Effect effect)
             {
-                for (int i = 0; i < _vertices.Length; i++)
+                effect.CurrentTechnique = effect.Techniques["Textured"];
+
+                _graphicsDevice.SetVertexBuffer(_vertices);
+
+                for (int i = 0; i < _textures.Length; i++)
                 {
-                    if (_vertices[i] == null)
-                        continue;
+                    _graphicsDevice.Indices = _indexes[i];
+                    effect.Parameters["xTexture"].SetValue(_textures[i]);
 
-                    if (i > 0)
-                        effect.Parameters["xTexture"].SetValue(_textures[i - 1]);
-
-                    _graphicsDevice.SetVertexBuffer(_vertices[i]);
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
                     }
-                    _graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, _vertices[i].VertexCount);
+
+                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
                 }
             }
         }
