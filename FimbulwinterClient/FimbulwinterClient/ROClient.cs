@@ -170,8 +170,8 @@ namespace FimbulwinterClient
             kb.KeyReleased += new KeyDelegate(kb_KeyReleased);
 
             GUI.Utils.Init(GraphicsDevice);
-            ChangeScreen(new ServiceSelectScreen());
-            //ChangeScreen(new TestMap("prontera.gnd"));
+            //ChangeScreen(new ServiceSelectScreen());
+            ChangeScreen(new TestMap("prontera.gat"));
         }
 
         void kb_KeyReleased(Keys key)

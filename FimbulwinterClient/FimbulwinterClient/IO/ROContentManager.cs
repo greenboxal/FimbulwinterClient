@@ -37,6 +37,7 @@ namespace FimbulwinterClient.IO
             _loaders.Add(typeof(RsmModel), new RsmModelLoader());
             _loaders.Add(typeof(Lub), new LubLoader());
             _loaders.Add(typeof(Palette), new PaletteLoader());
+            _loaders.Add(typeof(Map), new MapLoader());
         }
 
         private Dictionary<string, object> _cache;

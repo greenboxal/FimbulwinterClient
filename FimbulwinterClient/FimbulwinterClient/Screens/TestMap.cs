@@ -8,36 +8,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.Content;
 using Microsoft.Xna.Framework.Input;
-using Extensions;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.GUI.Ingame;
+using System.IO;
 
 namespace FimbulwinterClient.Screens
 {
-    public struct VertexPositionNormalColor
-    {
-        public Vector3 Position;
-        public Color Color;
-        public Vector3 Normal;
-        public Vector2 TexturePosition;
-
-        public VertexPositionNormalColor(Vector3 position, Color color, Vector3 normal)
-        {
-            Position = position;
-            Color = color;
-            Normal = normal;
-            TexturePosition = new Vector2(0.0f, 0.0f);
-        }
-
-        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-             (
-                  new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                  new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-                  new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                  new VertexElement(sizeof(float) * 7, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-             );
-    }
-
     class TestMap : IGameScreen
     {
         VertexBuffer vertexBuffer;
@@ -55,204 +31,19 @@ namespace FimbulwinterClient.Screens
         MouseState originalMouseState;
 
         private string _mapname;
+        Map _map;
 
         public TestMap(string mapname)
         {
             _mapname = mapname;
-            ROClient.Singleton.GuiManager.Controls.Add(new QuickSlotWindow());
-            ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
+            _map = ROClient.Singleton.ContentManager.LoadContent<Map>(Path.Combine("data\\", _mapname));
+            //ROClient.Singleton.GuiManager.Controls.Add(new QuickSlotWindow());
+            //ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
 
             Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
             originalMouseState = Mouse.GetState();
 
             effect = ROClient.Singleton.Content.Load<Effect>("Effect2");
-            SetUpVertices();
-        }
-
-        int version;
-        int width;
-        int height;
-        List<Tuple<String, String>> textures;
-        List<List<Cube>> cubes;
-        List<Tile> tiles;
-        private void SetUpVertices()
-        {
-            System.IO.Stream f = ROClient.Singleton.ContentManager.LoadContent<System.IO.Stream>(System.IO.Path.Combine("data\\", _mapname));
-            using (System.IO.BinaryReader br = new System.IO.BinaryReader(f))
-            {
-                var header = br.ReadBytes(4);
-                version = br.ReadInt16();
-
-                width = br.ReadInt32();
-                height = br.ReadInt32();
-                Single scale = br.ReadSingle();
-                int nTextures = br.ReadInt32();
-                int temp = br.ReadInt32();
-
-                textures = new List<Tuple<String, String>>();
-                for (int i = 0; i < nTextures; i++)
-                {
-                    textures.Add(new Tuple<String, String>(br.ReadCString(40), br.ReadCString(40)));
-
-                }
-
-                int nLightmaps = br.ReadInt32();
-                int lightmapWidth = br.ReadInt32();
-                int lightmapHeight = br.ReadInt32();
-                int gridSizeCell = br.ReadInt32();
-
-                List<Byte[]> lightmaps = new List<Byte[]>();
-                for (int i = 0; i < nLightmaps; i++)
-                    lightmaps.Add(br.ReadBytes(256));
-
-                int nTiles = br.ReadInt32();
-                tiles = new List<Tile>();
-                for (int i = 0; i < nTiles; i++)
-                    tiles.Add(new Tile(br));
-
-
-                cubes = new List<List<Cube>>();
-                int y;
-                int x;
-                for (y = 0; y < height; y++)
-                {
-                    var t = new List<Cube>();
-                    cubes.Add(t);
-                    for (x = 0; x < width; x++)
-                    {
-                        t.Add(new Cube(br));
-                    }
-                }
-
-                calcVertexNormals();
-            }
-
-            Dictionary<int, Texture2D> textureCache = new Dictionary<int, Texture2D>();
-            Dictionary<Texture2D, List<VertexPositionNormalTexture>> vertices = new Dictionary<Texture2D, List<VertexPositionNormalTexture>>();
-            Dictionary<Texture2D, List<VertexPositionTexture>> vpt = new Dictionary<Texture2D, List<VertexPositionTexture>>();
-            List<VertexPositionNormalColor> vertices_notexture = new List<VertexPositionNormalColor>();
-            cameraPosition = new Vector3(150, 150, width * 10);
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Cube c = cubes[y][x];
-
-                    if (c.tileUp > -1 && c.tileUp < (int)tiles.Count())
-                    {
-                        Tile t = tiles[c.tileUp];
-                        if (t.texture >= (int)textures.Count())
-                            t.texture = 0;
-                        if (t.texture < 0)
-                            t.texture = 0;
-
-                        Texture2D texture = textureCache.FirstOrDefault(txt => txt.Key == t.texture).Value;
-                        if (texture == null)
-                        {
-                            texture = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\" + textures[t.texture].Item1.Korean());
-                            textureCache.Add(t.texture, texture);
-                        }
-
-                        if (!vertices.ContainsKey(texture))
-                            vertices.Add(texture, new List<VertexPositionNormalTexture>());
-
-                        vertices[texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.cell1, (height - y) * 10), c.vNormal1, new Vector2(t.u1, 1 - t.v1)));
-                        vertices[texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10, -c.cell3, (height - y) * 10 - 10), c.vNormal2, new Vector2(t.u3, 3 - t.v3)));
-                        vertices[texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.cell2, (height - y) * 10), c.vNormal3, new Vector2(t.u2, 1 - t.v2)));
-                        vertices[texture].Add(new VertexPositionNormalTexture(new Vector3(x * 10 + 10, -c.cell4, (height - y) * 10 - 10), c.vNormal4, new Vector2(t.u4, 1 - t.v4)));
-                    }
-                    else
-                    {
-                        vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.cell1, (height - y) * 10), Color.White, c.vNormal1));
-                        vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10, -c.cell3, (height - y) * 10 - 10), Color.White, c.vNormal2));
-                        vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.cell2, (height - y) * 10), Color.White, c.vNormal3));
-                        vertices_notexture.Add(new VertexPositionNormalColor(new Vector3(x * 10 + 10, -c.cell4, (height - y) * 10 - 10), Color.White, c.vNormal4));
-                    }
-                }
-            }
-
-            vertexBuffers = new Dictionary<Texture2D, VertexBuffer>();
-            //vertexBuffers2 = new Dictionary<Texture2D, VertexBuffer>();
-            foreach (KeyValuePair<Texture2D, List<VertexPositionNormalTexture>> v in vertices)
-            {
-                vertexBuffer = new VertexBuffer(ROClient.Singleton.GraphicsDevice, VertexPositionNormalTexture.VertexDeclaration, v.Value.ToArray().Length, BufferUsage.WriteOnly);
-                vertexBuffer.SetData(v.Value.ToArray());
-                vertexBuffers.Add(v.Key, vertexBuffer);
-            }
-
-            if (vertices_notexture.Count > 0)
-            {
-                vertexBuffer.Dispose();
-                vertexBuffer = new VertexBuffer(ROClient.Singleton.GraphicsDevice, VertexPositionNormalColor.VertexDeclaration, vertices_notexture.ToArray().Length, BufferUsage.WriteOnly);
-                vertexBuffer.SetData(vertices_notexture.ToArray());
-            }
-        }
-
-        private void calcVertexNormals()
-        {
-            int xfrom = 0;
-            int yfrom = 0;
-            int xto = width;
-            int yto = height;
-
-            int x;
-            int y;
-
-            for (y = yfrom; y <= yto - 1; y++)
-            {
-                for (x = xfrom; x <= xto - 1; x++)
-                {
-                    cubes[y][x].calcNormal();
-                }
-            }
-
-            for (y = yfrom; y <= yto - 1; y++)
-            {
-                for (x = xfrom; x <= xto - 1; x++)
-                {
-                    cubes[y][x].vNormal1 = cubes[y][x].normal;
-                    cubes[y][x].vNormal2 = cubes[y][x].normal;
-                    cubes[y][x].vNormal3 = cubes[y][x].normal;
-                    cubes[y][x].vNormal4 = cubes[y][x].normal;
-
-                    if (y > 0)
-                    {
-                        cubes[y][x].vNormal1 += cubes[y - 1][x].normal;
-                        cubes[y][x].vNormal3 += cubes[y - 1][x].normal;
-                        if (x > 0)
-                            cubes[y][x].vNormal1 += cubes[y - 1][x - 1].normal;
-                        if (x < width - 1)
-                            cubes[y][x].vNormal3 += cubes[y - 1][x + 1].normal;
-                    }
-                    if (x > 0)
-                    {
-                        cubes[y][x].vNormal1 += cubes[y][x - 1].normal;
-                        cubes[y][x].vNormal2 += cubes[y][x - 1].normal;
-                        if (y < height - 1)
-                            cubes[y][x].vNormal2 += cubes[y + 1][x - 1].normal;
-                    }
-                    if (y < height - 1)
-                    {
-                        cubes[y][x].vNormal2 += cubes[y + 1][x].normal;
-                        cubes[y][x].vNormal4 += cubes[y + 1][x].normal;
-                        if (x < width - 1)
-                            cubes[y][x].vNormal4 += cubes[y + 1][x + 1].normal;
-                    }
-                    if (x < width - 1)
-                    {
-                        cubes[y][x].vNormal3 += cubes[y][x + 1].normal;
-                        cubes[y][x].vNormal4 += cubes[y][x + 1].normal;
-                    }
-                    cubes[y][x].vNormal1 = cubes[y][x].vNormal1;
-                    cubes[y][x].vNormal2 = cubes[y][x].vNormal2;
-                    cubes[y][x].vNormal3 = cubes[y][x].vNormal3;
-                    cubes[y][x].vNormal4 = cubes[y][x].vNormal4;
-                    cubes[y][x].vNormal1.Normalize();
-                    cubes[y][x].vNormal2.Normalize();
-                    cubes[y][x].vNormal3.Normalize();
-                    cubes[y][x].vNormal4.Normalize();
-                }
-            }
         }
 
         public void Draw(SpriteBatch sb, GameTime gameTime)
@@ -277,24 +68,8 @@ namespace FimbulwinterClient.Screens
             effect.Parameters["xEnableLighting"].SetValue(true);
             effect.Parameters["xAmbient"].SetValue(0.4f);
             effect.Parameters["xLightDirection"].SetValue(new Vector3(-0.5f, -1, -0.5f));
-            
-            ROClient.Singleton.GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-            }
-            ROClient.Singleton.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, vertexBuffer.VertexCount);
-            
-            foreach (KeyValuePair<Texture2D, VertexBuffer> vb in vertexBuffers)
-            {
-                effect.Parameters["xTexture"].SetValue(vb.Key);
-                ROClient.Singleton.GraphicsDevice.SetVertexBuffer(vb.Value);
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                }
-                ROClient.Singleton.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, vb.Value.VertexCount);
-            }
+
+            _map.Draw(effect);
         }
 
         public void Update(SpriteBatch sb, GameTime gameTime)
@@ -340,6 +115,7 @@ namespace FimbulwinterClient.Screens
             cameraPosition += moveSpeed * rotatedVector;
             UpdateViewMatrix();
         }
+
         Vector3 cameraFinalTarget;
         private void UpdateViewMatrix()
         {
