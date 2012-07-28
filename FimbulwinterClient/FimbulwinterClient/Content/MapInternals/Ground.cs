@@ -458,6 +458,7 @@ namespace FimbulwinterClient.Content.MapInternals
             int idx = current_surface * 4;
             int cell_idx = y * _width + x;
             Cell cell = _cells[cell_idx];
+
             Surface surface = _surfaces[surface_id];
 
             Vector3[] position = new Vector3[4];
