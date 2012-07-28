@@ -156,7 +156,8 @@ namespace FimbulwinterClient
             graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
             graphics.ApplyChanges();
 
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.DepthStencilState = new DepthStencilState();
+            GraphicsDevice.RasterizerState = new RasterizerState();
 
             netState = new NetworkState();
         }

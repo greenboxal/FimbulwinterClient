@@ -94,6 +94,9 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Scripting.SSharp">
+      <HintPath>..\..\Deps\Scripting.SSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -123,6 +126,10 @@
     <Compile Include="Config\ServersInfo.cs" />
     <Compile Include="Content\Lub.cs" />
     <Compile Include="Content\Map.cs" />
+    <Compile Include="Content\MapInternals\Altitude.cs" />
+    <Compile Include="Content\MapInternals\Ground.cs" />
+    <Compile Include="Content\MapInternals\VertexPositionTextureNormalLightmap.cs" />
+    <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="Content\Palette.cs" />
     <Compile Include="Content\RsmBone.cs" />
     <Compile Include="Content\RsmMesh.cs" />

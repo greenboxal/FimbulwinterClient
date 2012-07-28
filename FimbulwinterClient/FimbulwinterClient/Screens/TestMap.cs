@@ -38,7 +38,7 @@ namespace FimbulwinterClient.Screens
             //ROClient.Singleton.GuiManager.Controls.Add(new CollectionInfoWindow());
 
             leftrightRot = MathHelper.ToRadians(90);
-            updownRot = -MathHelper.Pi / _map.GroundInfo.Zoom;
+            updownRot = -MathHelper.Pi / _map.Ground.Zoom;
 
             Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
             originalMouseState = Mouse.GetState();
@@ -52,30 +52,25 @@ namespace FimbulwinterClient.Screens
 
             var sf = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
             sb.Begin();
+            //sb.Draw(_map.ShadowLightmap, new Rectangle(0, 0, _map.ShadowLightmap.Width, _map.ShadowLightmap.Height), Color.White);
+            //sb.Draw(_map.ColorLightmap, new Rectangle(0, 0, _map.ColorLightmap.Width, _map.ColorLightmap.Height), Color.White);
             sb.DrawString(sf, string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", cameraPosition.X, cameraPosition.Y, cameraPosition.Y, cameraFinalTarget.X, cameraFinalTarget.Y, cameraFinalTarget.Z), new Vector2(10, 10), Color.White);
             sb.End();
+
+            ROClient.Singleton.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            ROClient.Singleton.GraphicsDevice.BlendState = BlendState.Opaque;
+            ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             Matrix worldMatrix = Matrix.Identity;
 
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 5000.0F);
 
-            effect.World = worldMatrix;
-            effect.View = viewMatrix;
-            effect.Projection = projectionMatrix;
-
-            effect.TextureEnabled = true;
-            effect.LightingEnabled = true;
-
-            effect.AmbientLightColor = new Vector3(0.4F);
-
-            effect.DirectionalLight0.Enabled = true;
-            effect.DirectionalLight0.Direction = new Vector3(-0.5f, -1, -0.5f);
-
-            _map.Draw(effect);
+            _map.Draw(gameTime, viewMatrix, projectionMatrix, worldMatrix);
         }
 
         public void Update(SpriteBatch sb, GameTime gameTime)
         {
+            _map.Update(gameTime);
             float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
             ProcessInput(timeDifference);
         }
