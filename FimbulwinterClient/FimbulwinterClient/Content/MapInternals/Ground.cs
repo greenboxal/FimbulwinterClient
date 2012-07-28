@@ -405,7 +405,7 @@ namespace FimbulwinterClient.Content.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 1);
+                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileSide, cur_surface, x, y, 1);
 
                         cur_surface++;
                     }
@@ -414,7 +414,7 @@ namespace FimbulwinterClient.Content.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileOtherSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 2);
+                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileOtherSide, cur_surface, x, y, 2);
 
                         cur_surface++;
                     }
@@ -440,6 +440,7 @@ namespace FimbulwinterClient.Content.MapInternals
             int idx = current_surface * 4;
             int cell_idx = y * _width + x;
             Cell cell = _cells[cell_idx];
+
             Surface surface = _surfaces[surface_id];
 
             Vector3[] position = new Vector3[4];
