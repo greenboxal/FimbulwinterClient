@@ -17,12 +17,6 @@ namespace FimbulwinterClient.Content
             get { return meshes; }
         }
 
-        private RsmBone[] bones;
-        public RsmBone[] Bones
-        {
-            get { return bones; }
-        }
-
         private RsmMesh root;
         public RsmMesh Root
         {
@@ -48,13 +42,6 @@ namespace FimbulwinterClient.Content
             set { textures = value; }
         }
 
-        private Matrix world;
-        public Matrix World
-        {
-            get { return world; }
-            set { world = value; }
-        }
-
         private int frame;
         public int Frame
         {
@@ -77,39 +64,44 @@ namespace FimbulwinterClient.Content
 
             textures = new Texture2D[mdl.Textures.Length];
             for (int i = 0; i < mdl.Textures.Length; i++)
-                textures[i] = contentManager.LoadContent<Texture2D>("data\\texture\\" + mdl.Textures[i].Name);
-
-            meshes = new RsmMesh[mdl.Nodes.Length];
-            bones = new RsmBone[mdl.Nodes.Length];
-            for (int i = 0; i < meshes.Length; i++)
             {
-                bones[i] = new RsmBone(i, mdl.Nodes[i]);
-                meshes[i] = new RsmMesh(graphicsDevice, bones[i], mdl, mdl.Nodes[i], textures);
+                string fn = mdl.Textures[i].Name;
+
+                Map.OnReportStatus("Loading texture {0}...", fn);
+
+                textures[i] = contentManager.LoadContent<Texture2D>("data\\texture\\" + fn.Korean());
             }
 
-            for (int i = 0; i < bones.Length; i++)
+            meshes = new RsmMesh[mdl.Nodes.Length];
+            for (int i = 0; i < meshes.Length; i++)
             {
-                List<RsmBone> childs = new List<RsmBone>();
+                meshes[i] = new RsmMesh(graphicsDevice, mdl, mdl.Nodes[i], textures);
+            }
 
-                for (int n = 0; n < bones.Length; n++)
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                List<RsmMesh> childs = new List<RsmMesh>();
+
+                for (int n = 0; n < meshes.Length; n++)
                 {
-                    if (mdl.Nodes[n].ParentName == bones[i].Name)
+                    if (mdl.Nodes[n].ParentName == meshes[i].Name)
                     {
-                        bones[n].Parent = bones[i];
-                        childs.Add(bones[n]);
+                        meshes[n].Parent = meshes[i];
+                        childs.Add(meshes[n]);
                     }
                 }
 
-                bones[i].Children = childs.ToArray();
+                meshes[i].Children = childs.ToArray();
             }
 
-            for (int i = 0; i < bones.Length; i++)
+            for (int i = 0; i < meshes.Length; i++)
             {
-                if (bones[i].Parent == null)
-                    bones[i].Parent = bones[i];
+                if (meshes[i].Parent == null)
+                    meshes[i].Parent = meshes[i];
             }
 
             root = GetMesh(mdl.MainNode);
+            root.Parent = null;
 
             return true;
         }
@@ -121,14 +113,6 @@ namespace FimbulwinterClient.Content
                     return m;
 
             return null;
-        }
-
-        public void CopyAbsoluteBoneTransformsTo(Matrix[] transforms)
-        {
-            for (int i = 0; i < bones.Length; i++)
-            {
-                transforms[i] = GetMeshTransform(i);
-            }
         }
 
         public Matrix GetMeshTransform(int id)
@@ -201,31 +185,7 @@ namespace FimbulwinterClient.Content
                 m *= Matrix.CreateTranslation(mesh.OffsetMT[9], mesh.OffsetMT[10], mesh.OffsetMT[11]);
             }
 
-            return m * mesh.Bone.Transform;
+            return m;// *mesh.Bone.Transform;
         }
-
-        public void Draw(Vector3 pos)
-        {
-            Matrix m = Matrix.CreateTranslation(pos.X, -pos.Y, pos.Z);
-
-            DrawMesh(root.Bone.Index, world * m);
-        }
-
-        private void DrawMesh(int id, Matrix parentMatrix)
-        {
-            RsmMesh mesh = meshes[id];
-            Matrix trans = GetMeshTransform(id) * parentMatrix;
-
-            foreach(BasicEffect eff in mesh.Effects)
-            {
-                eff.World = trans;
-            }
-
-            mesh.Draw();
-
-            foreach (RsmBone b in mesh.Bone.Children)
-                DrawMesh(b.Index, world);
-        }
-
     }
 }

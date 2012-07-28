@@ -23,13 +23,6 @@ namespace FimbulwinterClient.Content
             get { return name; }
         }
 
-        private RsmBone bone;
-        public RsmBone Bone
-        {
-            get { return bone; }
-            set { bone = value; }
-        }
-
         private RsmMeshPart[] meshParts;
         public RsmMeshPart[] MeshParts
         {
@@ -108,7 +101,27 @@ namespace FimbulwinterClient.Content
             get { return offsetMT; }
         }
 
-        public RsmMesh(GraphicsDevice gd, RsmBone self, ROFormats.Model mdl, ROFormats.Model.Node node, Texture2D[] textures)
+        private Matrix offsetMatrix;
+        public Matrix OffsetMatrix
+        {
+            get { return offsetMatrix; }
+        }
+
+        private RsmMesh parent;
+        public RsmMesh Parent
+        {
+            get { return parent; }
+            set { parent = value; }
+        }
+
+        private RsmMesh[] children;
+        public RsmMesh[] Children
+        {
+            get { return children; }
+            set { children = value; }
+        }
+
+        public RsmMesh(GraphicsDevice gd, ROFormats.Model mdl, ROFormats.Model.Node node, Texture2D[] textures)
         {
             VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[node.Faces.Length * 3];
             List<short>[] indices = new List<short>[node.Textures.Length];
@@ -118,7 +131,6 @@ namespace FimbulwinterClient.Content
             effects = new Effect[node.Textures.Length];
             boundingBox = node.GetBoundingBox();
             name = node.Name;
-            bone = self;
 
             isOnly = node.IsOnly;
             isMain = node.IsMain;
@@ -158,7 +170,7 @@ namespace FimbulwinterClient.Content
                 {
                     triangle[n] = new Vector3(
                                     node.Vertices[node.Faces[i].VertexID[n]].X,
-                                    node.Vertices[node.Faces[i].VertexID[n]].Y,
+                                    -node.Vertices[node.Faces[i].VertexID[n]].Y,
                                     node.Vertices[node.Faces[i].VertexID[n]].Z
                                 );
                 }
@@ -190,7 +202,13 @@ namespace FimbulwinterClient.Content
 
             rotationFrames = new Tuple<Quaternion, int>[node.RotKeyFrames.Length];
             for (int i = 0; i < rotationFrames.Length; i++)
-                rotationFrames[i] = new Tuple<Quaternion, int>(new Quaternion(node.RotKeyFrames[i].QX, node.RotKeyFrames[i].QY, node.RotKeyFrames[i].QZ, node.RotKeyFrames[i].QW), node.RotKeyFrames[i].Frame);
+                rotationFrames[i] = new Tuple<Quaternion, int>(Quaternion.Normalize(new Quaternion(node.RotKeyFrames[i].QX, node.RotKeyFrames[i].QY, node.RotKeyFrames[i].QZ, node.RotKeyFrames[i].QW)), node.RotKeyFrames[i].Frame);
+            
+            offsetMatrix = new Matrix(
+                node.OffsetMT[0], node.OffsetMT[1], node.OffsetMT[2], 0.0F,
+                node.OffsetMT[3], node.OffsetMT[4], node.OffsetMT[5], 0.0F,
+                node.OffsetMT[6], node.OffsetMT[7], node.OffsetMT[8], 0.0F,
+                0.0F, 0.0F, 0.0F, 1.0F);
         }
 
         public void Draw()
@@ -207,6 +225,100 @@ namespace FimbulwinterClient.Content
                 graphicsDevice.Indices = meshParts[i].IndexBuffer;
                 graphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, meshParts[i].IndexBuffer.IndexCount / 3);
             }
+        }
+
+        private bool _localCacheOn;
+        private Matrix _localCache;
+        public Matrix GetLocalMatrix()
+        {
+            if (_localCacheOn)
+                return _localCache;
+
+            _localCache = Matrix.Identity;
+
+            //if (isMain && children.Length == 0)
+            //    _localCache *=
+
+            if (!isMain || children.Length > 0)
+                _localCache *= Matrix.CreateTranslation(translation);
+
+            _localCache *= offsetMatrix;
+            _localCacheOn = true;
+
+            return _localCache;
+        }
+
+        private bool _globalCacheOn;
+        private Matrix _globalCache;
+        public Matrix GetGlobalMatrix(bool animated)
+        {
+            if (_globalCacheOn)
+                return _globalCache;
+
+            Matrix m = Matrix.Identity;
+
+            if (isMain)
+            {
+                if (isOnly)
+                {
+                    m *= Matrix.CreateTranslation(0.0F, -boundingBox.Max[1] + boundingBox.Offset[1], 0.0F);
+                }
+                else
+                {
+                    m *= Matrix.CreateTranslation(-boundingBox.Offset[0], -boundingBox.Max[1], -boundingBox.Offset[2]);
+                }
+            }
+            else
+            {
+                m *= Matrix.CreateTranslation(translation);
+            }
+
+            if (rotationFrames.Length == 0)
+            {
+                m *= Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(rotationAxis, rotationAngle));
+            }
+            else
+            {
+                m *= Matrix.CreateFromQuaternion(rotationFrames[0].Item1);
+                /*int current = 0;
+                int next = 0;
+                float t = 0;
+                Quaternion q;
+
+                for (int i = 0; i < rotationFrames.Length; i++)
+                {
+                    if (frame < mesh.RotationFrames[i].Item2)
+                    {
+                        current = i - 1;
+                        break;
+                    }
+                }
+
+                next = current + 1;
+
+                if (next == mesh.RotationFrames.Length)
+                    next = 0;
+
+                t = (frame - mesh.RotationFrames[current].Item2) / (float)(mesh.RotationFrames[next].Item2 - mesh.RotationFrames[current].Item2);
+
+                q = Quaternion.Lerp(mesh.RotationFrames[current].Item1, mesh.RotationFrames[next].Item1, t);
+                q.Normalize();
+
+                m *= Matrix.CreateFromQuaternion(q);
+
+                frame += mesh.RotationFrames[mesh.RotationFrames.Length - 1].Item2 / 100;
+                if (frame >= mesh.RotationFrames[mesh.RotationFrames.Length - 1].Item2)
+                    frame = 0;*/
+            }
+
+            m *= Matrix.CreateScale(scale);
+
+            _globalCache = m;
+
+            if (rotationFrames.Length == 0)
+                _globalCacheOn = true;
+
+            return _globalCache;
         }
     }
 }

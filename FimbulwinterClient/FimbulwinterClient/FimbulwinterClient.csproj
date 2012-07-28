@@ -46,6 +46,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>false</XnaCompressContent>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -131,7 +132,6 @@
     <Compile Include="Content\MapInternals\VertexPositionTextureNormalLightmap.cs" />
     <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="Content\Palette.cs" />
-    <Compile Include="Content\RsmBone.cs" />
     <Compile Include="Content\RsmMesh.cs" />
     <Compile Include="Content\RsmMeshPart.cs" />
     <Compile Include="Content\RsmModel.cs" />
@@ -351,14 +351,13 @@
     <Compile Include="ROClient.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Screens\IngameScreen.cs" />
-    <Compile Include="Screens\TestMap.cs" />
+    <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="RODirection.cs" />
     <Compile Include="Screens\BaseLoginScreen.cs" />
     <Compile Include="Screens\LoginScreen.cs" />
     <Compile Include="Screens\CharServerSelectScreen.cs" />
     <Compile Include="Screens\ServiceSelectScreen.cs" />
-    <Compile Include="Screens\TestScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

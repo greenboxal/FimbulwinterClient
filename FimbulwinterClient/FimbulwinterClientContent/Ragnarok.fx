@@ -52,6 +52,7 @@ struct MapGroundInput
 	float3	Normal		: NORMAL0;
 	float2	Texture		: TEXCOORD0;
 	float2	Lightmap	: TEXCOORD1;
+	float4  Color		: COLOR0;
 };
 
 struct MapGroundOutput
@@ -61,6 +62,7 @@ struct MapGroundOutput
 	float2	Texture		: TEXCOORD0;
 	float2	Lightmap	: TEXCOORD1;
 	float4  PositionOrig: TEXCOORD2;
+	float4  Color		: COLOR0;
 };
 
 MapGroundOutput MapGroundVS(MapGroundInput Input)
@@ -76,6 +78,7 @@ MapGroundOutput MapGroundVS(MapGroundInput Input)
 	Output.Texture			= Input.Texture;
 	Output.Lightmap			= Input.Lightmap;
 	Output.PositionOrig		= Input.Position;
+	Output.Color			= Input.Color;
 
     return Output;
 }
@@ -89,7 +92,7 @@ float4 MapGroundPS(MapGroundOutput Input) : COLOR0
 	totalLightDiffuse.rgb += DiffuseColor * max(0, dot(Input.Normal, lightDir));
 	totalLightDiffuse.a = 1.0F;
 
-	color = tex2D(TextureSampler, Input.Texture);
+	color = tex2D(TextureSampler, Input.Texture) * Input.Color;
 	color.rgb *= tex2D(ShadowSampler, Input.Lightmap).a;
 	color.rgb += tex2D(ColorSampler, Input.Lightmap).rgb;
 	

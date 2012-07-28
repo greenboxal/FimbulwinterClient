@@ -82,6 +82,8 @@ namespace FimbulwinterClient.Content.MapInternals
                 _cells[i] = c;
             }
 
+            Map.OnReportStatus("Altitude v{0}.{1} status: {2}x{3} - {4} cells", majorVersion, minorVersion, _width, _height, _cells.Length);
+
             return true;
         }
     }

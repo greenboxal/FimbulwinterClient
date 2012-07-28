@@ -18,10 +18,10 @@ namespace FimbulwinterClient.IO.ContentLoaders
 
                 Bitmap bmp = (Bitmap)Bitmap.FromStream(s);
                 bmp.MakeTransparent(Color.Fuchsia);
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
 
                 s.Close();
-
+                ms.Position = 0;
                 return Texture2D.FromStream(rcm.Game.GraphicsDevice, ms);
             }
             else

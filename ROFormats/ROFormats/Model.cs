@@ -425,7 +425,7 @@ namespace ROFormats
             {
                 Texture tex = new Texture();
 
-                tex.Name = br.ReadCString(40).Korean();
+                tex.Name = br.ReadCString(40);
 
                 textures[i] = tex;
             }

@@ -156,9 +156,6 @@ namespace FimbulwinterClient
             graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
             graphics.ApplyChanges();
 
-            GraphicsDevice.DepthStencilState = new DepthStencilState();
-            GraphicsDevice.RasterizerState = new RasterizerState();
-
             netState = new NetworkState();
         }
 
@@ -172,13 +169,8 @@ namespace FimbulwinterClient
 
             GUI.Utils.Init(GraphicsDevice);
             //ChangeScreen(new ServiceSelectScreen());
-            ChangeScreen(new TestMap("prontera.gat"));
-        }
-
-        void kb_KeyReleased(Keys key)
-        {
-            if (key == Keys.PrintScreen)
-                MakeScreenshot();
+            //ChangeScreen(new LoadingScreen("prontera.gat"));
+            StartMapChange("prontera");
         }
 
         protected override void LoadContent()
@@ -197,6 +189,24 @@ namespace FimbulwinterClient
                 screen.Update(spriteBatch, gameTime);
 
             base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.Black);
+
+            if (screen != null)
+                screen.Draw(spriteBatch, gameTime);
+
+            base.Draw(gameTime);
+        }
+
+        public void ChangeScreen(IGameScreen screen)
+        {
+            if (this.screen != null)
+                this.screen.Dispose();
+
+            this.screen = screen;
         }
 
         private static int _counter;
@@ -225,22 +235,24 @@ namespace FimbulwinterClient
             _counter++;
         }
 
-        protected override void Draw(GameTime gameTime)
+        void kb_KeyReleased(Keys key)
         {
-            GraphicsDevice.Clear(Color.Black);
-
-            if (screen != null)
-                screen.Draw(spriteBatch, gameTime);
-
-            base.Draw(gameTime);
+            if (key == Keys.PrintScreen)
+                MakeScreenshot();
         }
 
-        public void ChangeScreen(IGameScreen screen)
+        public void StartMapChange(string p)
         {
-            if (this.screen != null)
-                this.screen.Dispose();
+            LoadingScreen ls = new LoadingScreen(p);
 
-            this.screen = screen;
+            ls.Loaded += ls_Loaded;
+
+            ChangeScreen(ls);
+        }
+
+        private void ls_Loaded(Map obj)
+        {
+            ChangeScreen(new IngameScreen(obj));
         }
     }
 }

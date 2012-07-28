@@ -71,7 +71,7 @@ namespace FimbulwinterClient.Screens
         void packetLoginAccepted(ushort cmd, int size, ZC_Accept_Enter2 pkt)
         {
             CloseWait();
-            ROClient.Singleton.ChangeScreen(new TestMap(_mapname));
+            ROClient.Singleton.StartMapChange(_mapname.Replace(".gat", ""));
         }
 
         NewCharWindow newCharWindow;

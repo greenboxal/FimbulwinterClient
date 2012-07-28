@@ -11,6 +11,25 @@ namespace FimbulwinterClient.Content
 {
     public class Map
     {
+        public static event Action<string> ReportStatus;
+        public static event Action<int> ReportProgress;
+        public static int TabLevel { get; set; }
+
+        public static void OnReportStatus(string s, params object[] args)
+        {
+            for (int i = 0; i < TabLevel; i++)
+                s = "    " + s;
+
+            if (ReportStatus != null)
+                ReportStatus(string.Format(s, args));
+        }
+
+        public static void OnReportProgress(int progress)
+        {
+            if (ReportProgress != null)
+                ReportProgress(progress);
+        }
+
         private Ground _ground;
         public Ground Ground
         {
@@ -64,27 +83,43 @@ namespace FimbulwinterClient.Content
 
         public bool Load(Stream gat, Stream gnd, Stream rsw)
         {
-            _ground = new Ground(_graphicsDevice);
+            OnReportProgress(0);
 
-            if (!_ground.Load(gnd))
-                return false;
-
+            OnReportProgress(5);
+            OnReportStatus("Loading altitude...");
             _altitude = new Altitude();
             if (!_altitude.Load(gat))
                 return false;
 
+            OnReportProgress(10);
+            OnReportStatus("Loading ground...");
+            _ground = new Ground(_graphicsDevice);
+            if (!_ground.Load(gnd))
+                return false;
+
+            OnReportProgress(30);
+            OnReportStatus("Loading world...");
             _world = new World(_graphicsDevice);
             if (!_world.Load(rsw, this))
                 return false;
 
+            OnReportProgress(90);
+            OnReportStatus("Building lightmaps...");
+            BuildLightmaps();
+
+            OnReportProgress(99);
+
+            _effect.Parameters["ShadowLightmap"].SetValue(_shadowLightmap);
+            _effect.Parameters["ColorLightmap"].SetValue(_colorLightmap);
+
             _effect.Parameters["AmbientColor"].SetValue(_world.LightInfo.Ambient);
             _effect.Parameters["DiffuseColor"].SetValue(_world.LightInfo.Diffuse);
-            
+
             // FIXME: Where I put the light? O_O
             //_effect.Parameters["LightPosition"].SetValue(_world.LightInfo.Position);
             _effect.Parameters["LightPosition"].SetValue(new Vector3(-1000, 2000, -1000));
 
-            BuildLightmaps();
+            OnReportProgress(100);
 
             return true;
         }
@@ -95,7 +130,7 @@ namespace FimbulwinterClient.Content
             int h = (int)Math.Ceiling((float)_ground.Lightmaps.Length / w);
 
             byte[] shadow = new byte[7 * 7 * w * h];
-            byte[] color = new byte[7 * 7 * w * h * 4];
+            Color[] color = new Color[7 * 7 * w * h];
 
             int x = 0, y = 0;
             for (int i = 0; i < _ground.Lightmaps.Length; i++)
@@ -108,10 +143,7 @@ namespace FimbulwinterClient.Content
 
                     for (int n = 0; n < 7; n++)
                     {
-                        color[offset * 4 + n * 4 + 0] = _ground.Lightmaps[i].Intensity[j * 8 + n * 3 + 0];
-                        color[offset * 4 + n * 4 + 1] = _ground.Lightmaps[i].Intensity[j * 8 + n * 3 + 1];
-                        color[offset * 4 + n * 4 + 2] = _ground.Lightmaps[i].Intensity[j * 8 + n * 3 + 2];
-                        color[offset * 4 + n * 4 + 3] = 255;
+                        color[offset + n] = _ground.Lightmaps[i].Intensity[j * 8 + n];
                     }
                 }
 
@@ -125,16 +157,15 @@ namespace FimbulwinterClient.Content
 
             _shadowLightmap = new Texture2D(_graphicsDevice, w * 7, h * 7, false, SurfaceFormat.Alpha8);
             _shadowLightmap.SetData(shadow);
-            _effect.Parameters["ShadowLightmap"].SetValue(_shadowLightmap);
 
             _colorLightmap = new Texture2D(_graphicsDevice, w * 7, h * 7, false, SurfaceFormat.Color);
             _colorLightmap.SetData(color);
-            _effect.Parameters["ColorLightmap"].SetValue(_colorLightmap);
         }
 
         public void Update(GameTime gametime)
         {
-            _world.Update(gametime);
+            _world.UpdateWater(gametime);
+            _world.UpdateModels(gametime);
         }
 
         public void Draw(GameTime gametime, Matrix view, Matrix projection, Matrix world)
@@ -147,7 +178,9 @@ namespace FimbulwinterClient.Content
             _ground.Draw(_effect);
 
             _effect.CurrentTechnique = _effect.Techniques["Water"];
-            _world.Draw(_effect);
+            _world.DrawWater(_effect);
+
+            _world.DrawModels(view, projection, world);
         }
     }
 }

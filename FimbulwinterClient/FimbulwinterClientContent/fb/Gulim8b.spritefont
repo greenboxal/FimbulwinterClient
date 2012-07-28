@@ -83,7 +83,7 @@ with.
       <!-- and/or the standard Latin set... -->
       <CharacterRegion>
         <Start>&#32;</Start>
-        <End>&#126;</End>
+        <End>&#255;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

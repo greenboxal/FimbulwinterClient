@@ -18,8 +18,8 @@ namespace FimbulwinterClient.Content.MapInternals
                 get { return _brightness; }
             }
 
-            private byte[] _intensity;
-            public byte[] Intensity
+            private Color[] _intensity;
+            public Color[] Intensity
             {
                 get { return _intensity; }
             }
@@ -27,7 +27,16 @@ namespace FimbulwinterClient.Content.MapInternals
             public void Load(BinaryReader br)
             {
                 _brightness = br.ReadBytes(8 * 8);
-                _intensity = br.ReadBytes(8 * 8 * 3);
+
+                _intensity = new Color[8 * 8];
+                for (int i = 0; i < _intensity.Length; i++)
+                {
+                    byte r = br.ReadByte();
+                    byte g = br.ReadByte();
+                    byte b = br.ReadByte();
+
+                    _intensity[i] = new Color(r, g, b, 255);
+                }
             }
         }
 
@@ -233,7 +242,11 @@ namespace FimbulwinterClient.Content.MapInternals
             len = br.ReadInt32();
             for (int i = 0; i < _textures.Length; i++)
             {
-                _textures[i] = ROClient.Singleton.ContentManager.LoadContent<Texture2D>(Path.Combine("data\\texture\\", br.ReadCString(len).Korean()));
+                string fn = br.ReadCString(len);
+
+                Map.OnReportStatus("Loading {0}...", fn);
+
+                _textures[i] = ROClient.Singleton.ContentManager.LoadContent<Texture2D>(Path.Combine("data\\texture\\", fn.Korean()));
             }
 
             _lightmaps = new Lightmap[br.ReadInt32()];
@@ -271,8 +284,13 @@ namespace FimbulwinterClient.Content.MapInternals
                 _cells[i] = c;
             }
 
+            Map.OnReportStatus("Calculating normals...");
             CalculateNormals();
+
+            Map.OnReportStatus("Creating ground vertex buffer...");
             SetupVertices();
+
+            Map.OnReportStatus("Ground v{0}.{1} status: {2} textures - {3} lightmaps - {4} surfaces - {5} cells - {6} vertices", majorVersion, minorVersion, _textures.Length, _lightmaps.Length, _surfaces.Length, _cells.Length, _vertices.VertexCount);
 
             return true;
         }
@@ -405,7 +423,7 @@ namespace FimbulwinterClient.Content.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 1);
+                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileSide, cur_surface, x, y, 1);
 
                         cur_surface++;
                     }
@@ -414,7 +432,7 @@ namespace FimbulwinterClient.Content.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileOtherSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 2);
+                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileOtherSide, cur_surface, x, y, 2);
 
                         cur_surface++;
                     }
@@ -504,10 +522,10 @@ namespace FimbulwinterClient.Content.MapInternals
             lightmapV[0] = (float)(0.1f + lm_y) / lm_h;
             lightmapV[1] = (float)(0.9f + lm_y) / lm_h;
 
-            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], cell.Normal[1], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]));
-            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], cell.Normal[2], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]));
-            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], cell.Normal[3], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]));
-            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], cell.Normal[4], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]));
+            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], cell.Normal[1], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
+            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], cell.Normal[2], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
+            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], cell.Normal[3], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
+            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], cell.Normal[4], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
 
             indexdata.Add(idx + 0);
             indexdata.Add(idx + 1);
