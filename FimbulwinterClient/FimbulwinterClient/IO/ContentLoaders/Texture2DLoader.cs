@@ -14,15 +14,33 @@ namespace FimbulwinterClient.IO.ContentLoaders
         {
             if (fn.EndsWith(".bmp"))
             {
-                MemoryStream ms = new MemoryStream();
-
                 Bitmap bmp = (Bitmap)Bitmap.FromStream(s);
-                bmp.MakeTransparent(Color.Fuchsia);
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                int[] argbData = new int[bmp.Width * bmp.Height];
+                Texture2D texture = new Texture2D(rcm.Game.GraphicsDevice, bmp.Width, bmp.Height);
 
-                s.Close();
-                ms.Position = 0;
-                return Texture2D.FromStream(rcm.Game.GraphicsDevice, ms);
+                unsafe
+                {
+                    // lock bitmap
+                    System.Drawing.Imaging.BitmapData bmpData =  bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+
+                    uint* bgraData = (uint*)bmpData.Scan0;
+
+                    for (int i = 0; i < argbData.Length; i++)
+                    {
+                        if (bgraData[i] == 0x00FF00FF)
+                            argbData[i] = 0xFF;
+                        else
+                            argbData[i] = (int)((bgraData[i] & 0x000000ff) << 16 | (bgraData[i] & 0x0000FF00) | (bgraData[i] & 0x00FF0000) >> 16 /* | (bgraData[i] & 0xFF000000) */);
+                    }
+
+                    bgraData = null;
+
+                    bmp.UnlockBits(bmpData);
+                }
+
+                texture.SetData(argbData);
+
+                return texture;
             }
             else
             {

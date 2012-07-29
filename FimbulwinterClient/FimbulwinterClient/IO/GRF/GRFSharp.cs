@@ -453,10 +453,11 @@ namespace GRFSharp
         {
             int i = 0;
             byte[] data = File.ReadAllBytes(inputFilePath);
+            outputFilePath = outputFilePath.ToLower();
 
             foreach (GRFFile file in _GRFFiles)
             {
-                if (file.Name.ToLower() == outputFilePath.ToLower())
+                if (file.Name == outputFilePath)
                 {
                     _GRFFiles[i].UncompressedBody = data;
                     return;
@@ -478,9 +479,10 @@ namespace GRFSharp
         /// <param name="filename">The file name to delete.</param>
         public void DeleteFile(string filename)
         {
+            filename = filename.ToLower();
             foreach (GRFFile file in _GRFFiles)
             {
-                if (file.Name.ToLower() == filename.ToLower())
+                if (file.Name == filename)
                 {
                     _GRFFiles.Remove(file);
                     _fileCount--;
@@ -508,7 +510,8 @@ namespace GRFSharp
 
         public GRFFile GetFile(string asset)
         {
-            return _GRFFiles.FirstOrDefault(x => string.Equals(asset, x.Name, StringComparison.CurrentCultureIgnoreCase));
+            asset = asset.ToLower();
+            return _GRFFiles.FirstOrDefault(x => string.Equals(asset, x.Name, StringComparison.CurrentCulture));
         }
     }
 }

@@ -47,7 +47,7 @@ namespace GRFSharp
             int cycle,
             GRF ownerGRF) // Constructor
         {
-            _filename = fileName;
+            _filename = fileName.ToLower();
             _compressedLength = compressedLength;
             _comressedLengthAligned = compressedLengthAligned;
             _uncompressedLength = uncompressedLength;
