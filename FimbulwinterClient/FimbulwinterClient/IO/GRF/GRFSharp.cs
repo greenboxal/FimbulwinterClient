@@ -508,7 +508,7 @@ namespace GRFSharp
 
         public GRFFile GetFile(string asset)
         {
-            return _GRFFiles.FirstOrDefault(x => string.Equals(asset, x.Name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            return _GRFFiles.FirstOrDefault(x => string.Equals(asset, x.Name, StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

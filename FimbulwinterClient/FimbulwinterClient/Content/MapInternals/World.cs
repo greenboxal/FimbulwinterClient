@@ -314,7 +314,7 @@ namespace FimbulwinterClient.Content.MapInternals
                 int id = -1;
                 for (int i = 0; i < _model.Meshes.Length; i++)
                 {
-                    if (_model.Meshes[i].Name.ToLower() == _nodeName)
+                    if (_model.Meshes[i].Name == _nodeName)
                     {
                         id = i;
                         break;
