@@ -156,6 +156,7 @@
     <Compile Include="GUI\System\CheckBox.cs" />
     <Compile Include="GUI\System\Control.cs" />
     <Compile Include="GUI\System\ControlCollection.cs" />
+    <Compile Include="GUI\System\FPSCounter.cs" />
     <Compile Include="GUI\System\GuiManager.cs" />
     <Compile Include="GUI\System\ImageButton.cs" />
     <Compile Include="GUI\System\Label.cs" />

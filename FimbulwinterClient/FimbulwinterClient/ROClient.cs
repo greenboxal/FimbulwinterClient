@@ -116,6 +116,7 @@ namespace FimbulwinterClient
         {
             Singleton = this;
             graphics = new GraphicsDeviceManager(this);
+            graphics.SynchronizeWithVerticalRetrace = false; // REMOVE ME LATER
             Window.Title = "Ragnarok Online";
             Content = (ContentManager)new ROContentManager(Services, this);
             Content.RootDirectory = "data";
@@ -145,6 +146,9 @@ namespace FimbulwinterClient
 
             Components.Add(inputManager);
             Components.Add(guiManager);
+            Components.Add(new FPSCounter(this)); // REMOVE ME LATER
+
+            IsFixedTimeStep = false; // REMOVE ME LATER
 
             Services.AddService(typeof(InputManager), inputManager);
             Services.AddService(typeof(GuiManager), guiManager);
