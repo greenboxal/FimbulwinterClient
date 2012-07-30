@@ -48,16 +48,10 @@ namespace FimbulwinterClient.Content
             get { return _world; }
         }
 
-        private Texture2D _shadowLightmap;
-        public Texture2D ShadowLightmap
+        private Texture2D _lightmap;
+        public Texture2D Lightmap
         {
-            get { return _shadowLightmap; }
-        }
-
-        private Texture2D _colorLightmap;
-        public Texture2D ColorLightmap
-        {
-            get { return _colorLightmap; }
+            get { return _lightmap; }
         }
 
         private Effect _effect;
@@ -109,8 +103,7 @@ namespace FimbulwinterClient.Content
 
             OnReportProgress(99);
 
-            _effect.Parameters["ShadowLightmap"].SetValue(_shadowLightmap);
-            _effect.Parameters["ColorLightmap"].SetValue(_colorLightmap);
+            _effect.Parameters["Lightmap"].SetValue(_lightmap);
 
             _effect.Parameters["AmbientColor"].SetValue(_world.LightInfo.Ambient);
             _effect.Parameters["DiffuseColor"].SetValue(_world.LightInfo.Diffuse);
@@ -129,7 +122,6 @@ namespace FimbulwinterClient.Content
             int w = (int)Math.Floor(Math.Sqrt(_ground.Lightmaps.Length));
             int h = (int)Math.Ceiling((float)_ground.Lightmaps.Length / w);
 
-            byte[] shadow = new byte[7 * 7 * w * h];
             Color[] color = new Color[7 * 7 * w * h];
 
             int x = 0, y = 0;
@@ -139,11 +131,10 @@ namespace FimbulwinterClient.Content
                 {
                     int offset = y * w * 7 * 7 + j * w * 7 + x * 7;
 
-                    Buffer.BlockCopy(_ground.Lightmaps[i].Brightness, j * 8, shadow, offset, 7);
-
                     for (int n = 0; n < 7; n++)
                     {
                         color[offset + n] = _ground.Lightmaps[i].Intensity[j * 8 + n];
+                        color[offset + n].A = _ground.Lightmaps[i].Brightness[j * 8 + n];
                     }
                 }
 
@@ -155,11 +146,8 @@ namespace FimbulwinterClient.Content
                 }
             }
 
-            _shadowLightmap = new Texture2D(_graphicsDevice, w * 7, h * 7, false, SurfaceFormat.Alpha8);
-            _shadowLightmap.SetData(shadow);
-
-            _colorLightmap = new Texture2D(_graphicsDevice, w * 7, h * 7, false, SurfaceFormat.Color);
-            _colorLightmap.SetData(color);
+            _lightmap = new Texture2D(_graphicsDevice, w * 7, h * 7, false, SurfaceFormat.Color);
+            _lightmap.SetData(color);
         }
 
         public void Update(GameTime gametime)

@@ -13,8 +13,7 @@ float3 DiffuseColor;
 
 // Samplers
 texture Texture;
-texture ShadowLightmap;
-texture ColorLightmap;
+texture Lightmap;
 sampler TextureSampler = sampler_state
 {
 	Texture = <Texture>;
@@ -25,19 +24,9 @@ sampler TextureSampler = sampler_state
 	AddressV = mirror;
 };
 
-sampler ShadowSampler = sampler_state
+sampler LightmapSampler = sampler_state
 {
-	Texture = <ShadowLightmap>;
-	MagFilter = LINEAR;
-	MinFilter = LINEAR;
-	MipFilter = LINEAR;
-	AddressU = WRAP;
-	AddressV = WRAP;
-};
-
-sampler ColorSampler = sampler_state
-{
-	Texture = <ColorLightmap>;
+	Texture = <Lightmap>;
 	MagFilter = LINEAR;
 	MinFilter = LINEAR;
 	MipFilter = LINEAR;
@@ -92,9 +81,11 @@ float4 MapGroundPS(MapGroundOutput Input) : COLOR0
 	totalLightDiffuse.rgb += DiffuseColor * max(0, dot(Input.Normal, lightDir));
 	totalLightDiffuse.a = 1.0F;
 
+	float4 lightmap = tex2D(LightmapSampler, Input.Lightmap);
+
 	color = tex2D(TextureSampler, Input.Texture) * Input.Color;
-	color.rgb *= tex2D(ShadowSampler, Input.Lightmap).a;
-	color.rgb += tex2D(ColorSampler, Input.Lightmap).rgb;
+	color.rgb *= lightmap.a;
+	color.rgb += lightmap.rgb;
 	
 	return color * (totalLightDiffuse + float4(AmbientColor, 1));
 }
