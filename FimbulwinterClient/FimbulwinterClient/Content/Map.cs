@@ -69,7 +69,6 @@ namespace FimbulwinterClient.Content
         public Map(GraphicsDevice gd)
         {
             _graphicsDevice = gd;
-            _effect = new BasicEffect(_graphicsDevice);
 
             _effect = ROClient.Singleton.Content.Load<Effect>(@"Ragnarok");
             _effect.CurrentTechnique = _effect.Techniques["MapGround"];
