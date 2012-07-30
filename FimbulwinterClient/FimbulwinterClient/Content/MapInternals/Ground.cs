@@ -72,7 +72,7 @@ namespace FimbulwinterClient.Content.MapInternals
                 get { return _normal; }
             }
 
-            public void Load(BinaryReader br)
+            public void Load(BinaryReader br, byte majorVersion, byte minorVersion)
             {
                 _height = new float[4];
                 _height[0] = br.ReadSingle();
@@ -80,9 +80,19 @@ namespace FimbulwinterClient.Content.MapInternals
                 _height[2] = br.ReadSingle();
                 _height[3] = br.ReadSingle();
 
-                _tileUp = br.ReadInt32();
-                _tileSide = br.ReadInt32();
-                _tileOtherSide = br.ReadInt32();
+                if (majorVersion >= 1 && minorVersion >= 6)
+                {
+                    _tileUp = br.ReadInt32();
+                    _tileSide = br.ReadInt32();
+                    _tileOtherSide = br.ReadInt32();
+                }
+                else
+                {
+                    _tileUp = br.ReadInt16();
+                    _tileSide = br.ReadInt16();
+                    _tileOtherSide = br.ReadInt16();
+                    br.ReadInt16(); // ??
+                }
             }
 
             public void CalculateNormal()
@@ -231,7 +241,7 @@ namespace FimbulwinterClient.Content.MapInternals
             majorVersion = br.ReadByte();
             minorVersion = br.ReadByte();
 
-            if (majorVersion != 1 || minorVersion != 7)
+            if (majorVersion != 1 || minorVersion < 5 || minorVersion > 7)
                 return false;
 
             _width = br.ReadInt32();
@@ -279,7 +289,7 @@ namespace FimbulwinterClient.Content.MapInternals
             {
                 Cell c = new Cell();
 
-                c.Load(br);
+                c.Load(br, majorVersion, minorVersion);
 
                 _cells[i] = c;
             }
