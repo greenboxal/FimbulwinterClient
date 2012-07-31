@@ -86,6 +86,10 @@ namespace FimbulwinterClient.Content.MapInternals
                     _tileSide = br.ReadInt32();
                     _tileOtherSide = br.ReadInt32();
                 }
+                else if (majorVersion == 0 && minorVersion == 0)
+                {
+                    br.ReadBytes(8); // ??
+                }
                 else
                 {
                     _tileUp = br.ReadInt16();
@@ -93,6 +97,13 @@ namespace FimbulwinterClient.Content.MapInternals
                     _tileOtherSide = br.ReadInt16();
                     br.ReadInt16(); // ??
                 }
+            }
+
+            public void SetTiles(int tileUp, int tileSide, int tileOtherSide)
+            {
+                _tileUp = tileUp;
+                _tileSide = tileSide;
+                _tileOtherSide = tileOtherSide;
             }
 
             public void CalculateNormal()
@@ -135,29 +146,57 @@ namespace FimbulwinterClient.Content.MapInternals
                 get { return _color; }
             }
 
-            public void Load(Ground owner, BinaryReader br)
+            public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion, int texture)
             {
                 _texCoord = new Vector2[4];
 
-                _texCoord[0].X = br.ReadSingle();
-                _texCoord[1].X = br.ReadSingle();
-                _texCoord[2].X = br.ReadSingle();
-                _texCoord[3].X = br.ReadSingle();
+                if (majorVersion == 0 && minorVersion == 0)
+                {
+                    _texCoord[0].X = br.ReadSingle();
+                    _texCoord[0].Y = br.ReadSingle();
 
-                _texCoord[0].Y = br.ReadSingle();
-                _texCoord[1].Y = br.ReadSingle();
-                _texCoord[2].Y = br.ReadSingle();
-                _texCoord[3].Y = br.ReadSingle();
+                    _texCoord[1].X = br.ReadSingle();
+                    _texCoord[1].Y = br.ReadSingle();
 
-                _texture = br.ReadInt16();
-                _lightmap = br.ReadInt16();
+                    _texCoord[2].X = br.ReadSingle();
+                    _texCoord[2].Y = br.ReadSingle();
 
-                int r = br.ReadByte();
-                int g = br.ReadByte();
-                int b = br.ReadByte();
-                int a = br.ReadByte();
+                    _texCoord[3].X = br.ReadSingle();
+                    _texCoord[3].Y = br.ReadSingle();
 
-                _color = new Color(r, g, b, a);
+                    _texture = texture;
+                    _lightmap = 0;
+
+                    // Is it white?? Seems too bright...
+                    _color = Color.White;
+                }
+                else
+                {
+                    _texCoord[0].X = br.ReadSingle();
+                    _texCoord[1].X = br.ReadSingle();
+                    _texCoord[2].X = br.ReadSingle();
+                    _texCoord[3].X = br.ReadSingle();
+
+                    _texCoord[0].Y = br.ReadSingle();
+                    _texCoord[1].Y = br.ReadSingle();
+                    _texCoord[2].Y = br.ReadSingle();
+                    _texCoord[3].Y = br.ReadSingle();
+
+                    _texture = br.ReadInt16();
+                    _lightmap = br.ReadInt16();
+
+                    int r = br.ReadByte();
+                    int g = br.ReadByte();
+                    int b = br.ReadByte();
+                    int a = br.ReadByte();
+
+                    _color = new Color(r, g, b, a);
+                }
+            }
+
+            public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion)
+            {
+                Load(owner, br, majorVersion, minorVersion, 0);
             }
         }
 
@@ -231,67 +270,161 @@ namespace FimbulwinterClient.Content.MapInternals
 
         public bool Load(Stream gnd)
         {
-            int len;
+            int texChunkSize, textureCount;
             BinaryReader br = new BinaryReader(gnd);
             string header = ((char)br.ReadByte()).ToString() + ((char)br.ReadByte()) + ((char)br.ReadByte()) + ((char)br.ReadByte());
 
-            if (header != "GRGN")
-                return false;
+            if (header == "GRGN")
+            {
+                majorVersion = br.ReadByte();
+                minorVersion = br.ReadByte();
 
-            majorVersion = br.ReadByte();
-            minorVersion = br.ReadByte();
+                if (majorVersion != 1 || minorVersion < 5 || minorVersion > 7)
+                    return false;
 
-            if (majorVersion != 1 || minorVersion < 5 || minorVersion > 7)
-                return false;
+                _width = br.ReadInt32();
+                _height = br.ReadInt32();
+                _zoom = br.ReadSingle();
 
-            _width = br.ReadInt32();
-            _height = br.ReadInt32();
-            _zoom = br.ReadSingle();
+                textureCount = br.ReadInt32();
 
-            _textures = new Texture2D[br.ReadInt32()];
-            len = br.ReadInt32();
+                texChunkSize = br.ReadInt32();
+            }
+            else
+            {
+                majorVersion = 0;
+                minorVersion = 0;
+
+                br.BaseStream.Position = 0;
+
+                textureCount = br.ReadInt32();
+
+                _width = br.ReadInt32();
+                _height = br.ReadInt32();
+                _zoom = 10.0f;
+
+                texChunkSize = 80;
+            }
+                
+            _textures = new Texture2D[textureCount];
+
             for (int i = 0; i < _textures.Length; i++)
             {
-                string fn = br.ReadCString(len);
+                string fn = br.ReadCString(texChunkSize);
 
                 Map.OnReportStatus("Loading {0}...", fn);
 
                 _textures[i] = ROClient.Singleton.ContentManager.LoadContent<Texture2D>(Path.Combine("data\\texture\\", fn.Korean()));
             }
 
-            _lightmaps = new Lightmap[br.ReadInt32()];
-
-            br.ReadInt32(); // Lightmap Width  = 8
-            br.ReadInt32(); // Lightmap Height = 8
-            br.ReadInt32(); // Lightmap Cells  = 1
-
-            for (int i = 0; i < _lightmaps.Length; i++)
+            if (majorVersion == 0 && minorVersion == 0)
             {
-                Lightmap l = new Lightmap();
+                int idx = 0;
+                _lightmaps = new Lightmap[0];
+                _cells = new Cell[_width * _height];
+                // Biggest possible amount of surfaces in this version is 3 * Width * Height.
+                // We resize it to the real amount after iterating through the cells.
+                _surfaces = new Surface[3 * _width * _height];
+                for (int i = 0; i < _cells.Length; i++)
+                {
+                    int textureUp, textureOtherSide, textureSide;
 
-                l.Load(br);
+                    textureUp = br.ReadInt32();
+                    textureOtherSide = br.ReadInt32();
+                    textureSide = br.ReadInt32();
 
-                _lightmaps[i] = l;
+                    Cell c = new Cell();
+
+                    c.Load(br, majorVersion, minorVersion);
+
+                    if (textureUp != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureUp);
+
+                        textureUp = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    if (textureOtherSide != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureOtherSide);
+
+                        textureOtherSide = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    if (textureSide != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureSide);
+
+                        textureSide = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    c.SetTiles(textureUp, textureSide, textureOtherSide);
+
+                    _cells[i] = c;
+                }
+                Array.Resize<Surface>(ref _surfaces, idx);
             }
-
-            _surfaces = new Surface[br.ReadInt32()];
-            for (int i = 0; i < _surfaces.Length; i++)
+            else
             {
-                Surface s = new Surface();
 
-                s.Load(this, br);
+                _lightmaps = new Lightmap[br.ReadInt32()];
 
-                _surfaces[i] = s;
-            }
+                br.ReadInt32(); // Lightmap Width  = 8
+                br.ReadInt32(); // Lightmap Height = 8
+                br.ReadInt32(); // Lightmap Cells  = 1
 
-            _cells = new Cell[_width * _height];
-            for (int i = 0; i < _cells.Length; i++)
-            {
-                Cell c = new Cell();
+                for (int i = 0; i < _lightmaps.Length; i++)
+                {
+                    Lightmap l = new Lightmap();
 
-                c.Load(br, majorVersion, minorVersion);
+                    l.Load(br);
 
-                _cells[i] = c;
+                    _lightmaps[i] = l;
+                }
+
+                _surfaces = new Surface[br.ReadInt32()];
+                for (int i = 0; i < _surfaces.Length; i++)
+                {
+                    Surface s = new Surface();
+
+                    s.Load(this, br, majorVersion, minorVersion);
+
+                    _surfaces[i] = s;
+                }
+
+                _cells = new Cell[_width * _height];
+                for (int i = 0; i < _cells.Length; i++)
+                {
+                    Cell c = new Cell();
+
+                    c.Load(br, majorVersion, minorVersion);
+
+                    _cells[i] = c;
+                }
             }
 
             Map.OnReportStatus("Calculating normals...");
