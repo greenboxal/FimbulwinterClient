@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Audio
 {
@@ -19,7 +20,7 @@ namespace FimbulwinterClient.Audio
         public void PlayEffect(SoundEffect se)
         {
             SoundEffectInstance sei = se.CreateInstance();
-            sei.Volume = ROClient.Singleton.Config.EffectVolume;
+            sei.Volume = SharedInformation.Config.EffectVolume;
             sei.Play();
         }
     }

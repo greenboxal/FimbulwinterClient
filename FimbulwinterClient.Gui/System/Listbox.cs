@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class Listbox : Control
     {

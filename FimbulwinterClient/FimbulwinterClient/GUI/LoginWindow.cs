@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI
+namespace FimbulwinterClient.Gui
 {
     public class LoginWindow : Window
     {
@@ -15,9 +16,9 @@ namespace FimbulwinterClient.GUI
         {
             InitializeComponent();
 
-            if (GuiManager.Singleton.Client.Config.SaveLast)
+            if (SharedInformation.Config.SaveLast)
             {
-                txtLogin.Text = GuiManager.Singleton.Client.Config.LastLogin;
+                txtLogin.Text = SharedInformation.Config.LastLogin;
                 ckSave.Checked = true;
                 txtPassword.Focus();
             }
@@ -32,7 +33,7 @@ namespace FimbulwinterClient.GUI
         private void InitializeComponent()
         {
             this.Size = new Vector2(280, 120);
-            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - 140, GuiManager.Singleton.Client.Config.ScreenHeight - 140 - 120);
+            this.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - 140, SharedInformation.Config.ScreenHeight - 140 - 120);
             this.Text = "Login";
 
             btnOK = new Button();
@@ -100,8 +101,8 @@ namespace FimbulwinterClient.GUI
 
                 if (ckSave.Checked)
                 {
-                    GuiManager.Singleton.Client.Config.SaveLast = true;
-                    GuiManager.Singleton.Client.Config.LastLogin = txtLogin.Text;
+                    SharedInformation.Config.SaveLast = true;
+                    SharedInformation.Config.LastLogin = txtLogin.Text;
                 }
 
                 if (DoLogin != null)

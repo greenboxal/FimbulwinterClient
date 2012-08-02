@@ -5,16 +5,21 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
-    public class Button : Control
+    public class ImageButton : Control
     {
         private bool pressed;
         private bool hover;
 
-        public Button()
+        Texture2D _n, _h, _p;
+
+        public ImageButton(Texture2D n, Texture2D h, Texture2D p)
         {
             TabStop = false;
+            _n = n;
+            _h = h;
+            _p = p;
         }
 
         public override void Draw(SpriteBatch sb, GameTime gt)
@@ -22,40 +27,21 @@ namespace FimbulwinterClient.GUI.System
             int absX = (int)GetAbsX();
             int absY = (int)GetAbsY();
 
-            int imgX = 0;
-            int imgY = 0;
-
             if (!pressed)
             {
                 if (hover)
                 {
-                    imgX = 29;
-                    imgY = 40;
+                    sb.Draw(_h, new Rectangle(absX, absY, (int)this.Size.X, (int)this.Size.Y), Color.White);
                 }
                 else
                 {
-                    imgX = 29;
-                    imgY = 20;
+                    sb.Draw(_n, new Rectangle(absX, absY, (int)this.Size.X, (int)this.Size.Y), Color.White);
                 }
             }
             else
             {
-                imgX = 29;
-                imgY = 0;
+                sb.Draw(_p, new Rectangle(absX, absY, (int)this.Size.X, (int)this.Size.Y), Color.White);
             }
-
-            int middleW = (int)Size.X - 10;
-
-            Color clr = Color.White;
-            if (Parent.Dragging)
-                clr = Color.White * 0.5f;
-
-            sb.Draw(FormSkin, new Rectangle(absX, absY, 5, 20), new Rectangle(imgX, imgY, 5, 20), clr);
-            sb.Draw(FormSkin, new Rectangle(absX + 5, absY, middleW, 20), new Rectangle(imgX + 6, imgY, 5, 20), clr);
-            sb.Draw(FormSkin, new Rectangle(absX + 5 + middleW, absY, 5, 20), new Rectangle(imgX + 59, imgY, 5, 20), clr);
-
-            Vector2 textSize = Gulim8.MeasureString(this.Text);
-            sb.DrawString(Gulim8, this.Text, new Vector2((float)absX + (this.Size.X / 2) - (textSize.X / 2), absY + 5), ForeColor);
 
             base.Draw(sb, gt);
         }

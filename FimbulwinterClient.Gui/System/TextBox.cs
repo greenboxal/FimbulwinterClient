@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class TextBox : Control
     {

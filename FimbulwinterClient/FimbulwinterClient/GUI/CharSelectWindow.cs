@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI
+namespace FimbulwinterClient.Gui
 {
     public class CharSelectWindow : Window
     {
@@ -23,7 +23,7 @@ namespace FimbulwinterClient.GUI
         {
             this.FullImage = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\login_interface\\win_select2.bmp");
             this.Size = new Vector2(576, 358);
-            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - (576 / 2), GuiManager.Singleton.Client.Config.ScreenHeight / 2 - (358 / 2));
+            this.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - (576 / 2), SharedInformation.Config.ScreenHeight / 2 - (358 / 2));
 
             cbChars = new CharBrowser(ROClient.Singleton.NetworkState.CharAccept.Chars, ROClient.Singleton.NetworkState.CharAccept.MaxSlots, ROClient.Singleton.NetworkState.CharAccept.PremiumSlots, ROClient.Singleton.NetworkState.CharAccept.AvailableSlots);
             cbChars.Position = new Vector2(60, 43);

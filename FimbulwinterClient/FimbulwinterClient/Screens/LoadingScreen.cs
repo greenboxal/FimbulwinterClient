@@ -29,7 +29,7 @@ namespace FimbulwinterClient.Screens
 
         public LoadingScreen(string mapname)
         {
-            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb");
+            _font = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
             _progressDot = "";
             _totalProgress = 0;

@@ -6,8 +6,9 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class Window : Control
     {
@@ -81,8 +82,8 @@ namespace FimbulwinterClient.GUI.System
                 float py = GetAbsY() + y - dragDeltaY;
                 if (px < 0) px = 0;
                 if (py < 0) py = 0;
-                if (px + this.Size.X > ROClient.Singleton.Config.ScreenWidth) px = ROClient.Singleton.Config.ScreenWidth - this.Size.X;
-                if (py + this.Size.Y > ROClient.Singleton.Config.ScreenHeight) py = ROClient.Singleton.Config.ScreenHeight - this.Size.Y;
+                if (px + this.Size.X > SharedInformation.Config.ScreenWidth) px = SharedInformation.Config.ScreenWidth - this.Size.X;
+                if (py + this.Size.Y > SharedInformation.Config.ScreenHeight) py = SharedInformation.Config.ScreenHeight - this.Size.Y;
                 this.Position = new Vector2(px, py);
             }
         }

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui;
+using FimbulwinterClient.Gui.System;
 using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Screens
@@ -49,7 +49,7 @@ namespace FimbulwinterClient.Screens
         public void ShowWait()
         {
             _wait = MessageBox.ShowMessage("Please wait...");
-            _wait.Position = new Vector2(ROClient.Singleton.Config.ScreenWidth / 2 - 140, ROClient.Singleton.Config.ScreenHeight - 140 - 120);
+            _wait.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - 140, SharedInformation.Config.ScreenHeight - 140 - 120);
         }
 
         public void CloseWait()
@@ -61,7 +61,7 @@ namespace FimbulwinterClient.Screens
         public virtual void Draw(SpriteBatch sb, GameTime gameTime)
         {
             sb.Begin();
-            sb.Draw(_background, new Rectangle(0, 0, ROClient.Singleton.Config.ScreenWidth, ROClient.Singleton.Config.ScreenHeight), Color.White);
+            sb.Draw(_background, new Rectangle(0, 0, SharedInformation.Config.ScreenWidth, SharedInformation.Config.ScreenHeight), Color.White);
             sb.End();
         }
 

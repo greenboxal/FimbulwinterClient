@@ -8,10 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FimbulwinterClient.Core.Assets;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class CharBrowser : Control
     {

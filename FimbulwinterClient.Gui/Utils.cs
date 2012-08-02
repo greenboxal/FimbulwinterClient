@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace FimbulwinterClient.GUI
+namespace FimbulwinterClient.Gui
 {
     public class Utils
     {

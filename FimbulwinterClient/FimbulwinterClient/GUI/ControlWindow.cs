@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI
+namespace FimbulwinterClient.Gui
 {
     public class ControlWindow : Window
     {
@@ -21,7 +22,7 @@ namespace FimbulwinterClient.GUI
         private void InitializeComponent()
         {
             this.Size = new Vector2(width, height);
-            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - width / 2, GuiManager.Singleton.Client.Config.ScreenHeight / 2 - height / 2);
+            this.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - width / 2, SharedInformation.Config.ScreenHeight / 2 - height / 2);
             this.Text = "Controltest";
 
             lblTextbox = new Label();

@@ -1,4 +1,5 @@
 using System;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient
 {
@@ -12,7 +13,7 @@ namespace FimbulwinterClient
         {
             ROClient game = new ROClient();
             game.Run();
-            game.Config.Save();
+            SharedInformation.Config.Save();
         }
     }
 #endif

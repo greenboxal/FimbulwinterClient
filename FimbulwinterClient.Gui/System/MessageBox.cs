@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class MessageBox : Window
     {
@@ -45,7 +46,7 @@ namespace FimbulwinterClient.GUI.System
         private void InitializeComponent(int type)
         {
             this.Size = new Vector2(280, 120);
-            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - 140, GuiManager.Singleton.Client.Config.ScreenHeight / 2 - 60);
+            this.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - 140, SharedInformation.Config.ScreenHeight / 2 - 60);
             this.Text = "message";
 
             lblText = new Label();

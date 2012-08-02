@@ -102,6 +102,9 @@
     <Compile Include="Assets\Palette.cs" />
     <Compile Include="Assets\Sprite.cs" />
     <Compile Include="Assets\SpriteAction.cs" />
+    <Compile Include="Config\Configuration.cs" />
+    <Compile Include="Config\ServerInfo.cs" />
+    <Compile Include="Config\ServersInfo.cs" />
     <Compile Include="Content\AdvancedContentManager.cs" />
     <Compile Include="Content\DefaultFileSystem.cs" />
     <Compile Include="Content\GrfFileSystem.cs" />
@@ -143,10 +146,6 @@
     <ProjectReference Include="..\FimbulwinterClient.Extensions\FimbulwinterClient.Extensions.csproj">
       <Project>{4D300142-5220-46E6-8501-1535ADDF804A}</Project>
       <Name>FimbulwinterClient.Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ROFormats\ROFormats\ROFormats.csproj">
-      <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>
-      <Name>ROFormats</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

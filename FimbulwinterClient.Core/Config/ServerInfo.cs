@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FimbulwinterClient.Config
+namespace FimbulwinterClient.Core.Config
 {
     [Serializable]
     public class ServerInfo

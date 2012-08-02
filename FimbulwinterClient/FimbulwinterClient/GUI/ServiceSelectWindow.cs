@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI
+namespace FimbulwinterClient.Gui
 {
     public class ServiceSelectWindow : Window
     {
@@ -15,7 +16,7 @@ namespace FimbulwinterClient.GUI
         {
             InitializeComponent();
 
-            foreach (ServerInfo si in GuiManager.Singleton.Client.Config.ServersInfo.Servers)
+            foreach (ServerInfo si in SharedInformation.Config.ServersInfo.Servers)
                 lstServices.Items.Add(si);
 
             lstServices.SelectedIndex = 0;
@@ -25,7 +26,7 @@ namespace FimbulwinterClient.GUI
         private void InitializeComponent()
         {
             this.Size = new Vector2(280, 200);
-            this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - 140, GuiManager.Singleton.Client.Config.ScreenHeight - 140 - 200);
+            this.Position = new Vector2(SharedInformation.Config.ScreenWidth / 2 - 140, SharedInformation.Config.ScreenHeight - 140 - 200);
             this.Text = "Service Select";
 
             lstServices = new Listbox();
@@ -88,7 +89,7 @@ namespace FimbulwinterClient.GUI
             TingSound.Play();
 
             if (result == 1)
-                GuiManager.Singleton.Client.Exit();
+                ROClient.Singleton.Exit();
         }
 
         public override void OnKeyDown(Microsoft.Xna.Framework.Input.Keys key)

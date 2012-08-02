@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using FimbulwinterClient.Network.Packets.Account;
 using FimbulwinterClient.Network.Packets.Character;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
 
 namespace FimbulwinterClient
 {

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.Ingame
+namespace FimbulwinterClient.Gui.Ingame
 {
     class QuickSlotWindow : Window
     {

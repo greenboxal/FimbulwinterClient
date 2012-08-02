@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui;
+using FimbulwinterClient.Gui.System;
 
 namespace FimbulwinterClient.Screens
 {

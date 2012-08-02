@@ -5,8 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class FPSCounter : DrawableGameComponent
     {
@@ -29,7 +30,7 @@ namespace FimbulwinterClient.GUI.System
         {
             base.Initialize();
             spriteBatch = new SpriteBatch(_client.GraphicsDevice);
-            spriteFont = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb"); ;
+            spriteFont = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb"); ;
         }
 
         public override void Update(GameTime gameTime)

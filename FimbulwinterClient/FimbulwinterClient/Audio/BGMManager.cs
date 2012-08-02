@@ -5,8 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework;
 using FMOD;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
 using System.IO;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Audio
 {
@@ -41,7 +42,7 @@ namespace FimbulwinterClient.Audio
             if (result != RESULT.OK)
                 throw new Exception("Create SoundSystem Failed");
 
-            ROClient.Singleton.Config.BgmVolumeChanged += new Action<float>(cfg_BgmVolumeChanged);
+            SharedInformation.Config.BgmVolumeChanged += new Action<float>(cfg_BgmVolumeChanged);
         }
 
         void cfg_BgmVolumeChanged(float vol)
@@ -66,7 +67,7 @@ namespace FimbulwinterClient.Audio
                 if (result != RESULT.OK)
                     throw new Exception("Play Sound Failed");
 
-               channel.setVolume(ROClient.Singleton.Config.BgmVolume);
+               channel.setVolume(SharedInformation.Config.BgmVolume);
                currentSound = fname;
             }
         }

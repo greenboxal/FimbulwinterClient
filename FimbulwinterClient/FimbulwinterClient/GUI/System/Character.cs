@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using FimbulwinterClient.Core.Assets;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     class Character : Control
     {

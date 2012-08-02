@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.Core.Content;
 
-namespace FimbulwinterClient.Config
+namespace FimbulwinterClient.Core.Config
 {
     [Serializable]
     public class Configuration
@@ -75,14 +75,6 @@ namespace FimbulwinterClient.Config
             set { _serversInfo = value; }
         }
 
-        private ROClient _client;
-        [XmlIgnore]
-        public ROClient Client
-        {
-            get { return _client; }
-            set { _client = value; }
-        }
-
         public event Action<float> BgmVolumeChanged;
         public event Action<float> EffectVolumeChanged;
 
@@ -96,12 +88,6 @@ namespace FimbulwinterClient.Config
 
             _saveLast = false;
             _lastLogin = "";
-        }
-
-        public Configuration(ROClient cl)
-            : this()
-        {
-            _client = cl;
         }
 
         public static Configuration FromStream(Stream s)

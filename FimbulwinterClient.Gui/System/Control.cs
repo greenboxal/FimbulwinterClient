@@ -9,7 +9,7 @@ using Nuclex.Input;
 using Microsoft.Xna.Framework.Audio;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class Control
     {
@@ -134,7 +134,7 @@ namespace FimbulwinterClient.GUI.System
             set { _font = value; }
         }
 
-        internal float GetAbsX()
+        public float GetAbsX()
         {
             if (_parent != null)
                 return _parent.GetAbsX() + _position.X;
@@ -142,7 +142,7 @@ namespace FimbulwinterClient.GUI.System
                 return _position.X;
         }
 
-        internal float GetAbsY()
+        public float GetAbsY()
         {
             if (_parent != null)
                 return _parent.GetAbsY() + _position.Y;

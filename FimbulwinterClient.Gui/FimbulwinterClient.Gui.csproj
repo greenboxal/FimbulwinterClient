@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{8E339982-FF7B-486D-97A2-6DB7AA68F8A8}</ProjectGuid>
+    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FimbulwinterClient.Gui</RootNamespace>
+    <AssemblyName>FimbulwinterClient.Gui</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
+    <XnaPlatform>Windows</XnaPlatform>
+    <XnaProfile>HiDef</XnaProfile>
+    <XnaCrossPlatformGroupID>56f8dc3c-c895-4ba9-97c0-c5e1cba04061</XnaCrossPlatformGroupID>
+    <XnaOutputType>Library</XnaOutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x86\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;NO_DIRECTINPUT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>true</XnaCompressContent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Input.Touch, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Avatar, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Net, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Storage, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="mscorlib">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Nuclex\Input\CollectionHelper.cs" />
+    <Compile Include="Nuclex\Input\ControllerDetector.cs" />
+    <Compile Include="Nuclex\Input\ControllerEventArgs.cs" />
+    <Compile Include="Nuclex\Input\Devices\BufferedKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\BufferedMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedAxes.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedGamePadState.Builders.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedGamePadState.cs" />
+    <Compile Include="Nuclex\Input\Devices\ExtendedSliders.cs" />
+    <Compile Include="Nuclex\Input\Devices\GamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\IGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\IInputDevice.cs" />
+    <Compile Include="Nuclex\Input\Devices\IKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\IKeyboardMessageSource.cs" />
+    <Compile Include="Nuclex\Input\Devices\IMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\IMouseMessageSource.cs" />
+    <Compile Include="Nuclex\Input\Devices\ITouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\KeyboardStateHelper.cs" />
+    <Compile Include="Nuclex\Input\Devices\LeakyQueue.cs" />
+    <Compile Include="Nuclex\Input\Devices\LeakyQueue.Test.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedKeyboard.KeyMap.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\MockedTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\NoTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchCollectionHelper.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchPanelBase.cs" />
+    <Compile Include="Nuclex\Input\Devices\TouchState.cs" />
+    <Compile Include="Nuclex\Input\Devices\WindowMessageKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\WindowMessageMouse.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaGamePad.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaKeyboard.CharacterMap.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaKeyboard.cs" />
+    <Compile Include="Nuclex\Input\Devices\XnaTouchPanel.cs" />
+    <Compile Include="Nuclex\Input\ExtendedPlayerIndex.cs" />
+    <Compile Include="Nuclex\Input\GamePadButtonsHelper.cs" />
+    <Compile Include="Nuclex\Input\IInputService.cs" />
+    <Compile Include="Nuclex\Input\InputManager.cs" />
+    <Compile Include="Nuclex\Input\MockInputManager.cs" />
+    <Compile Include="Nuclex\Input\MouseButtons.cs" />
+    <Compile Include="Nuclex\Input\UnsafeNativeMethods.cs" />
+    <Compile Include="Nuclex\Input\WindowMessageFilter.cs" />
+    <Compile Include="Nuclex\Support\AffineThreadPool.cs" />
+    <Compile Include="Nuclex\Support\Cloning\CloneFactoryTest.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ClonerHelpers.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.FieldBased.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ExpressionTreeCloner.PropertyBased.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ICloneFactory.cs" />
+    <Compile Include="Nuclex\Support\Cloning\IStateCopier.cs" />
+    <Compile Include="Nuclex\Support\Cloning\ReflectionCloner.cs" />
+    <Compile Include="Nuclex\Support\Cloning\SerializationCloner.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Insertion.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Removal.cs" />
+    <Compile Include="Nuclex\Support\Collections\Deque.Search.cs" />
+    <Compile Include="Nuclex\Support\Collections\IMultiDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\IObservableCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\IRecyclable.cs" />
+    <Compile Include="Nuclex\Support\Collections\ItemEventArgs.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\MultiDictionary.ValueCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\ObservableList.cs" />
+    <Compile Include="Nuclex\Support\Collections\PairPriorityQueue.cs" />
+    <Compile Include="Nuclex\Support\Collections\Parentable.cs" />
+    <Compile Include="Nuclex\Support\Collections\ParentingCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\Pool.cs" />
+    <Compile Include="Nuclex\Support\Collections\PriorityItemPair.cs" />
+    <Compile Include="Nuclex\Support\Collections\PriorityQueue.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReadOnlyList.cs" />
+    <Compile Include="Nuclex\Support\Collections\ReverseComparer.cs" />
+    <Compile Include="Nuclex\Support\Collections\TransformingReadOnlyCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\TransformingReadOnlyCollection.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\Collections\WeakCollection.cs" />
+    <Compile Include="Nuclex\Support\Collections\WeakCollection.Interfaces.cs" />
+    <Compile Include="Nuclex\Support\EnumHelper.cs" />
+    <Compile Include="Nuclex\Support\FloatHelper.cs" />
+    <Compile Include="Nuclex\Support\IntegerHelper.cs" />
+    <Compile Include="Nuclex\Support\IO\ChainStream.cs" />
+    <Compile Include="Nuclex\Support\IO\PartialStream.cs" />
+    <Compile Include="Nuclex\Support\IO\RingMemoryStream.cs" />
+    <Compile Include="Nuclex\Support\Licensing\LicenseKey.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Argument.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Formatter.cs" />
+    <Compile Include="Nuclex\Support\Parsing\CommandLine.Parser.cs" />
+    <Compile Include="Nuclex\Support\PathHelper.cs" />
+    <Compile Include="Nuclex\Support\Plugins\AssemblyLoadEventArgs.cs" />
+    <Compile Include="Nuclex\Support\Plugins\Employer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\FactoryEmployer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\IAbstractFactory.cs" />
+    <Compile Include="Nuclex\Support\Plugins\IAssemblyLoader.cs" />
+    <Compile Include="Nuclex\Support\Plugins\InstanceEmployer.cs" />
+    <Compile Include="Nuclex\Support\Plugins\NoPluginAttribute.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginHelper.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginHost.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PluginRepository.cs" />
+    <Compile Include="Nuclex\Support\Plugins\PrototypeFactory.cs" />
+    <Compile Include="Nuclex\Support\Semaphore.cs" />
+    <Compile Include="Nuclex\Support\Services\AppDomainTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ExplicitTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\Instancing.cs" />
+    <Compile Include="Nuclex\Support\Services\ITypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\MultiAssemblyTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\IProgressCollectingService.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\IProgressPublishingService.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\ITrackedProcess.cs" />
+    <Compile Include="Nuclex\Support\Services\ProgressTracking\ProgressTrackingComponent.cs" />
+    <Compile Include="Nuclex\Support\Services\RepositoryTypeLister.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.Analyzer.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.cs" />
+    <Compile Include="Nuclex\Support\Services\ServiceManager.For.cs" />
+    <Compile Include="Nuclex\Support\Shared.cs" />
+    <Compile Include="Nuclex\Support\StringBuilderHelper.cs" />
+    <Compile Include="Nuclex\Support\StringHelper.cs" />
+    <Compile Include="Nuclex\Support\StringSegment.cs" />
+    <Compile Include="Nuclex\Support\WeakReference.cs" />
+    <Compile Include="Nuclex\Support\WeakReference.Phone7.cs" />
+    <Compile Include="Nuclex\Support\XmlHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\ArrowSelector.cs" />
+    <Compile Include="System\Border.cs" />
+    <Compile Include="System\Button.cs" />
+    <Compile Include="System\CheckBox.cs" />
+    <Compile Include="System\Control.cs" />
+    <Compile Include="System\ControlCollection.cs" />
+    <Compile Include="System\GuiManager.cs" />
+    <Compile Include="System\ImageButton.cs" />
+    <Compile Include="System\Label.cs" />
+    <Compile Include="System\Listbox.cs" />
+    <Compile Include="System\MessageBox.cs" />
+    <Compile Include="System\TextBox.cs" />
+    <Compile Include="System\Window.cs" />
+    <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FimbulwinterClient.Core\FimbulwinterClient.Core.csproj">
+      <Project>{58B02A91-78AE-43F3-A4C1-68E797A02BD9}</Project>
+      <Name>FimbulwinterClient.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <!--
+      To modify your build process, add your task inside one of the targets below and uncomment it. 
+      Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+    -->
+</Project>

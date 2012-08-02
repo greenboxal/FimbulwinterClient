@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Gui;
+using FimbulwinterClient.Core.Config;
 
 namespace FimbulwinterClient.Screens
 {
@@ -14,7 +14,7 @@ namespace FimbulwinterClient.Screens
         public ServiceSelectScreen()
         {
             window = new ServiceSelectWindow();
-            window.ServerSelected += new Action<Config.ServerInfo>(window_ServerSelected);
+            window.ServerSelected += new Action<ServerInfo>(window_ServerSelected);
 
             ROClient.Singleton.GuiManager.Controls.Add(window);
         }

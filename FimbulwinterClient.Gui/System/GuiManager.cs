@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using FimbulwinterClient.Core.Assets;
 using FimbulwinterClient.Core;
 
-namespace FimbulwinterClient.GUI.System
+namespace FimbulwinterClient.Gui.System
 {
     public class GuiManager : DrawableGameComponent
     {
@@ -19,12 +19,6 @@ namespace FimbulwinterClient.GUI.System
         public static GuiManager Singleton
         {
             get { return GuiManager._singleton; }
-        }
-
-        private ROClient _client;
-        public ROClient Client
-        {
-            get { return _client; }
         }
 
         private List<Control> _controls;
@@ -58,11 +52,9 @@ namespace FimbulwinterClient.GUI.System
         private Control _downControl;
         private MouseButtons _downButtons;
 
-        public GuiManager(ROClient roc)
-            : base(roc)
+        public GuiManager(Game game)
+            : base(game)
         {
-            _client = roc;
-
             _singleton = this;
         }
 
@@ -70,14 +62,14 @@ namespace FimbulwinterClient.GUI.System
         {
             base.Initialize();
 
-            spriteBatch = new SpriteBatch(_client.GraphicsDevice);
+            spriteBatch = new SpriteBatch(SharedInformation.GraphicsDevice);
             _controls = new List<Control>();
             _deleteQueue = new Queue<Control>();
 
             _cursor = SharedInformation.ContentManager.Load<SpriteAction>("data\\sprite\\cursors.act");
             _cursor.Loop = true;
 
-            InputManager im = (InputManager)_client.Services.GetService(typeof(InputManager));
+            InputManager im = (InputManager)SharedInformation.Services.GetService(typeof(InputManager));
 
             IMouse mouse = im.GetMouse();
             mouse.MouseButtonPressed += new MouseButtonDelegate(mouse_MouseButtonPressed);

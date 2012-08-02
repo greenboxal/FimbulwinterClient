@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.GUI.Ingame;
+using FimbulwinterClient.Gui;
+using FimbulwinterClient.Gui.Ingame;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using FimbulwinterClient.Core.Assets;
 using Microsoft.Xna.Framework.Input;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Screens
 {
@@ -30,7 +31,7 @@ namespace FimbulwinterClient.Screens
         public IngameScreen(Map map)
         {
             _map = map;
-            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb");
+            _font = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
             leftrightRot = MathHelper.ToRadians(90);
             updownRot = -MathHelper.Pi / _map.Ground.Zoom;

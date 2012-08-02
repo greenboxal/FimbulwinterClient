@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FimbulwinterClient.Audio;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Config;
 using FimbulwinterClient.Core.Assets;
 using FimbulwinterClient.Core.Content;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui;
+using FimbulwinterClient.Gui.System;
 using FimbulwinterClient.Lua;
 using FimbulwinterClient.Network;
 using FimbulwinterClient.Network.Packets;
@@ -43,13 +43,6 @@ namespace FimbulwinterClient
         {
             get { return spriteBatch; }
             set { spriteBatch = value; }
-        }
-
-        Configuration cfg;
-        public Configuration Config
-        {
-            get { return cfg; }
-            set { cfg = value; }
         }
 
         BGMManager bgmManager;
@@ -121,16 +114,15 @@ namespace FimbulwinterClient
             try
             {
                 Stream s = Content.Load<Stream>(@"data\fb\config\config.xml");
-                cfg = Configuration.FromStream(s);
-                cfg.Client = this;
+                SharedInformation.Config = Configuration.FromStream(s);
                 s.Close();
             }
             catch
             {
-                cfg = new Configuration(this);
+                SharedInformation.Config = new Configuration();
             }
 
-            cfg.ReadConfig();
+            SharedInformation.Config.ReadConfig();
 
             bgmManager = new BGMManager();
             effectManager = new EffectManager();
@@ -153,8 +145,8 @@ namespace FimbulwinterClient
             Services.AddService(typeof(BGMManager), bgmManager);
             Services.AddService(typeof(LuaManager), luaManager);
 
-            graphics.PreferredBackBufferWidth = cfg.ScreenWidth;
-            graphics.PreferredBackBufferHeight = cfg.ScreenHeight;
+            graphics.PreferredBackBufferWidth = SharedInformation.Config.ScreenWidth;
+            graphics.PreferredBackBufferHeight = SharedInformation.Config.ScreenHeight;
             graphics.ApplyChanges();
 
             netState = new NetworkState();
@@ -168,7 +160,7 @@ namespace FimbulwinterClient
             IKeyboard kb = im.GetKeyboard();
             kb.KeyReleased += new KeyDelegate(kb_KeyReleased);
 
-            GUI.Utils.Init(GraphicsDevice);
+            Gui.Utils.Init(GraphicsDevice);
             //ChangeScreen(new ServiceSelectScreen());
             //ChangeScreen(new LoadingScreen("prontera.gat"));
             StartMapChange("izlude");

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FimbulwinterClient.GUI;
+using FimbulwinterClient.Gui;
 using FimbulwinterClient.Network.Packets.Account;
-using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Gui.System;
 using FimbulwinterClient.Network.Packets.Character;
 
 namespace FimbulwinterClient.Screens
