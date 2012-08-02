@@ -90,6 +90,10 @@ namespace FimbulwinterClient.Core.Assets
 
         private void BuildLightmaps()
         {
+            // Nothing to be built
+            if (_ground.Lightmaps.Length == 0)
+                return;
+
             int w = (int)Math.Floor(Math.Sqrt(_ground.Lightmaps.Length));
             int h = (int)Math.Ceiling((float)_ground.Lightmaps.Length / w);
 

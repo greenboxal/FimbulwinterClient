@@ -72,7 +72,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 get { return _normal; }
             }
 
-            public void Load(BinaryReader br)
+            public void Load(BinaryReader br, byte majorVersion, byte minorVersion)
             {
                 _height = new float[4];
                 _height[0] = br.ReadSingle();
@@ -80,11 +80,43 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _height[2] = br.ReadSingle();
                 _height[3] = br.ReadSingle();
 
-                _tileUp = br.ReadInt32();
-                _tileSide = br.ReadInt32();
-                _tileOtherSide = br.ReadInt32();
+                if (majorVersion >= 1 && minorVersion >= 6)
+                {
+                    _tileUp = br.ReadInt32();
+                    _tileSide = br.ReadInt32();
+                    _tileOtherSide = br.ReadInt32();
+                }
+                else if (majorVersion == 0 && minorVersion == 0)
+                {
+                    br.ReadBytes(8); // ??
+                }
+                else
+                {
+                    _tileUp = br.ReadInt16();
+                    _tileSide = br.ReadInt16();
+                    _tileOtherSide = br.ReadInt16();
+                    br.ReadInt16(); // ??
+                }
+            }
+
+            public void SetTiles(int tileUp, int tileSide, int tileOtherSide)
+            {
+                _tileUp = tileUp;
+                _tileSide = tileSide;
+                _tileOtherSide = tileOtherSide;
+            }
+
+            public void CalculateNormal()
+            {
+                Vector3 b1 = default(Vector3);
+                Vector3 b2 = default(Vector3);
+
+                b1 = new Vector3(10, -_height[0], -10) - new Vector3(0, -_height[3], 0);
+                b2 = new Vector3(0, -_height[2], -10) - new Vector3(0, -_height[3], 0);
 
                 _normal = new Vector3[5];
+                _normal[0] = Vector3.Cross(b1, b2);
+                _normal[0].Normalize();
             }
         }
 
@@ -114,29 +146,57 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 get { return _color; }
             }
 
-            public void Load(Ground owner, BinaryReader br)
+            public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion, int texture)
             {
                 _texCoord = new Vector2[4];
 
-                _texCoord[0].X = br.ReadSingle();
-                _texCoord[1].X = br.ReadSingle();
-                _texCoord[2].X = br.ReadSingle();
-                _texCoord[3].X = br.ReadSingle();
+                if (majorVersion == 0 && minorVersion == 0)
+                {
+                    _texCoord[0].X = br.ReadSingle();
+                    _texCoord[0].Y = br.ReadSingle();
 
-                _texCoord[0].Y = br.ReadSingle();
-                _texCoord[1].Y = br.ReadSingle();
-                _texCoord[2].Y = br.ReadSingle();
-                _texCoord[3].Y = br.ReadSingle();
+                    _texCoord[1].X = br.ReadSingle();
+                    _texCoord[1].Y = br.ReadSingle();
 
-                _texture = br.ReadInt16();
-                _lightmap = br.ReadInt16();
+                    _texCoord[2].X = br.ReadSingle();
+                    _texCoord[2].Y = br.ReadSingle();
 
-                int r = br.ReadByte();
-                int g = br.ReadByte();
-                int b = br.ReadByte();
-                int a = br.ReadByte();
+                    _texCoord[3].X = br.ReadSingle();
+                    _texCoord[3].Y = br.ReadSingle();
 
-                _color = new Color(r, g, b, a);
+                    _texture = texture;
+                    _lightmap = 0;
+
+                    // Is it white?? Seems too bright...
+                    _color = Color.White;
+                }
+                else
+                {
+                    _texCoord[0].X = br.ReadSingle();
+                    _texCoord[1].X = br.ReadSingle();
+                    _texCoord[2].X = br.ReadSingle();
+                    _texCoord[3].X = br.ReadSingle();
+
+                    _texCoord[0].Y = br.ReadSingle();
+                    _texCoord[1].Y = br.ReadSingle();
+                    _texCoord[2].Y = br.ReadSingle();
+                    _texCoord[3].Y = br.ReadSingle();
+
+                    _texture = br.ReadInt16();
+                    _lightmap = br.ReadInt16();
+
+                    int r = br.ReadByte();
+                    int g = br.ReadByte();
+                    int b = br.ReadByte();
+                    int a = br.ReadByte();
+
+                    _color = new Color(r, g, b, a);
+                }
+            }
+
+            public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion)
+            {
+                Load(owner, br, majorVersion, minorVersion, 0);
             }
         }
 
@@ -210,67 +270,161 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
         public bool Load(Stream gnd)
         {
-            int len;
+            int texChunkSize, textureCount;
             BinaryReader br = new BinaryReader(gnd);
             string header = ((char)br.ReadByte()).ToString() + ((char)br.ReadByte()) + ((char)br.ReadByte()) + ((char)br.ReadByte());
 
-            if (header != "GRGN")
-                return false;
+            if (header == "GRGN")
+            {
+                majorVersion = br.ReadByte();
+                minorVersion = br.ReadByte();
 
-            majorVersion = br.ReadByte();
-            minorVersion = br.ReadByte();
+                if (majorVersion != 1 || minorVersion < 5 || minorVersion > 7)
+                    return false;
 
-            if (majorVersion != 1 || minorVersion != 7)
-                return false;
+                _width = br.ReadInt32();
+                _height = br.ReadInt32();
+                _zoom = br.ReadSingle();
 
-            _width = br.ReadInt32();
-            _height = br.ReadInt32();
-            _zoom = br.ReadSingle();
+                textureCount = br.ReadInt32();
 
-            _textures = new Texture2D[br.ReadInt32()];
-            len = br.ReadInt32();
+                texChunkSize = br.ReadInt32();
+            }
+            else
+            {
+                majorVersion = 0;
+                minorVersion = 0;
+
+                br.BaseStream.Position = 0;
+
+                textureCount = br.ReadInt32();
+
+                _width = br.ReadInt32();
+                _height = br.ReadInt32();
+                _zoom = 10.0f;
+
+                texChunkSize = 80;
+            }
+
+            _textures = new Texture2D[textureCount];
+
             for (int i = 0; i < _textures.Length; i++)
             {
-                string fn = br.ReadCString(len);
+                string fn = br.ReadCString(texChunkSize);
 
                 Logger.WriteLine("Loading {0}...", fn);
 
-                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(Path.Combine(@"data\texture\", fn.Korean()));
+                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(Path.Combine("data\\texture\\", fn.Korean()));
             }
 
-            _lightmaps = new Lightmap[br.ReadInt32()];
-
-            br.ReadInt32(); // Lightmap Width  = 8
-            br.ReadInt32(); // Lightmap Height = 8
-            br.ReadInt32(); // Lightmap Cells  = 1
-
-            for (int i = 0; i < _lightmaps.Length; i++)
+            if (majorVersion == 0 && minorVersion == 0)
             {
-                Lightmap l = new Lightmap();
+                int idx = 0;
+                _lightmaps = new Lightmap[0];
+                _cells = new Cell[_width * _height];
+                // Biggest possible amount of surfaces in this version is 3 * Width * Height.
+                // We resize it to the real amount after iterating through the cells.
+                _surfaces = new Surface[3 * _width * _height];
+                for (int i = 0; i < _cells.Length; i++)
+                {
+                    int textureUp, textureOtherSide, textureSide;
 
-                l.Load(br);
+                    textureUp = br.ReadInt32();
+                    textureOtherSide = br.ReadInt32();
+                    textureSide = br.ReadInt32();
 
-                _lightmaps[i] = l;
+                    Cell c = new Cell();
+
+                    c.Load(br, majorVersion, minorVersion);
+
+                    if (textureUp != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureUp);
+
+                        textureUp = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    if (textureOtherSide != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureOtherSide);
+
+                        textureOtherSide = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    if (textureSide != -1)
+                    {
+                        Surface s = new Surface();
+
+                        s.Load(this, br, majorVersion, minorVersion, textureSide);
+
+                        textureSide = idx;
+
+                        _surfaces[idx++] = s;
+                    }
+                    else
+                    {
+                        br.ReadBytes(32);
+                    }
+
+                    c.SetTiles(textureUp, textureSide, textureOtherSide);
+
+                    _cells[i] = c;
+                }
+                Array.Resize<Surface>(ref _surfaces, idx);
             }
-
-            _surfaces = new Surface[br.ReadInt32()];
-            for (int i = 0; i < _surfaces.Length; i++)
+            else
             {
-                Surface s = new Surface();
 
-                s.Load(this, br);
+                _lightmaps = new Lightmap[br.ReadInt32()];
 
-                _surfaces[i] = s;
-            }
+                br.ReadInt32(); // Lightmap Width  = 8
+                br.ReadInt32(); // Lightmap Height = 8
+                br.ReadInt32(); // Lightmap Cells  = 1
 
-            _cells = new Cell[_width * _height];
-            for (int i = 0; i < _cells.Length; i++)
-            {
-                Cell c = new Cell();
+                for (int i = 0; i < _lightmaps.Length; i++)
+                {
+                    Lightmap l = new Lightmap();
 
-                c.Load(br);
+                    l.Load(br);
 
-                _cells[i] = c;
+                    _lightmaps[i] = l;
+                }
+
+                _surfaces = new Surface[br.ReadInt32()];
+                for (int i = 0; i < _surfaces.Length; i++)
+                {
+                    Surface s = new Surface();
+
+                    s.Load(this, br, majorVersion, minorVersion);
+
+                    _surfaces[i] = s;
+                }
+
+                _cells = new Cell[_width * _height];
+                for (int i = 0; i < _cells.Length; i++)
+                {
+                    Cell c = new Cell();
+
+                    c.Load(br, majorVersion, minorVersion);
+
+                    _cells[i] = c;
+                }
             }
 
             Logger.WriteLine("Calculating normals...");
@@ -295,19 +449,10 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             {
                 for (int x = xfrom; x <= xto - 1; x++)
                 {
-                    Cell c = _cells[y * _width + x];
-
-                    float xoffset = 0; //-1.0F * (float)_width * _zoom / 2.0F;
-                    float yoffset = 0; //-1.0F * (float)_height * _zoom / 2.0F;
-
-                    Vector3 b1 = new Vector3(xoffset + _zoom, -c.Height[0], yoffset - _zoom) - new Vector3(xoffset, -c.Height[2], yoffset);
-                    Vector3 b2 = new Vector3(xoffset, -c.Height[1], yoffset - _zoom) - new Vector3(xoffset, -c.Height[2], yoffset);
-
-                    c.Normal[0] = Vector3.Cross(b1, b2);
-                    c.Normal[0].Normalize();
+                    _cells[y * _width + x].CalculateNormal();
                 }
             }
-            return;
+
             for (int y = yfrom; y <= yto - 1; y++)
             {
                 for (int x = xfrom; x <= xto - 1; x++)
@@ -322,53 +467,51 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     int iSE = (y + 1) * _width + (x + 1);
                     int iE = y * _width + (x + 1);
 
-                    Cell c = _cells[i];
-
-                    c.Normal[1] = c.Normal[0];
-                    c.Normal[2] = c.Normal[0];
-                    c.Normal[3] = c.Normal[0];
-                    c.Normal[4] = c.Normal[0];
+                    _cells[i].Normal[1] = _cells[i].Normal[0];
+                    _cells[i].Normal[2] = _cells[i].Normal[0];
+                    _cells[i].Normal[3] = _cells[i].Normal[0];
+                    _cells[i].Normal[4] = _cells[i].Normal[0];
 
                     if (y > 0)
                     {
-                        c.Normal[1] += _cells[iN].Normal[0];
-                        c.Normal[3] += _cells[iN].Normal[0];
+                        _cells[i].Normal[1] += _cells[iN].Normal[0];
+                        _cells[i].Normal[3] += _cells[iN].Normal[0];
 
                         if (x > 0)
-                            c.Normal[1] += _cells[iNW].Normal[0];
+                            _cells[i].Normal[1] += _cells[iNW].Normal[0];
 
                         if (x < _width - 1)
-                            c.Normal[3] += _cells[iNE].Normal[0];
+                            _cells[i].Normal[3] += _cells[iNE].Normal[0];
                     }
 
                     if (x > 0)
                     {
-                        c.Normal[1] += _cells[iW].Normal[0];
-                        c.Normal[2] += _cells[iW].Normal[0];
+                        _cells[i].Normal[1] += _cells[iW].Normal[0];
+                        _cells[i].Normal[2] += _cells[iW].Normal[0];
 
                         if (y < _height - 1)
-                            c.Normal[2] += _cells[iSW].Normal[0];
+                            _cells[i].Normal[2] += _cells[iSW].Normal[0];
                     }
 
                     if (y < _height - 1)
                     {
-                        c.Normal[2] += _cells[iS].Normal[0];
-                        c.Normal[4] += _cells[iS].Normal[0];
+                        _cells[i].Normal[2] += _cells[iS].Normal[0];
+                        _cells[i].Normal[4] += _cells[iS].Normal[0];
 
                         if (x < _width - 1)
-                            c.Normal[4] += _cells[iSE].Normal[0];
+                            _cells[i].Normal[4] += _cells[iSE].Normal[0];
                     }
 
                     if (x < _width - 1)
                     {
-                        c.Normal[3] += _cells[iE].Normal[0];
-                        c.Normal[4] += _cells[iE].Normal[0];
+                        _cells[i].Normal[3] += _cells[iE].Normal[0];
+                        _cells[i].Normal[4] += _cells[iE].Normal[0];
                     }
 
-                    c.Normal[1].Normalize();
-                    c.Normal[2].Normalize();
-                    c.Normal[3].Normalize();
-                    c.Normal[4].Normalize();
+                    _cells[i].Normal[1].Normalize();
+                    _cells[i].Normal[2].Normalize();
+                    _cells[i].Normal[3].Normalize();
+                    _cells[i].Normal[4].Normalize();
                 }
             }
         }
@@ -445,11 +588,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             _indexes = new IndexBuffer[_textures.Length];
             for (int i = 0; i < _indexes.Length; i++)
             {
-                if (indexdata[i].Count > 0)
-                {
-                    _indexes[i] = new IndexBuffer(_graphicsDevice, typeof(int), indexdata[i].Count, BufferUsage.WriteOnly);
-                    _indexes[i].SetData(indexdata[i].ToArray());
-                }
+                _indexes[i] = new IndexBuffer(_graphicsDevice, typeof(int), indexdata[i].Count, BufferUsage.WriteOnly);
+                _indexes[i].SetData(indexdata[i].ToArray());
             }
         }
 
@@ -545,18 +685,15 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             for (int i = 0; i < _textures.Length; i++)
             {
-                if (_indexes[i] != null)
+                _graphicsDevice.Indices = _indexes[i];
+                effect.Parameters["Texture"].SetValue(_textures[i]);
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
-                    _graphicsDevice.Indices = _indexes[i];
-                    effect.Parameters["Texture"].SetValue(_textures[i]);
-
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                    }
-
-                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
+                    pass.Apply();
                 }
+
+                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
             }
         }
     }
