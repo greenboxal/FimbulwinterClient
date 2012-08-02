@@ -5,6 +5,7 @@ using System.Text;
 using FimbulwinterClient.GUI.System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI
 {
@@ -20,7 +21,7 @@ namespace FimbulwinterClient.GUI
 
         private void InitializeComponent()
         {
-            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\login_interface\\win_select2.bmp");
+            this.FullImage = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\login_interface\\win_select2.bmp");
             this.Size = new Vector2(576, 358);
             this.Position = new Vector2(GuiManager.Singleton.Client.Config.ScreenWidth / 2 - (576 / 2), GuiManager.Singleton.Client.Config.ScreenHeight / 2 - (358 / 2));
 
@@ -95,14 +96,14 @@ namespace FimbulwinterClient.GUI
             lblLuk.Position = new Vector2(214, 286);
             this.Controls.Add(lblLuk);
 
-            Texture2D scrollleft = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp"); ;
+            Texture2D scrollleft = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp"); ;
             ibScrollLeft = new ImageButton(scrollleft, scrollleft, scrollleft);
             ibScrollLeft.Size = new Vector2(13, 13);
             ibScrollLeft.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollLeft_Clicked);
             ibScrollLeft.Position = new Vector2(45, 110);
             this.Controls.Add(ibScrollLeft);
 
-            Texture2D scrollright = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp"); ;
+            Texture2D scrollright = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp"); ;
             ibScrollRight = new ImageButton(scrollright, scrollright, scrollright);
             ibScrollRight.Size = new Vector2(13, 13);
             ibScrollRight.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollRight_Clicked);

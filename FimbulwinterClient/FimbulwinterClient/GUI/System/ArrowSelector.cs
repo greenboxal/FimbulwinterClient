@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI.System
 {
@@ -42,18 +43,18 @@ namespace FimbulwinterClient.GUI.System
 
         public ArrowSelector()
         {
-            this.scrollmid = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1mid.bmp");
-            this.scroll1bar_left = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_left.bmp");
-            this.scroll1bar_mid = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_mid.bmp");
-            this.scroll1bar_right = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_right.bmp");
+            this.scrollmid = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1mid.bmp");
+            this.scroll1bar_left = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_left.bmp");
+            this.scroll1bar_mid = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_mid.bmp");
+            this.scroll1bar_right = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1bar_right.bmp");
 
-            Texture2D scrollleft = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp");
+            Texture2D scrollleft = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp");
             ibScrollLeft = new ImageButton(scrollleft, scrollleft, scrollleft);
             ibScrollLeft.Size = new Vector2(13, 13);
             ibScrollLeft.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollLeft_Clicked);
             this.Controls.Add(ibScrollLeft);
 
-            Texture2D scrollright = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp");
+            Texture2D scrollright = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp");
             ibScrollRight = new ImageButton(scrollright, scrollright, scrollright);
             ibScrollRight.Size = new Vector2(13, 13);
             ibScrollRight.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollRight_Clicked);

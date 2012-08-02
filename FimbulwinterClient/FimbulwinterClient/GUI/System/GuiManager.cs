@@ -8,7 +8,8 @@ using Nuclex.Input;
 using Nuclex.Input.Devices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using FimbulwinterClient.Content;
+using FimbulwinterClient.Core.Assets;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI.System
 {
@@ -73,7 +74,7 @@ namespace FimbulwinterClient.GUI.System
             _controls = new List<Control>();
             _deleteQueue = new Queue<Control>();
 
-            _cursor = _client.ContentManager.LoadContent<SpriteAction>("data\\sprite\\cursors.act");
+            _cursor = SharedInformation.ContentManager.Load<SpriteAction>("data\\sprite\\cursors.act");
             _cursor.Loop = true;
 
             InputManager im = (InputManager)_client.Services.GetService(typeof(InputManager));

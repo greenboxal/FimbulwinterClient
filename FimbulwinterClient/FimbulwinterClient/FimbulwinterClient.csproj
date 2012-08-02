@@ -123,20 +123,9 @@
     <Compile Include="Audio\FMOD\fmod_dsp.cs" />
     <Compile Include="Audio\FMOD\fmod_errors.cs" />
     <Compile Include="Audio\FMOD\fmod_memoryinfo.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
-    <Compile Include="Content\Lub.cs" />
-    <Compile Include="Content\Map.cs" />
-    <Compile Include="Content\MapInternals\Altitude.cs" />
-    <Compile Include="Content\MapInternals\Ground.cs" />
-    <Compile Include="Content\MapInternals\VertexPositionTextureNormalLightmap.cs" />
-    <Compile Include="Content\MapInternals\World.cs" />
-    <Compile Include="Content\Palette.cs" />
-    <Compile Include="Content\RsmMesh.cs" />
-    <Compile Include="Content\RsmMeshPart.cs" />
-    <Compile Include="Content\RsmModel.cs" />
-    <Compile Include="Content\SpriteAction.cs" />
-    <Compile Include="Content\Sprite.cs" />
     <Compile Include="Graphics\Actor.cs" />
     <Compile Include="GUI\ControlWindow.cs" />
     <Compile Include="GUI\Ingame\CharacterInfoWindow.cs" />
@@ -165,10 +154,6 @@
     <Compile Include="GUI\System\TextBox.cs" />
     <Compile Include="GUI\System\Window.cs" />
     <Compile Include="GUI\Utils.cs" />
-    <Compile Include="IO\ContentLoaders\LubLoader.cs" />
-    <Compile Include="IO\ContentLoaders\MapLoader.cs" />
-    <Compile Include="IO\ContentLoaders\PaletteLoader.cs" />
-    <Compile Include="IO\ContentLoaders\RsmModelLoader.cs" />
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Network\Packets\Base.cs" />
@@ -180,32 +165,6 @@
     <Compile Include="Screens\ControlTestScreen.cs" />
     <Compile Include="Screens\CreateCharScreen.cs" />
     <Compile Include="Screens\IGameScreen.cs" />
-    <Compile Include="IO\ContentLoaders\SoundEffectLoader.cs" />
-    <Compile Include="IO\ContentLoaders\SpriteActionLoader.cs" />
-    <Compile Include="IO\ContentLoaders\SpriteLoader.cs" />
-    <Compile Include="IO\ContentLoaders\StreamLoader.cs" />
-    <Compile Include="IO\ContentLoaders\Texture2DLoader.cs" />
-    <Compile Include="IO\ROContentManager.cs" />
-    <Compile Include="IO\GRF\DES.cs" />
-    <Compile Include="IO\GRF\GRFEventArg.cs" />
-    <Compile Include="IO\GRF\GRFFile.cs" />
-    <Compile Include="IO\GRF\GRFFileExtractEventArg.cs" />
-    <Compile Include="IO\GRF\GRFHeader.cs" />
-    <Compile Include="IO\GRF\GRFSharp.cs" />
-    <Compile Include="IO\ROFileSystem.cs" />
-    <Compile Include="IO\ZLib\CRC32.cs" />
-    <Compile Include="IO\ZLib\Deflate.cs" />
-    <Compile Include="IO\ZLib\DeflateStream.cs" />
-    <Compile Include="IO\ZLib\GZipStream.cs" />
-    <Compile Include="IO\ZLib\Inflate.cs" />
-    <Compile Include="IO\ZLib\InfTree.cs" />
-    <Compile Include="IO\ZLib\ParallelDeflateOutputStream.cs" />
-    <Compile Include="IO\ZLib\Tree.cs" />
-    <Compile Include="IO\ZLib\Zlib.cs" />
-    <Compile Include="IO\ZLib\ZlibBaseStream.cs" />
-    <Compile Include="IO\ZLib\ZlibCodec.cs" />
-    <Compile Include="IO\ZLib\ZlibConstants.cs" />
-    <Compile Include="IO\ZLib\ZlibStream.cs" />
     <Compile Include="NetworkState.cs" />
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Packet.cs" />
@@ -354,7 +313,6 @@
     <Compile Include="Screens\IngameScreen.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Statics.cs" />
-    <Compile Include="RODirection.cs" />
     <Compile Include="Screens\BaseLoginScreen.cs" />
     <Compile Include="Screens\LoginScreen.cs" />
     <Compile Include="Screens\CharServerSelectScreen.cs" />
@@ -365,9 +323,13 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Extensions\Extensions.csproj">
-      <Project>{DBEDEFD4-E8CC-43D8-92DF-C1FE4EEC8148}</Project>
-      <Name>Extensions</Name>
+    <ProjectReference Include="..\..\FimbulwinterClient.Core\FimbulwinterClient.Core.csproj">
+      <Project>{58B02A91-78AE-43F3-A4C1-68E797A02BD9}</Project>
+      <Name>FimbulwinterClient.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FimbulwinterClient.Extensions\FimbulwinterClient.Extensions.csproj">
+      <Project>{4D300142-5220-46E6-8501-1535ADDF804A}</Project>
+      <Name>FimbulwinterClient.Extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ROFormats\ROFormats\ROFormats.csproj">
       <Project>{A9135DAE-9212-45E6-87F8-C4EDA48BD074}</Project>

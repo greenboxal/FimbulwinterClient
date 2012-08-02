@@ -6,6 +6,7 @@ using FimbulwinterClient.GUI.System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Nuclex.Input;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI
 {
@@ -52,14 +53,14 @@ namespace FimbulwinterClient.GUI
             btnCancel.Size = new Vector2(42, 20);
             btnCancel.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(btnCancel_Clicked);
 
-            Texture2D scrollleft = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp"); ;
+            Texture2D scrollleft = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1left.bmp"); ;
             ibScrollLeft = new ImageButton(scrollleft, scrollleft, scrollleft);
             ibScrollLeft.Size = new Vector2(13, 13);
             ibScrollLeft.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollLeft_Clicked);
             ibScrollLeft.Position = new Vector2(22, 80);
             this.Controls.Add(ibScrollLeft);
 
-            Texture2D scrollright = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp"); ;
+            Texture2D scrollright = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\scroll1right.bmp"); ;
             ibScrollRight = new ImageButton(scrollright, scrollright, scrollright);
             ibScrollRight.Size = new Vector2(13, 13);
             ibScrollRight.Clicked += new Action<Nuclex.Input.MouseButtons, float, float>(ibScrollRight_Clicked);

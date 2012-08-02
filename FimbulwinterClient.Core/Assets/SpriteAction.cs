@@ -1,54 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace ROFormats
+namespace FimbulwinterClient.Core.Assets
 {
     public class SpriteAction
     {
-        public struct Point
-        {
-            public int X, Y;
-
-            public Point(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-        }
-
-        public struct Vector2
-        {
-            public float X, Y;
-
-            public Vector2(float x, float y)
-            {
-                X = x;
-                Y = y;
-            }
-
-            public Vector2(float xy)
-            {
-                X = xy;
-                Y = xy;
-            }
-        }
-
-        public struct Rectangle
-        {
-            public int X, Y, Width, Height;
-
-            public Rectangle(int x, int y, int w, int h)
-            {
-                X = x;
-                Y = y;
-                Width = w;
-                Height = h;
-            }
-        }
-
         public struct AttachPoint
         {
             public Point Position;
@@ -60,7 +21,7 @@ namespace ROFormats
             public Point Position;
             public int SpriteNumber;
             public bool Mirror;
-            public Palette.Color Mask;
+            public Color Mask;
             public Vector2 Zoom;
             public int Angle;
             public int SpriteType;
@@ -114,18 +75,53 @@ namespace ROFormats
             set { _delays = value; }
         }
 
-        public SpriteAction(Sprite spr)
+        private float _delay;
+        public float Delay
         {
-            _sprite = spr;
+            get { return _delay; }
+            set { _delay = value; }
+        }
+
+        private int _action;
+        public int Action
+        {
+            get { return _action; }
+            set { _action = value; _frame = 0; _delay = 0; }
+        }
+
+        private int _frame;
+        public int Frame
+        {
+            get { return _frame; }
+            set { _frame = value; }
+        }
+
+        private bool _loop;
+        public bool Loop
+        {
+            get { return _loop; }
+            set { _loop = value; }
+        }
+
+        private bool _playing;
+        public bool Playing
+        {
+            get { return _playing; }
+            set { _playing = value; }
+        }
+
+        public SpriteAction(Sprite sprite)
+        {
+            _sprite = sprite;
 
             _events = new List<string>();
             _actions = new List<Act>();
             _delays = new List<float>();
         }
 
-        public bool Load(Stream s)
+        public bool Load(Stream stream)
         {
-            BinaryReader br = new BinaryReader(s);
+            BinaryReader br = new BinaryReader(stream);
 
             byte[] magic = br.ReadBytes(2);
 
@@ -185,7 +181,7 @@ namespace ROFormats
 
                                     sc.SpriteNumber = br.ReadInt32();
                                     sc.Mirror = br.ReadInt32() == 1;
-                                    sc.Mask = new Palette.Color(255, 255, 255, 255);
+                                    sc.Mask = new Color(255, 255, 255, 255);
                                     sc.Zoom = new Vector2(1.0f);
                                     sc.Angle = 0;
                                     sc.SpriteType = 0;
@@ -198,7 +194,7 @@ namespace ROFormats
                                         byte b = br.ReadByte();
                                         byte a = br.ReadByte();
 
-                                        sc.Mask = new Palette.Color(r, g, b, a);
+                                        sc.Mask = new Color(r, g, b, a);
 
                                         if (_version >= 0x204)
                                         {
@@ -289,6 +285,70 @@ namespace ROFormats
             }
 
             return true;
+        }
+
+        public float GetDelay(int i)
+        {
+            if (i < Delays.Count)
+                return Delays[i];
+
+            return 4.0f;
+        }
+
+        public void Update(GameTime gt)
+        {
+            _delay += (int)gt.ElapsedGameTime.TotalMilliseconds;
+
+            float d = GetDelay(_action) * 25;
+            while (_delay > d)
+            {
+                _delay -= d;
+                _frame++;
+            }
+
+            Act act = Actions[_action];
+            if (_frame >= act.Motions.Count)
+            {
+                if (_loop)
+                {
+                    _frame = _frame % act.Motions.Count;
+                }
+                else
+                {
+                    _playing = false;
+                    _frame = act.Motions.Count - 1;
+                }
+            }
+        }
+
+        public void SetPalette(Palette pal)
+        {
+            _sprite.SetPalette(pal);
+        }
+
+        public void Draw(RODirection direction, float z)
+        {
+
+        }
+
+        public void Draw(SpriteBatch sb, Microsoft.Xna.Framework.Point pos, SpriteAction parent, bool ext, SpriteEffects se = SpriteEffects.None)
+        {
+            Act act = Actions[_action];
+            Motion mo = act.Motions[_frame];
+
+            if (parent != null)
+            {
+                Motion pmo = parent.Actions[_action].Motions[_frame];
+
+                if (pmo.AttachPoints.Count > 0)
+                {
+                    pos.X += pmo.AttachPoints[0].Position.X;
+                    pos.Y += pmo.AttachPoints[0].Position.Y;
+                }
+            }
+
+            for (int i = 0; i < mo.Clips.Count; i++)
+                _sprite.Draw(mo, i, sb, pos.X, pos.Y, ext, se);
         }
     }
 }

@@ -1,6 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using FimbulwinterClient.Audio;
+using FimbulwinterClient.Config;
+using FimbulwinterClient.Core.Assets;
+using FimbulwinterClient.Core.Content;
+using FimbulwinterClient.GUI;
+using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Lua;
+using FimbulwinterClient.Network;
+using FimbulwinterClient.Network.Packets;
+using FimbulwinterClient.Network.Packets.Account;
+using FimbulwinterClient.Network.Packets.Character;
+using FimbulwinterClient.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -8,21 +21,9 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using FimbulwinterClient.IO;
-using FimbulwinterClient.Audio;
-using FimbulwinterClient.Lua;
 using Nuclex.Input;
 using Nuclex.Input.Devices;
-using FimbulwinterClient.GUI;
-using FimbulwinterClient.Content;
-using FimbulwinterClient.GUI.System;
-using System.IO;
-using FimbulwinterClient.Network;
-using FimbulwinterClient.Network.Packets;
-using FimbulwinterClient.Network.Packets.Character;
-using FimbulwinterClient.Network.Packets.Account;
-using FimbulwinterClient.Screens;
-using FimbulwinterClient.Config;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient
 {
@@ -49,11 +50,6 @@ namespace FimbulwinterClient
         {
             get { return cfg; }
             set { cfg = value; }
-        }
-
-        public ROContentManager ContentManager
-        {
-            get { return (ROContentManager)Content; }
         }
 
         BGMManager bgmManager;
@@ -118,12 +114,13 @@ namespace FimbulwinterClient
             graphics = new GraphicsDeviceManager(this);
             graphics.SynchronizeWithVerticalRetrace = false; // REMOVE ME LATER
             Window.Title = "Ragnarok Online";
-            Content = (ContentManager)new ROContentManager(Services, this);
-            Content.RootDirectory = "data";
+
+            SharedInformation.Initialize(Services, GraphicsDevice);
+            Content = SharedInformation.ContentManager;
 
             try
             {
-                Stream s = ContentManager.LoadContent<Stream>("data\\fb\\config\\config.xml");
+                Stream s = Content.Load<Stream>(@"data\fb\config\config.xml");
                 cfg = Configuration.FromStream(s);
                 cfg.Client = this;
                 s.Close();
@@ -165,7 +162,7 @@ namespace FimbulwinterClient
 
         protected override void Initialize()
         {
-            base.Initialize();
+            SharedInformation.GraphicsDevice = GraphicsDevice;
 
             InputManager im = (InputManager)Services.GetService(typeof(InputManager));
             IKeyboard kb = im.GetKeyboard();
@@ -174,7 +171,9 @@ namespace FimbulwinterClient
             GUI.Utils.Init(GraphicsDevice);
             //ChangeScreen(new ServiceSelectScreen());
             //ChangeScreen(new LoadingScreen("prontera.gat"));
-            StartMapChange("prontera");
+            StartMapChange("izlude");
+
+            base.Initialize();
         }
 
         protected override void LoadContent()

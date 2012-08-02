@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.GUI;
 using FimbulwinterClient.GUI.System;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Screens
 {
@@ -25,7 +26,7 @@ namespace FimbulwinterClient.Screens
                     background[y] = new Texture2D[4];
                     for (int x = 0; x < 4; x++)
                     {
-                        background[y][x] = ROClient.Singleton.ContentManager.LoadContent<Texture2D>(string.Format("data\\texture\\유저인터페이스\\t_배경{0}-{1}.bmp", y + 1, x + 1));
+                        background[y][x] = SharedInformation.ContentManager.Load<Texture2D>(string.Format("data\\texture\\유저인터페이스\\t_배경{0}-{1}.bmp", y + 1, x + 1));
                     }
                 }
                 

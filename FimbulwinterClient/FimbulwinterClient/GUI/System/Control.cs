@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nuclex.Input;
 using Microsoft.Xna.Framework.Audio;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI.System
 {
@@ -152,16 +153,16 @@ namespace FimbulwinterClient.GUI.System
         public Control()
         {
             if (formSkin == null)
-                formSkin = GuiManager.Singleton.Client.ContentManager.LoadContent<Texture2D>("data\\fb\\texture\\wndskin.png");
+                formSkin = SharedInformation.ContentManager.Load<Texture2D>(@"data\fb\texture\wndskin.png");
 
             if (gulim8 == null)
-                gulim8 = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8");
+                gulim8 = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8.xnb");
 
             if (gulim8B == null)
-                gulim8B = GuiManager.Singleton.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
+                gulim8B = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
             if (tingSound == null)
-                tingSound = GuiManager.Singleton.Client.ContentManager.LoadContent<SoundEffect>("data\\wav\\버튼소리.wav");
+                tingSound = SharedInformation.ContentManager.Load<SoundEffect>(@"data\wav\버튼소리.wav");
 
             _controls = new ControlCollection(this);
             _handle = GuiManager.Singleton.GetNewHandle();

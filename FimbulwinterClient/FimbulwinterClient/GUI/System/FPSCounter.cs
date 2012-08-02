@@ -29,7 +29,7 @@ namespace FimbulwinterClient.GUI.System
         {
             base.Initialize();
             spriteBatch = new SpriteBatch(_client.GraphicsDevice);
-            spriteFont = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>("fb\\Gulim8b"); ;
+            spriteFont = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb"); ;
         }
 
         public override void Update(GameTime gameTime)

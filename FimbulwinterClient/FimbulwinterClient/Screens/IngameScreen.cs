@@ -6,7 +6,7 @@ using FimbulwinterClient.GUI;
 using FimbulwinterClient.GUI.Ingame;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using FimbulwinterClient.Content;
+using FimbulwinterClient.Core.Assets;
 using Microsoft.Xna.Framework.Input;
 
 namespace FimbulwinterClient.Screens
@@ -30,7 +30,7 @@ namespace FimbulwinterClient.Screens
         public IngameScreen(Map map)
         {
             _map = map;
-            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
+            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
             leftrightRot = MathHelper.ToRadians(90);
             updownRot = -MathHelper.Pi / _map.Ground.Zoom;

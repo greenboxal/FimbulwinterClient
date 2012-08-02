@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using FimbulwinterClient.Content;
+using FimbulwinterClient.Core.Assets;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Screens
 {
@@ -13,7 +14,6 @@ namespace FimbulwinterClient.Screens
     {
         // Text
         private SpriteFont _font;
-        private List<string> _log;
 
         // Progress
         private string _progressDot;
@@ -29,8 +29,7 @@ namespace FimbulwinterClient.Screens
 
         public LoadingScreen(string mapname)
         {
-            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>("fb\\Gulim8b");
-            _log = new List<string>();
+            _font = ROClient.Singleton.GuiManager.Client.Content.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
             _progressDot = "";
             _totalProgress = 0;
@@ -47,11 +46,11 @@ namespace FimbulwinterClient.Screens
             sb.DrawString(_font, " " + _totalProgress + "%", new Vector2(_progressX, 10), Color.White);
 
             float y = 30;
-            for (int i = _log.Count > 55 ? _log.Count - 55 : 0; i < _log.Count; i++)
+            for (int i = 0; i < Logger.Lines.Count; i++)
             {
-                Vector2 size = _font.MeasureString(_log[i]);
+                Vector2 size = _font.MeasureString(Logger.Lines[i]);
 
-                sb.DrawString(_font, _log[i], new Vector2(10, y), Color.White);
+                sb.DrawString(_font, Logger.Lines[i], new Vector2(10, y), Color.White);
 
                 y += size.Y;
             }
@@ -91,24 +90,8 @@ namespace FimbulwinterClient.Screens
 
         private void _Load()
         {
-            Map.ReportStatus += Map_ReportStatus;
-            Map.ReportProgress += Map_ReportProgress;
-
-            _map = ROClient.Singleton.ContentManager.LoadContent<Map>(@"data\" + _mapName + ".gat");
+            _map = SharedInformation.ContentManager.Load<Map>(@"data\" + _mapName + ".gat");
             _state++;
-
-            Map.ReportStatus -= Map_ReportStatus;
-            Map.ReportProgress -= Map_ReportProgress;
-        }
-
-        private void Map_ReportProgress(int obj)
-        {
-            _totalProgress = obj;
-        }
-
-        private void Map_ReportStatus(string obj)
-        {
-            _log.Add(obj);
         }
 
         public virtual void Dispose()

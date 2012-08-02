@@ -8,14 +8,14 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using LuaInterface;
 using System.IO;
-using FimbulwinterClient.Content;
+using FimbulwinterClient.Core.Assets;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.Lua
 {
     public class LuaManager : GameComponent
     {
-
-        private const string lua_folder = "data\\luafiles514\\lua files";
+        private const string lua_folder = @"data\luafiles514\lua files";
 
         private LuaInterface.Lua _luaparser;
 
@@ -31,26 +31,28 @@ namespace FimbulwinterClient.Lua
 
         private void RunScript(string filename)
         {
-            var file = ROClient.Singleton.ContentManager.LoadContent<Lub>(Path.Combine(lua_folder, filename));
+            Stream file = SharedInformation.ContentManager.Load<Stream>(Path.Combine(lua_folder, filename));
             string temp = Path.GetTempFileName();
+
             using (FileStream fs = new FileStream(temp, FileMode.Create))
             {
                 using (BinaryWriter bw = new BinaryWriter(fs))
                 {
-                    bw.Write(file.Content);
+                    BinaryReader br = new BinaryReader(file);
+                    byte[] bytes = br.ReadBytes((int)file.Length);
+
+                    bw.Write(bytes);
                 }
             }
+
             _luaparser.DoFile(temp);
             System.IO.File.Delete(temp);
-            //if (!File.Exists(fullname))
-                //throw new FileNotFoundException("The file could not be found.", fullname);
-            //_luaparser.DoFile(fullname);
         }
 
         private void LoadAccessory()
         {
-            RunScript("datainfo\\accessoryid.lub");
-            RunScript("datainfo\\accname.lub");
+            RunScript(@"datainfo\accessoryid.lub");
+            RunScript(@"datainfo\accname.lub");
 
             var tbl = _luaparser.GetTable("ACCESSORY_IDs");
             foreach (DictionaryEntry de in tbl)
@@ -65,8 +67,8 @@ namespace FimbulwinterClient.Lua
 
         private void LoadRobe()
         {
-            RunScript("datainfo\\spriterobeid.lub");
-            RunScript("datainfo\\spriterobename.lub");
+            RunScript(@"datainfo\spriterobeid.lub");
+            RunScript(@"datainfo\spriterobename.lub");
 
             var tbl = _luaparser.GetTable("SPRITE_ROBE_IDs");
             foreach (DictionaryEntry de in tbl)
@@ -81,8 +83,8 @@ namespace FimbulwinterClient.Lua
 
         private void LoadNpcIdentity()
         {
-            RunScript("datainfo\\npcidentity.lub");
-            RunScript("datainfo\\jobname.lub");
+            RunScript(@"datainfo\npcidentity.lub");
+            RunScript(@"datainfo\jobname.lub");
 
             var tbl = _luaparser.GetTable("jobtbl");
             foreach (DictionaryEntry de in tbl)

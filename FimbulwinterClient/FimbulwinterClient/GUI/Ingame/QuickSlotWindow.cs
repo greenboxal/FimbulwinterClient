@@ -5,6 +5,7 @@ using System.Text;
 using FimbulwinterClient.GUI.System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using FimbulwinterClient.Core;
 
 namespace FimbulwinterClient.GUI.Ingame
 {
@@ -12,7 +13,7 @@ namespace FimbulwinterClient.GUI.Ingame
     {
         public QuickSlotWindow()
         {
-            this.FullImage = ROClient.Singleton.ContentManager.LoadContent<Texture2D>("data\\texture\\유저인터페이스\\basic_interface\\quickslot.bmp");
+            this.FullImage = SharedInformation.ContentManager.Load<Texture2D>("data\\texture\\유저인터페이스\\basic_interface\\quickslot.bmp");
             this.Size = new Vector2(this.FullImage.Width, this.FullImage.Height);
         }
     }

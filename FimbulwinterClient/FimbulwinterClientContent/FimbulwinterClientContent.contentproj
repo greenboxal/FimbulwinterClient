@@ -60,14 +60,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effect1.fx">
-      <Name>Effect1</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Ragnarok.fx">
+    <Compile Include="fb\Ragnarok.fx">
       <Name>Ragnarok</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>

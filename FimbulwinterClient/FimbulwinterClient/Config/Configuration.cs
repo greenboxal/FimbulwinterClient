@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml.Linq;
 using System.IO;
 using System.Xml.Serialization;
+using FimbulwinterClient.Core;
+using FimbulwinterClient.Core.Content;
 
 namespace FimbulwinterClient.Config
 {
@@ -111,10 +113,10 @@ namespace FimbulwinterClient.Config
 
         public void ReadConfig()
         {
-            _client.ContentManager.FileSystem.LoadGrf(@"rdata.grf");
-            _client.ContentManager.FileSystem.LoadGrf(@"data.grf");
+            GrfFileSystem.AddGrf(@"rdata.grf");
+            GrfFileSystem.AddGrf(@"data.grf");
 
-            using (Stream s = ROClient.Singleton.ContentManager.LoadContent<Stream>("data\\fb\\config\\serverinfo.xml"))
+            using (Stream s = SharedInformation.ContentManager.Load<Stream>(@"data\fb\config\serverinfo.xml"))
             {
                 _serversInfo = ServersInfo.FromStream(s);
                 s.Close();
@@ -125,7 +127,7 @@ namespace FimbulwinterClient.Config
         {
             XmlSerializer xs = new XmlSerializer(typeof(Configuration));
 
-            xs.Serialize(new FileStream("data\\fb\\config\\config.xml", FileMode.Create), this);
+            xs.Serialize(new FileStream(@"data\fb\config\config.xml", FileMode.Create), this);
         }
     }
 }
