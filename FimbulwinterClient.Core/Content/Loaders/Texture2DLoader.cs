@@ -39,7 +39,10 @@ namespace FimbulwinterClient.Core.Content.Loaders
         {
             Texture2D result = null;
 
-            if (assetName.EndsWith(".jpg") || assetName.EndsWith(".png") || assetName.EndsWith(".gif"))
+            if (assetName.EndsWith(".tga"))
+            {
+            }
+            else if (assetName.EndsWith(".jpg") || assetName.EndsWith(".png") || assetName.EndsWith(".gif"))
             {
                 result = Texture2D.FromStream(SharedInformation.GraphicsDevice, stream);
             }

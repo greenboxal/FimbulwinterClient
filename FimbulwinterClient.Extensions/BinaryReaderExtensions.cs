@@ -8,7 +8,7 @@ public static class BinaryReaderExtensions
 {
     public static string ReadCString(this BinaryReader br)
     {
-        string str = "";
+        StringBuilder str = new StringBuilder();
 
         do
         {
@@ -17,17 +17,17 @@ public static class BinaryReaderExtensions
             if (b == 0)
                 break;
 
-            str += (char)b;
+            str.Append((char)b);
         }
         while (true);
 
-        return str;
+        return str.ToString();
     }
 
     public static string ReadCString(this BinaryReader br, int size)
     {
         int i;
-        string str = "";
+        StringBuilder str = new StringBuilder(size);
 
         for (i = 0; i < size; i++)
         {
@@ -36,13 +36,13 @@ public static class BinaryReaderExtensions
             if (b == 0)
                 break;
 
-            str += (char)b;
+            str.Append((char)b);
         }
 
         if (i < size)
             br.ReadBytes(size - i - 1);
 
-        return str;
+        return str.ToString();
     }
 }
 
