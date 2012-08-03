@@ -359,7 +359,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         s.Load(this, br, majorVersion, minorVersion, textureOtherSide);
 
                         textureOtherSide = idx;
-
+                        
                         _surfaces[idx++] = s;
                     }
                     else
@@ -605,6 +605,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             Surface surface = _surfaces[surface_id];
 
             Vector3[] position = new Vector3[4];
+            Vector3[] normal = new Vector3[4];
 
             switch (type)
             {
@@ -620,6 +621,11 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         position[1] = new Vector3(x1, -cell.Height[1], y0);
                         position[2] = new Vector3(x0, -cell.Height[2], y1);
                         position[3] = new Vector3(x1, -cell.Height[3], y1);
+
+                        normal[0] = cell.Normal[1];
+                        normal[1] = cell.Normal[2];
+                        normal[2] = cell.Normal[3];
+                        normal[3] = cell.Normal[4];
                     }
                     break;
                 case 1:
@@ -635,6 +641,11 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         position[1] = new Vector3(x1, -cell.Height[3], yy);
                         position[2] = new Vector3(x0, -cell2.Height[0], yy);
                         position[3] = new Vector3(x1, -cell2.Height[1], yy);
+
+                        normal[0] = new Vector3(0, 0, cell2.Height[0] > cell.Height[3] ? -1 : 1);
+                        normal[1] = normal[0];
+                        normal[2] = normal[0];
+                        normal[3] = normal[0];
                     }
                     break;
                 case 2:
@@ -650,6 +661,11 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         position[1] = new Vector3(xx, -cell.Height[1], y0);
                         position[2] = new Vector3(xx, -cell2.Height[2], y1);
                         position[3] = new Vector3(xx, -cell2.Height[0], y0);
+
+                        normal[0] = new Vector3(cell.Height[3] > cell2.Height[2] ? -1 : 1, 0, 0);
+                        normal[1] = normal[0];
+                        normal[2] = normal[0];
+                        normal[3] = normal[0];
                     }
                     break;
             }
@@ -666,10 +682,10 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             lightmapV[0] = (float)(0.1f + lm_y) / lm_h;
             lightmapV[1] = (float)(0.9f + lm_y) / lm_h;
 
-            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], cell.Normal[1], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
-            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], cell.Normal[2], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
-            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], cell.Normal[3], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
-            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], cell.Normal[4], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
+            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
+            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
+            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], normal[2], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
+            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], normal[3], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
 
             indexdata.Add(idx + 0);
             indexdata.Add(idx + 1);

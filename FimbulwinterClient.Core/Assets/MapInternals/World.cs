@@ -251,6 +251,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             public Vector3 Position
             {
                 get { return _position; }
+                set { _position = value; }
             }
 
             private Vector3 _rotation;
@@ -263,6 +264,12 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             public Vector3 Scale
             {
                 get { return _scale; }
+            }
+
+            private GravityModel _model;
+            public GravityModel Model
+            {
+                get { return _model; }
             }
 
             public void Load(BinaryReader br, int major, int minor, MapInternals.Ground gnd)
@@ -280,24 +287,36 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 }
 
                 _modelName = br.ReadCString(80);
-                _nodeName = br.ReadCString(80).ToLower();
+                _nodeName = br.ReadCString(80);
 
+                _position.X = br.ReadSingle();
                 _position.Y = br.ReadSingle();
                 _position.Z = br.ReadSingle();
-                _position.X = br.ReadSingle();
 
+                _rotation.X = br.ReadSingle();
                 _rotation.Y = br.ReadSingle();
                 _rotation.Z = br.ReadSingle();
-                _rotation.X = br.ReadSingle();
 
+                _scale.X = br.ReadSingle();
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
-                _scale.X = br.ReadSingle();
+
+                _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName.Korean());
             }
 
             public void Draw(Matrix view, Matrix projection, Matrix world)
             {
-                
+                if (_model == null)
+                    return;
+
+                world *= Matrix.CreateTranslation(5 * _position.X, -_position.Y, 5 * _position.Z);
+                world *= Matrix.CreateRotationZ(-Rotation.Z);
+                world *= Matrix.CreateRotationX(-Rotation.X);
+                world *= Matrix.CreateRotationY(Rotation.Y);
+                world *= Matrix.CreateScale(_scale.X, -_scale.Y, _scale.Z);
+                world *= Matrix.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
+
+                _model.Draw(view, projection, world);
             }
         }
 
@@ -426,6 +445,11 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     ModelObject mo = new ModelObject();
 
                     mo.Load(br, majorVersion, minorVersion, owner.Ground);
+
+                    Vector3 tmp = mo.Position;
+                    tmp.X = (mo.Position.X / 5) + owner.Ground.Width;
+                    tmp.Z = (mo.Position.Z / 5) + owner.Ground.Height;
+                    mo.Position = tmp;
 
                     _models.Add(mo);
                 }

@@ -94,6 +94,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GravityModel.cs" />
+    <Compile Include="Assets\GravityModelMesh.cs" />
     <Compile Include="Assets\Map.cs" />
     <Compile Include="Assets\MapInternals\Altitude.cs" />
     <Compile Include="Assets\MapInternals\Ground.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Content\GRF\GRFFileExtractEventArg.cs" />
     <Compile Include="Content\GRF\GRFHeader.cs" />
     <Compile Include="Content\GRF\GRFSharp.cs" />
+    <Compile Include="Content\Loaders\GravityModelLoader.cs" />
     <Compile Include="Content\Loaders\MapLoader.cs" />
     <Compile Include="Content\Loaders\PaletteLoader.cs" />
     <Compile Include="Content\Loaders\SoundEffectLoader.cs" />

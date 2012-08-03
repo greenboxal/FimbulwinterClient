@@ -42,6 +42,7 @@ namespace FimbulwinterClient.Core.Content
             _contentLoaders.Add(typeof(SpriteAction), new SpriteActionLoader());
             _contentLoaders.Add(typeof(Palette), new PaletteLoader());
             _contentLoaders.Add(typeof(Map), new MapLoader());
+            _contentLoaders.Add(typeof(GravityModel), new GravityModelLoader());
         }
 
         private GraphicsDevice _graphicsDevice;

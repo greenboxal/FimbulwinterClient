@@ -33,7 +33,6 @@ namespace FimbulwinterClient.Screens
             _map = map;
             _font = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
-            leftrightRot = MathHelper.ToRadians(90);
             updownRot = -MathHelper.Pi / _map.Ground.Zoom;
 
             Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
@@ -52,7 +51,7 @@ namespace FimbulwinterClient.Screens
 
             ROClient.Singleton.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             ROClient.Singleton.GraphicsDevice.BlendState = BlendState.Opaque;
-            ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
 
             Matrix worldMatrix = Matrix.Identity;
 
