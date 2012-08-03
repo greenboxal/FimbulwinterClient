@@ -72,6 +72,9 @@ namespace FimbulwinterClient.Core.Assets
             if (!_world.Load(rsw, this))
                 return false;
 
+            Logger.WriteLine("Creating ground vertex buffer...");
+            _ground.SetupVertices();
+
             Logger.WriteLine("Building lightmaps...");
             BuildLightmaps();
 

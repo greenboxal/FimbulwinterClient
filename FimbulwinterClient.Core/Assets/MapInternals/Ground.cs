@@ -106,13 +106,13 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _tileOtherSide = tileOtherSide;
             }
 
-            public void CalculateNormal()
+            public void CalculateNormal(Ground ground)
             {
                 Vector3 b1 = default(Vector3);
                 Vector3 b2 = default(Vector3);
 
-                b1 = new Vector3(10, -_height[0], -10) - new Vector3(0, -_height[3], 0);
-                b2 = new Vector3(0, -_height[2], -10) - new Vector3(0, -_height[3], 0);
+                b1 = new Vector3(ground.Zoom, _height[1], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
+                b2 = new Vector3(ground.Zoom, _height[2], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
 
                 _normal = new Vector3[5];
                 _normal[0] = Vector3.Cross(b1, b2);
@@ -449,7 +449,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             {
                 for (int x = xfrom; x <= xto - 1; x++)
                 {
-                    _cells[y * _width + x].CalculateNormal();
+                    _cells[y * _width + x].CalculateNormal(this);
                 }
             }
             
@@ -517,7 +517,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
         }
 
         private int objectCount;
-        private void SetupVertices()
+        public void SetupVertices()
         {
             objectCount = 0;
 
@@ -595,9 +595,6 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
         private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
         {
-            float xoffset = -1.0F * (float)_width * _zoom / 2.0F;
-            float yoffset = -1.0F * (float)_height * _zoom / 2.0F;
-
             int idx = current_surface * 4;
             int cell_idx = y * _width + x;
             Cell cell = _cells[cell_idx];
@@ -611,16 +608,16 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             {
                 case 0:
                     {
-                        float x0 = (float)x * _zoom + xoffset;
-                        float y0 = (float)(_height - y) * _zoom + yoffset;
+                        float x0 = (x - _width / 2) * _zoom;
+                        float x1 = (x - _width / 2 + 1) * _zoom;
 
-                        float x1 = (float)(x + 1) * _zoom + xoffset;
-                        float y1 = (float)((_height - y) - 1) * _zoom + yoffset;
+                        float z0 = (y - _height / 2) * _zoom;
+                        float z1 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(x0, -cell.Height[0], y0);
-                        position[1] = new Vector3(x1, -cell.Height[1], y0);
-                        position[2] = new Vector3(x0, -cell.Height[2], y1);
-                        position[3] = new Vector3(x1, -cell.Height[3], y1);
+                        position[0] = new Vector3(x0, cell.Height[0], z0);
+                        position[1] = new Vector3(x1, cell.Height[1], z0);
+                        position[2] = new Vector3(x0, cell.Height[2], z1);
+                        position[3] = new Vector3(x1, cell.Height[3], z1);
 
                         normal[0] = cell.Normal[1];
                         normal[1] = cell.Normal[2];
@@ -632,15 +629,15 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     {
                         Cell cell2 = _cells[(y + 1) * _width + x];
 
-                        float x0 = (float)x * _zoom + xoffset;
-                        float x1 = (float)(x + 1) * _zoom + xoffset;
+                        float x0 = (x - _width / 2) * _zoom;
+                        float x1 = (x - _width / 2 + 1) * _zoom;
 
-                        float yy = (float)((_height - y) - 1) * _zoom + yoffset;
+                        float z0 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(x0, -cell.Height[2], yy);
-                        position[1] = new Vector3(x1, -cell.Height[3], yy);
-                        position[2] = new Vector3(x0, -cell2.Height[0], yy);
-                        position[3] = new Vector3(x1, -cell2.Height[1], yy);
+                        position[0] = new Vector3(x0, cell.Height[2], z0);
+                        position[1] = new Vector3(x1, cell.Height[3], z0);
+                        position[2] = new Vector3(x0, cell2.Height[0], z0);
+                        position[3] = new Vector3(x1, cell2.Height[1], z0);
 
                         normal[0] = new Vector3(0, 0, cell2.Height[0] > cell.Height[3] ? -1 : 1);
                         normal[1] = normal[0];
@@ -652,15 +649,15 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     {
                         Cell cell2 = _cells[y * _width + x + 1];
 
-                        float xx = (float)x * _zoom + xoffset;
+                        float x0 = (x - _width / 2 + 1) * _zoom;
 
-                        float y0 = (float)(_height - y) * _zoom + yoffset;
-                        float y1 = (float)((_height - y) - 1) * _zoom + yoffset;
+                        float z0 = (y - _height / 2) * _zoom;
+                        float z1 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(xx, -cell.Height[3], y1);
-                        position[1] = new Vector3(xx, -cell.Height[1], y0);
-                        position[2] = new Vector3(xx, -cell2.Height[2], y1);
-                        position[3] = new Vector3(xx, -cell2.Height[0], y0);
+                        position[0] = new Vector3(x0, cell.Height[3], z1);
+                        position[1] = new Vector3(x0, cell.Height[1], z0);
+                        position[2] = new Vector3(x0, cell2.Height[2], z1);
+                        position[3] = new Vector3(x0, cell2.Height[0], z0);
 
                         normal[0] = new Vector3(cell.Height[3] > cell2.Height[2] ? -1 : 1, 0, 0);
                         normal[1] = normal[0];

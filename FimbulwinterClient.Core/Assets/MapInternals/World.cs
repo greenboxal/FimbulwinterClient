@@ -300,7 +300,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _scale.X = br.ReadSingle();
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
-
+                return;
                 _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName.Korean());
             }
 
@@ -518,19 +518,22 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             VertexPositionNormalTexture[] vertexdata = new VertexPositionNormalTexture[4];
             short[] indexdata = new short[4];
 
-            float xoffset = -1.0F * (float)owner.Ground.Width * owner.Ground.Zoom / 2.0F;
-            float yoffset = -1.0F * (float)owner.Ground.Height * owner.Ground.Zoom / 2.0F;
-
-            float xmax = xoffset + owner.Ground.Zoom * owner.Ground.Width;
-            float ymax = yoffset + owner.Ground.Zoom * owner.Ground.Height;
+            float xmax = owner.Ground.Zoom * owner.Ground.Width;
+            float ymax = owner.Ground.Zoom * owner.Ground.Height;
 
             Vector3[] position = new Vector3[4];
             Vector2[] tex = new Vector2[4];
 
-            position[0] = new Vector3(xoffset, -_waterInfo.Level, yoffset);
-            position[1] = new Vector3(xmax, -_waterInfo.Level, yoffset);
-            position[2] = new Vector3(xmax, -_waterInfo.Level, ymax);
-            position[3] = new Vector3(xoffset, -_waterInfo.Level, ymax);
+            float x0 = (-owner.Ground.Width / 2) * owner.Ground.Zoom;
+            float x1 = ((owner.Ground.Width - 1) - owner.Ground.Width / 2 + 1) * owner.Ground.Zoom;
+
+            float z0 = (-owner.Ground.Height / 2) * owner.Ground.Zoom;
+            float z1 = ((owner.Ground.Height - 1) - owner.Ground.Height / 2 + 1) * owner.Ground.Zoom;
+
+            position[0] = new Vector3(x0, _waterInfo.Level, z0);
+            position[1] = new Vector3(x1, _waterInfo.Level, z0);
+            position[2] = new Vector3(x0, _waterInfo.Level, z1);
+            position[3] = new Vector3(x1, _waterInfo.Level, z1);
 
             tex[0] = new Vector2(0, 0);
             tex[1] = new Vector2(owner.Ground.Width / 8, 0);
@@ -544,8 +547,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             indexdata[0] = 0;
             indexdata[1] = 1;
-            indexdata[2] = 3;
-            indexdata[3] = 2;
+            indexdata[2] = 2;
+            indexdata[3] = 3;
 
             _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionNormalTexture), 4, BufferUsage.WriteOnly);
             _vertices.SetData(vertexdata);

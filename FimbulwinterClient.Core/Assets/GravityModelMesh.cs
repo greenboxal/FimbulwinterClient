@@ -248,7 +248,7 @@ namespace FimbulwinterClient.Core.Assets
                 }
 
                 SharedInformation.GraphicsDevice.Indices = _indexes[i];
-                SharedInformation.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
+                SharedInformation.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleStrip, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
             }
 
             for (int i = 0; i < _children.Length; i++)
