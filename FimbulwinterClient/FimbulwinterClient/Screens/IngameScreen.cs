@@ -14,16 +14,7 @@ namespace FimbulwinterClient.Screens
 {
     public class IngameScreen : IGameScreen
     {
-        BasicEffect effect;
-        Matrix viewMatrix;
-        Matrix projectionMatrix;
-
-        Vector3 cameraPosition = new Vector3(6, 6, 1200);
-        float leftrightRot;
-        float updownRot;
-        const float rotationSpeed = 0.3f;
-        const float moveSpeed = 150.0f;
-        MouseState originalMouseState;
+        Camera _camera;
 
         SpriteFont _font;
         Map _map;
@@ -33,12 +24,7 @@ namespace FimbulwinterClient.Screens
             _map = map;
             _font = SharedInformation.ContentManager.Load<SpriteFont>(@"fb\Gulim8b.xnb");
 
-            updownRot = -MathHelper.Pi / _map.Ground.Zoom;
-
-            Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
-            originalMouseState = Mouse.GetState();
-
-            effect = new BasicEffect(ROClient.Singleton.GraphicsDevice);
+            _camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, -1), Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Down), 1.0F, 5000.0F);
         }
 
         public void Draw(SpriteBatch sb, GameTime gameTime)
@@ -46,79 +32,86 @@ namespace FimbulwinterClient.Screens
             ROClient.Singleton.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.DarkSlateBlue, 1.0f, 0);
 
             sb.Begin();
-            sb.DrawString(_font, string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", cameraPosition.X, cameraPosition.Y, cameraPosition.Y, cameraFinalTarget.X, cameraFinalTarget.Y, cameraFinalTarget.Z), new Vector2(10, 10), Color.White);
+            sb.DrawString(_font, string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", _camera.Position.X, _camera.Position.Y, _camera.Position.Y, _camera.Target.X, _camera.Target.Y, _camera.Target.Z), new Vector2(10, 10), Color.White);
             sb.End();
 
             ROClient.Singleton.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             ROClient.Singleton.GraphicsDevice.BlendState = BlendState.Opaque;
             ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            Matrix worldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Down);
-
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 5000.0F);
-
-            _map.Draw(gameTime, viewMatrix, projectionMatrix, worldMatrix);
+            _map.Draw(gameTime, _camera.View, _camera.Projection, _camera.World);
         }
 
+        Vector2 tempMousePosition;
+        MouseState prevMouseState;
         public void Update(SpriteBatch sb, GameTime gameTime)
         {
-            _map.Update(gameTime);
-            float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
-            ProcessInput(timeDifference);
-        }
+            if (!ROClient.Singleton.IsActive)
+                return;
 
-        private void ProcessInput(float amount)
-        {
-            MouseState currentMouseState = Mouse.GetState();
-            if (currentMouseState != originalMouseState)
+            float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 10.0f;
+
+            KeyboardState keyboardState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+
+            Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
+
+            if (keyboardState.IsKeyDown(Keys.W))
+                _camera.MoveForward(1.0f * timeDifference);
+            else if (keyboardState.IsKeyDown(Keys.S))
+                _camera.MoveForward(-1.0f * timeDifference);
+
+            if (keyboardState.IsKeyDown(Keys.A))
+                _camera.Strafe(-1.0f * timeDifference);
+            else if (keyboardState.IsKeyDown(Keys.D))
+                _camera.Strafe(1.0f * timeDifference);
+
+            if (keyboardState.IsKeyDown(Keys.LeftShift))
+                _camera.Levitate(1.0f * timeDifference);
+            else if (keyboardState.IsKeyDown(Keys.LeftControl))
+                _camera.Levitate(-1.0f * timeDifference);
+
+            Viewport viewport = SharedInformation.GraphicsDevice.Viewport;
+
+            if (mouseState.RightButton == ButtonState.Pressed && prevMouseState.RightButton == ButtonState.Pressed)
             {
-                float xDifference = currentMouseState.X - originalMouseState.X;
-                float yDifference = currentMouseState.Y - originalMouseState.Y;
-                leftrightRot -= rotationSpeed * xDifference * amount;
-                updownRot -= rotationSpeed * yDifference * amount;
-                Mouse.SetPosition(ROClient.Singleton.GraphicsDevice.Viewport.Width / 2, ROClient.Singleton.GraphicsDevice.Viewport.Height / 2);
-                UpdateViewMatrix();
+                Vector2 center = GetViewportCenter(viewport);
+
+                _camera.AddYaw((center.X - mousePos.X) / 100.0F * timeDifference);
+                _camera.AddPitch((center.Y - mousePos.Y) / 100.0F * timeDifference);
+
+                Mouse.SetPosition((int)center.X, (int)center.Y);
+            }
+            else if (mouseState.RightButton == ButtonState.Pressed && prevMouseState.RightButton == ButtonState.Released)
+            {
+                Vector2 center = GetViewportCenter(viewport);
+                tempMousePosition = new Vector2(mouseState.X, mouseState.Y);
+                Mouse.SetPosition((int)center.X, (int)center.Y);
+            }
+            else if (mouseState.RightButton == ButtonState.Released && prevMouseState.RightButton == ButtonState.Pressed)
+            {
+                Mouse.SetPosition((int)tempMousePosition.X, (int)tempMousePosition.Y);
             }
 
-            Vector3 moveVector = new Vector3(0, 0, 0);
-            KeyboardState keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))
-                moveVector += new Vector3(0, 0, -1);
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))
-                moveVector += new Vector3(0, 0, 1);
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D))
-                moveVector += new Vector3(1, 0, 0);
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A))
-                moveVector += new Vector3(-1, 0, 0);
-            if (keyState.IsKeyDown(Keys.Q))
-                moveVector += new Vector3(0, 1, 0);
-            if (keyState.IsKeyDown(Keys.Z))
-                moveVector += new Vector3(0, -1, 0);
-            AddToCameraPosition(moveVector * amount);
+            if (mousePos.X >= viewport.X && mousePos.Y >= viewport.Y && mousePos.X <= viewport.X + viewport.Width && mousePos.Y <= viewport.Y + viewport.Height)
+            {
+                _camera.UpdateMouseRay(mousePos, viewport);
+            }
+
+            _camera.Update();
+            _map.Update(gameTime);
+
+            prevMouseState = mouseState;
         }
 
-        private void AddToCameraPosition(Vector3 vectorToAdd)
+        public static Vector2 GetViewportCenter(Viewport viewport)
         {
-            Matrix cameraRotation = Matrix.CreateRotationX(updownRot) * Matrix.CreateRotationY(leftrightRot);
-            Vector3 rotatedVector = Vector3.Transform(vectorToAdd, cameraRotation);
-            cameraPosition += moveSpeed * rotatedVector;
-            UpdateViewMatrix();
+            return new Vector2(viewport.X + viewport.Width / 2, viewport.Y + viewport.Height / 2);
         }
 
-        Vector3 cameraFinalTarget;
-        private void UpdateViewMatrix()
+        public static Rectangle GetViewportRectangle(Viewport viewport)
         {
-            Matrix cameraRotation = Matrix.CreateRotationX(updownRot) * Matrix.CreateRotationY(leftrightRot);
-
-            Vector3 cameraOriginalTarget = new Vector3(0, 0, -1);
-            Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
-
-            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRotation);
-            cameraFinalTarget = cameraPosition + cameraRotatedTarget;
-
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
-
-            viewMatrix = Matrix.CreateLookAt(cameraPosition, cameraFinalTarget, cameraRotatedUpVector);
+            return new Rectangle(0, 0, viewport.Width, viewport.Height);
         }
 
         public void Dispose()

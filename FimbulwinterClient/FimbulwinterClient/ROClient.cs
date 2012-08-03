@@ -155,12 +155,10 @@ namespace FimbulwinterClient
         protected override void Initialize()
         {
             SharedInformation.GraphicsDevice = GraphicsDevice;
-
-            InputManager im = (InputManager)Services.GetService(typeof(InputManager));
-            IKeyboard kb = im.GetKeyboard();
-            kb.KeyReleased += new KeyDelegate(kb_KeyReleased);
-
             Gui.Utils.Init(GraphicsDevice);
+
+            inputManager.GetKeyboard().KeyPressed += kb_KeyReleased;
+
             //ChangeScreen(new ServiceSelectScreen());
             //ChangeScreen(new LoadingScreen("prontera.gat"));
             StartMapChange("izlude");

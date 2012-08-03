@@ -45,12 +45,6 @@ namespace FimbulwinterClient.Core.Content
             _contentLoaders.Add(typeof(GravityModel), new GravityModelLoader());
         }
 
-        private GraphicsDevice _graphicsDevice;
-        public GraphicsDevice GraphicsDevice
-        {
-            get { return _graphicsDevice; }
-        }
-
         private Hashtable _cache;
         public Hashtable Cache
         {
@@ -60,7 +54,6 @@ namespace FimbulwinterClient.Core.Content
         public AdvancedContentManager(IServiceProvider serviceProvider, GraphicsDevice graphicsDevice)
             : base(serviceProvider, "data")
         {
-            _graphicsDevice = graphicsDevice;
             _cache = CollectionsUtil.CreateCaseInsensitiveHashtable();
         }
 
@@ -72,10 +65,10 @@ namespace FimbulwinterClient.Core.Content
             if (assetName.EndsWith(".xnb"))
                 return base.Load<T>(Path.Combine(RootDirectory, assetName));
 
-            T cached = (T)_cache[assetName];
+            object cached = (T)_cache[assetName];
 
             if (cached != null)
-                return cached;
+                return (T)cached;
 
             stream = OpenStream(assetName);
 
@@ -84,6 +77,9 @@ namespace FimbulwinterClient.Core.Content
 
             if (_contentLoaders.ContainsKey(typeof(T)))
                 value = (T)_contentLoaders[typeof(T)].Load(stream, assetName);
+
+            if (value == null)
+                return value;
 
             _cache.Add(assetName, value);
 

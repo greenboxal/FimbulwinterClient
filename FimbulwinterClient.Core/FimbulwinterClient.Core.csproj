@@ -104,6 +104,7 @@
     <Compile Include="Assets\Palette.cs" />
     <Compile Include="Assets\Sprite.cs" />
     <Compile Include="Assets\SpriteAction.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Config\ServerInfo.cs" />
     <Compile Include="Config\ServersInfo.cs" />
