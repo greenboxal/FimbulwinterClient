@@ -75,19 +75,19 @@ MapGroundOutput MapGroundVS(MapGroundInput Input)
 float4 MapGroundPS(MapGroundOutput Input) : COLOR0
 {
 	float4 color;
-	float4 totalLightDiffuse = float4(0, 0, 0, 1);
+	float3 totalLightDiffuse = float3(0, 0, 0);
 
 	float3 lightDir = normalize(float4(LightPosition, 1) - Input.PositionOrig);
-	totalLightDiffuse.rgb += DiffuseColor * max(0, dot(Input.Normal, lightDir));
-	totalLightDiffuse.a = 1.0F;
+	totalLightDiffuse.rgb += DiffuseColor * max(0, dot(Input.Normal.xyz, lightDir));
 
 	float4 lightmap = tex2D(LightmapSampler, Input.Lightmap);
 
 	color = tex2D(TextureSampler, Input.Texture) * Input.Color;
 	color.rgb *= lightmap.a;
 	color.rgb += lightmap.rgb;
+	color.rgb *= totalLightDiffuse + AmbientColor;;
 	
-	return color * (totalLightDiffuse + float4(AmbientColor, 1));
+	return color;
 }
 
 technique MapGround

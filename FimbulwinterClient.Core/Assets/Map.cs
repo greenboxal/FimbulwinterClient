@@ -77,12 +77,11 @@ namespace FimbulwinterClient.Core.Assets
 
             _effect.Parameters["Lightmap"].SetValue(_lightmap);
 
-            _effect.Parameters["AmbientColor"].SetValue(_world.LightInfo.Ambient);
-            _effect.Parameters["DiffuseColor"].SetValue(_world.LightInfo.Diffuse);
+            _effect.Parameters["AmbientColor"].SetValue(new Vector3(1, 1, 1));
+            _effect.Parameters["DiffuseColor"].SetValue(new Vector3(0, 0, 0));
 
             // FIXME: Where I put the light? O_O
-            //_effect.Parameters["LightPosition"].SetValue(_world.LightInfo.Position);
-            _effect.Parameters["LightPosition"].SetValue(new Vector3(-1000, 2000, -1000));
+            _effect.Parameters["LightPosition"].SetValue(new Vector3(0, 0, 0));
 
             return true;
         }

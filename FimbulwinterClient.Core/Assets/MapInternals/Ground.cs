@@ -452,7 +452,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     _cells[y * _width + x].CalculateNormal();
                 }
             }
-
+            
             for (int y = yfrom; y <= yto - 1; y++)
             {
                 for (int x = xfrom; x <= xto - 1; x++)
