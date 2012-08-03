@@ -50,7 +50,6 @@ namespace FimbulwinterClient.Core.Assets
         public Map(GraphicsDevice gd)
         {
             _graphicsDevice = gd;
-            _effect = new BasicEffect(_graphicsDevice);
 
             _effect = SharedInformation.ContentManager.Load<Effect>(@"fb\Ragnarok.xnb");
             _effect.CurrentTechnique = _effect.Techniques["MapGround"];
