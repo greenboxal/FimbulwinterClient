@@ -16,14 +16,14 @@ namespace FimbulwinterClient.Core.Content.Loaders
             uint[] imageData = new uint[bmp.Width * bmp.Height];
             Texture2D texture = new Texture2D(device, bmp.Width, bmp.Height);
 
+            BitmapData origdata = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             unsafe
             {
-                BitmapData origdata = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 uint *byteData = (uint *)origdata.Scan0;
 
                 for (int i = 0; i < imageData.Length; i++)
                 {
-                    imageData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                    imageData[i] = (byteData[i] & 0x000000FF) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
                 }
 
                 byteData = null;

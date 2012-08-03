@@ -69,8 +69,10 @@ namespace FimbulwinterClient.Core.Content
             T value = default(T);
             Stream stream;
 
-            if (_cache.Contains(assetName))
-                return (T)_cache[assetName];
+            T cached = (T)_cache[assetName];
+
+            if (cached != null)
+                return cached;
 
             if (assetName.EndsWith(".xnb"))
                 return base.Load<T>(Path.Combine(RootDirectory, assetName));
@@ -82,6 +84,8 @@ namespace FimbulwinterClient.Core.Content
 
             if (_contentLoaders.ContainsKey(typeof(T)))
                 value = (T)_contentLoaders[typeof(T)].Load(stream, assetName);
+
+            _cache.Add(assetName, value);
 
             return value;
         }

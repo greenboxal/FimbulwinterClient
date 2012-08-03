@@ -1,7 +1,8 @@
 using System;
 using System.IO;
 using Ionic.Zlib;
-using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -24,7 +25,7 @@ namespace GRFSharp
     {
         #region Local variables
         private string _filePathToGRF;
-        private Dictionary<String, GRFFile> _GRFFiles = new Dictionary<String, GRFFile>();
+        private Hashtable _GRFFiles = CollectionsUtil.CreateCaseInsensitiveHashtable();
 
         private int _compressedLength;
         private int _uncompressedLength;
@@ -121,7 +122,7 @@ namespace GRFSharp
         #endregion
 
         #region Public properties
-        public Dictionary<String, GRFFile> Files { get { return _GRFFiles; } }
+        public Hashtable Files { get { return _GRFFiles; } }
         public int FileCount { get { return _fileCount; } }
         public bool IsOpen { get { return _isOpen; } }
         public int Version
@@ -230,10 +231,10 @@ namespace GRFSharp
             bw.Write((int)_GRFFiles.Count + _m1 + 7);
             bw.Write((int)0x200); // We always save as 2.0
             OnGRFMetaWriteComplete();
-            foreach (KeyValuePair<string, GRFFile>entry in _GRFFiles)
+            foreach (DictionaryEntry entry in _GRFFiles)
             {
-                entry.Value.SaveBody(bw);
-                OnFileBodyWriteComplete(new GRFEventArg(entry.Value));
+                ((GRFFile)entry.Value).SaveBody(bw);
+                OnFileBodyWriteComplete(new GRFEventArg((GRFFile)entry.Value));
             }
 
             bw.Flush();
@@ -243,10 +244,10 @@ namespace GRFSharp
             MemoryStream bodyStream = new MemoryStream();
             BinaryWriter bw2 = new BinaryWriter(bodyStream);
 
-            foreach (KeyValuePair<string, GRFFile> entry in _GRFFiles)
+            foreach (DictionaryEntry entry in _GRFFiles)
             {
-                entry.Value.Save(bw2);
-                OnFileTableWriteComplete(new GRFEventArg(entry.Value));
+                ((GRFFile)entry.Value).Save(bw2);
+                OnFileTableWriteComplete(new GRFEventArg((GRFFile)entry.Value));
             }
 
             bw2.Flush();
@@ -380,7 +381,7 @@ namespace GRFSharp
                     fileCycle,
                     this);
 
-                _GRFFiles.Add(newGRFFile.Name.ToLower(), newGRFFile);
+                _GRFFiles.Add(newGRFFile.Name, newGRFFile);
                 OnFileReadComplete(new GRFEventArg(newGRFFile));
             }
             _isOpen = true;
@@ -452,18 +453,16 @@ namespace GRFSharp
         public void AddFile(string inputFilePath,string outputFilePath)
         {
             byte[] data = File.ReadAllBytes(inputFilePath);
-            outputFilePath = outputFilePath.ToLower();
+            GRFFile f;
 
-            foreach (KeyValuePair<string, GRFFile> entry in _GRFFiles)
+            f = (GRFFile)_GRFFiles[outputFilePath];
+            if (f != null)
             {
-                if (entry.Value.Name == outputFilePath)
-                {
-                    entry.Value.UncompressedBody = data;
-                    return;
-                }
+                f.UncompressedBody = data;
+                return;
             }
 
-            GRFFile f = new GRFFile(outputFilePath, 0, 0, 0, 1, 0, 0, this);
+            f = new GRFFile(outputFilePath, 0, 0, 0, 1, 0, 0, this);
             f.UncompressedBody = data;
             _GRFFiles.Add(f.Name, f);
             _fileCount++;
@@ -476,15 +475,10 @@ namespace GRFSharp
         /// <param name="filename">The file name to delete.</param>
         public void DeleteFile(string filename)
         {
-            filename = filename.ToLower();
-            foreach (KeyValuePair<string, GRFFile> entry in _GRFFiles)
+            if (_GRFFiles.ContainsKey(filename))
             {
-                if (entry.Value.Name == filename)
-                {
-                    _GRFFiles.Remove(entry.Value.Name);
-                    _fileCount--;
-                    return;
-                }
+                _GRFFiles.Remove(filename);
+                _fileCount--;
             }
         }
 
@@ -507,12 +501,7 @@ namespace GRFSharp
 
         public GRFFile GetFile(string asset)
         {
-            asset = asset.ToLower();
-            GRFFile ret;
-            if (_GRFFiles.TryGetValue(asset, out ret))
-                return ret;
-            else
-                return null;
+            return (GRFFile)_GRFFiles[asset];
         }
     }
 }
