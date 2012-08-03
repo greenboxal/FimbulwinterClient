@@ -51,9 +51,9 @@ namespace FimbulwinterClient.Screens
 
             ROClient.Singleton.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             ROClient.Singleton.GraphicsDevice.BlendState = BlendState.Opaque;
-            ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+            ROClient.Singleton.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            Matrix worldMatrix = Matrix.Identity;
+            Matrix worldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Down);
 
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), ROClient.Singleton.GraphicsDevice.Viewport.AspectRatio, 1.0f, 5000.0F);
 
