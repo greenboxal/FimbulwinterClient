@@ -69,13 +69,13 @@ namespace FimbulwinterClient.Core.Content
             T value = default(T);
             Stream stream;
 
+            if (assetName.EndsWith(".xnb"))
+                return base.Load<T>(Path.Combine(RootDirectory, assetName));
+
             T cached = (T)_cache[assetName];
 
             if (cached != null)
                 return cached;
-
-            if (assetName.EndsWith(".xnb"))
-                return base.Load<T>(Path.Combine(RootDirectory, assetName));
 
             stream = OpenStream(assetName);
 
