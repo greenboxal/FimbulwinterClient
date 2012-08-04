@@ -110,7 +110,7 @@ namespace FimbulwinterClient.Core.Assets
                 _textures[i] = owner.Textures[br.ReadInt32()];
             }
 
-            _matrix = new Matrix();
+            _matrix = Matrix.Identity;
 
             _matrix.M11 = br.ReadSingle();
             _matrix.M12 = br.ReadSingle();
@@ -123,8 +123,6 @@ namespace FimbulwinterClient.Core.Assets
             _matrix.M31 = br.ReadSingle();
             _matrix.M32 = br.ReadSingle();
             _matrix.M33 = br.ReadSingle();
-
-            _matrix = Matrix.Transpose(_matrix);
 
             _position.X = br.ReadSingle();
             _position.Y = br.ReadSingle();
@@ -228,19 +226,17 @@ namespace FimbulwinterClient.Core.Assets
             }
         }
 
-        public void Draw(Matrix view, Matrix projection, Matrix world, BasicEffect effect)
+        public void Draw(Matrix world, Effect effect, GameTime gameTime)
         {
-            Matrix m = world * GetGlobalMatrix(false);
+            Matrix m = world * GetGlobalMatrix(false, gameTime);
 
-            effect.View = view;
-            effect.Projection = projection;
-            effect.World = world * GetLocalMatrix();
+            effect.Parameters["ModelWorld"].SetValue(m * GetLocalMatrix());
 
             SharedInformation.GraphicsDevice.SetVertexBuffer(_vertices);
 
             for (int i = 0; i < _textures.Length; i++)
             {
-                effect.Texture = _textures[i];
+                effect.Parameters["Texture"].SetValue(_textures[i]);
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -248,12 +244,12 @@ namespace FimbulwinterClient.Core.Assets
                 }
 
                 SharedInformation.GraphicsDevice.Indices = _indexes[i];
-                SharedInformation.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleStrip, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
+                SharedInformation.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
             }
 
             for (int i = 0; i < _children.Length; i++)
             {
-                _children[i].Draw(view, projection, m, effect);
+                _children[i].Draw(m, effect, gameTime);
             }
         }
 
@@ -273,7 +269,7 @@ namespace FimbulwinterClient.Core.Assets
         private Matrix _globalMatrix;
         private bool _globalMatrixCached;
         private double _lastTick;
-        private Matrix GetGlobalMatrix(bool animated)
+        private Matrix GetGlobalMatrix(bool animated, GameTime gameTime)
         {
             if (_globalMatrixCached)
                 return _globalMatrix;
@@ -324,7 +320,7 @@ namespace FimbulwinterClient.Core.Assets
 
                     _globalMatrix *= Matrix.CreateFromQuaternion(q);
 
-                    //_lastTick +=
+                    _lastTick += gameTime.ElapsedGameTime.TotalMilliseconds;
                     while (_lastTick > _rotationFrames[_rotationFrames.Length - 1].Item2)
                         _lastTick -= _rotationFrames[_rotationFrames.Length - 1].Item2;
                 }
@@ -415,7 +411,7 @@ namespace FimbulwinterClient.Core.Assets
 
         public void SetBoundingBox2(Matrix mat, ref Vector3 _bbmin, ref Vector3 _bbmax)
         {
-	        Matrix myMat = mat * GetGlobalMatrix(false);
+	        Matrix myMat = mat * GetGlobalMatrix(false, null);
             Matrix mat2 = myMat * GetLocalMatrix();
 	        int i;
 

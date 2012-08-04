@@ -11,6 +11,9 @@ float AmbientIntensity = 0.5F;
 float3 LightPosition;
 float3 DiffuseColor;
 
+// Models
+float4x4 ModelWorld;
+
 // Samplers
 texture Texture;
 texture Lightmap;
@@ -102,20 +105,19 @@ technique MapGround
     }
 }
 
-
 // Water Shader
 struct WaterInput
 {
 	float4	Position	: POSITION0;
 	float3	Normal		: NORMAL0;
-	float2	Texture	: TEXCOORD0;
+	float2	Texture		: TEXCOORD0;
 };
 
 struct WaterOutput
 {
 	float4	Position	: POSITION;
 	float3	Normal		: NORMAL0;
-	float2	Texture	: TEXCOORD0;
+	float2	Texture		: TEXCOORD0;
 	float4	PositionOrig: TEXCOORD1;
 };
 
@@ -162,5 +164,53 @@ technique Water
 
         VertexShader = compile vs_3_0 WaterVS();
         PixelShader = compile ps_3_0 WaterPS();
+    }
+}
+
+// Model Shader
+struct ModelInput
+{
+	float4	Position	: POSITION0;
+	float3	Normal		: NORMAL0;
+	float2	Texture		: TEXCOORD0;
+};
+
+struct ModelOutput
+{
+	float4	Position	: POSITION;
+	float3	Normal		: NORMAL0;
+	float2	Texture		: TEXCOORD0;
+};
+
+ModelOutput ModelVS(ModelInput Input)
+{
+    ModelOutput Output;
+	
+	float4 pos_ws = mul(Input.Position, mul(World, ModelWorld));
+	float4 pos_vs = mul(pos_ws, View);
+	float4 pos_ps = mul(pos_vs, Projection);
+	
+	Output.Position		= pos_ps;
+	Output.Normal		= Input.Normal;
+	Output.Texture		= Input.Texture;
+
+    return Output;
+}
+
+float4 ModelPS(ModelOutput Input) : COLOR0
+{
+	float4 color;
+
+	color = tex2D(TextureSampler, Input.Texture);
+
+	return color;
+}
+
+technique Model
+{
+    pass Pass0
+    {
+        VertexShader = compile vs_3_0 ModelVS();
+        PixelShader = compile ps_3_0 ModelPS();
     }
 }

@@ -132,6 +132,7 @@ namespace FimbulwinterClient.Core.Assets
             _world.UpdateModels(gametime);
         }
 
+        BasicEffect eff2 = new BasicEffect(SharedInformation.GraphicsDevice);
         public void Draw(GameTime gametime, Matrix view, Matrix projection, Matrix world)
         {
             _effect.Parameters["View"].SetValue(view);
@@ -144,7 +145,23 @@ namespace FimbulwinterClient.Core.Assets
             _effect.CurrentTechnique = _effect.Techniques["Water"];
             _world.DrawWater(_effect);
 
-            _world.DrawModels(view, projection, world);
+            _effect.CurrentTechnique = _effect.Techniques["Model"];
+            _world.DrawModels(_effect);
         }
+
+        public struct VertexPositionColorNormal
+        {
+            public Vector3 Position;
+            public Color Color;
+            public Vector3 Normal;
+
+            public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+            (
+                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+                new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+            );
+        }
+
     }
 }

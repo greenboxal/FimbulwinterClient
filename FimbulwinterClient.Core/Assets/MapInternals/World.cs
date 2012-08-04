@@ -300,23 +300,23 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _scale.X = br.ReadSingle();
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
-                return;
+
                 _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName.Korean());
             }
 
-            public void Draw(Matrix view, Matrix projection, Matrix world)
+            public void Draw(Effect effect, GameTime gameTime)
             {
                 if (_model == null)
                     return;
 
-                world *= Matrix.CreateTranslation(5 * _position.X, -_position.Y, 5 * _position.Z);
+                Matrix world = Matrix.CreateTranslation(_position.X, _position.Y, _position.Z);
                 world *= Matrix.CreateRotationZ(-Rotation.Z);
                 world *= Matrix.CreateRotationX(-Rotation.X);
                 world *= Matrix.CreateRotationY(Rotation.Y);
-                world *= Matrix.CreateScale(_scale.X, -_scale.Y, _scale.Z);
+                world *= Matrix.CreateScale(_scale.X, _scale.Y, _scale.Z);
                 world *= Matrix.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
 
-                _model.Draw(view, projection, world);
+                _model.Draw(world, effect, gameTime);
             }
         }
 
@@ -587,15 +587,16 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
         #endregion
 
+        GameTime _gameTime;
         public void UpdateModels(GameTime gametime)
         {
-            
+            _gameTime = gametime;
         }
 
-        public void DrawModels(Matrix view, Matrix projection, Matrix world)
+        public void DrawModels(Effect effect)
         {
             for (int i = 0; i < _models.Count; i++)
-                _models[i].Draw(view, projection, world);
+                _models[i].Draw(effect, _gameTime);
         }
     }
 }

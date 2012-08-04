@@ -161,7 +161,7 @@ namespace FimbulwinterClient
 
             //ChangeScreen(new ServiceSelectScreen());
             //ChangeScreen(new LoadingScreen("prontera.gat"));
-            StartMapChange("izlude");
+            StartMapChange("prontera");
 
             base.Initialize();
         }

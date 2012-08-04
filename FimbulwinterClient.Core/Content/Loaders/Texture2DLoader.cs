@@ -23,7 +23,10 @@ namespace FimbulwinterClient.Core.Content.Loaders
 
                 for (int i = 0; i < imageData.Length; i++)
                 {
-                    imageData[i] = (byteData[i] & 0x000000FF) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                    if ((byteData[i] & 0x00FFFFFF) == 0x00FF00FF)
+                        imageData[i] = 0x000000FF;
+                    else
+                        imageData[i] = (byteData[i] & 0x000000FF) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
                 }
 
                 byteData = null;

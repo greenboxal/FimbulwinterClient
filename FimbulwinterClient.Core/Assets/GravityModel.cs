@@ -60,18 +60,12 @@ namespace FimbulwinterClient.Core.Assets
             get { return _rootMesh; }
         }
 
-        private BasicEffect _effect;
-        public BasicEffect Effect
-        {
-            get { return _effect; }
-        }
-
         protected byte minorVersion;
         protected byte majorVersion;
 
         public GravityModel()
         {
-            _effect = new BasicEffect(SharedInformation.GraphicsDevice);
+
         }
 
         public bool Load(Stream stream)
@@ -148,12 +142,9 @@ namespace FimbulwinterClient.Core.Assets
             return null;
         }
 
-        public void Draw(Matrix view, Matrix projection, Matrix world)
+        public void Draw(Matrix world, Effect effect, GameTime gameTime)
         {
-            _effect.Alpha = _alpha;
-            _effect.TextureEnabled = true;
-
-            _rootMesh.Draw(view, projection, world, _effect);
+            _rootMesh.Draw(world, effect, gameTime);
         }
 
         float maxrange;
