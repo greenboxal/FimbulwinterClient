@@ -186,8 +186,9 @@ ModelOutput ModelVS(ModelInput Input)
 {
     ModelOutput Output;
 	
-	float4 pos_ws = mul(Input.Position, mul(World, ModelWorld));
-	float4 pos_vs = mul(pos_ws, View);
+	float4 pos_ws = mul(Input.Position, World);
+	float4 pos_ms = mul(pos_ws, ModelWorld);
+	float4 pos_vs = mul(pos_ms, View);
 	float4 pos_ps = mul(pos_vs, Projection);
 	
 	Output.Position		= pos_ps;

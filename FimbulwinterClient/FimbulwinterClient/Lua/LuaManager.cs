@@ -15,7 +15,7 @@ namespace FimbulwinterClient.Lua
 {
     public class LuaManager : GameComponent
     {
-        private const string lua_folder = @"data\luafiles514\lua files";
+        private const string lua_folder = @"data\luafiles514\lua files\";
 
         private LuaInterface.Lua _luaparser;
 
@@ -31,7 +31,7 @@ namespace FimbulwinterClient.Lua
 
         private void RunScript(string filename)
         {
-            Stream file = SharedInformation.ContentManager.Load<Stream>(Path.Combine(lua_folder, filename));
+            Stream file = SharedInformation.ContentManager.Load<Stream>(lua_folder + filename);
             string temp = Path.GetTempFileName();
 
             using (FileStream fs = new FileStream(temp, FileMode.Create))
@@ -62,7 +62,7 @@ namespace FimbulwinterClient.Lua
             tbl = _luaparser.GetTable("AccNameTable");
             foreach (DictionaryEntry de in tbl)
                 if (Statics.Accessories.ContainsKey(Convert.ToInt32(de.Key)))
-                    Statics.Accessories[Convert.ToInt32(de.Key)] = new Tuple<string, string>(Statics.Accessories[Convert.ToInt32(de.Key)].Item1, de.Value.ToString().Korean());
+                    Statics.Accessories[Convert.ToInt32(de.Key)] = new Tuple<string, string>(Statics.Accessories[Convert.ToInt32(de.Key)].Item1, de.Value.ToString());
         }
 
         private void LoadRobe()
@@ -78,7 +78,7 @@ namespace FimbulwinterClient.Lua
             tbl = _luaparser.GetTable("RobeNameTable");
             foreach (DictionaryEntry de in tbl)
                 if (Statics.Robes.ContainsKey(Convert.ToInt32(de.Key)))
-                    Statics.Robes[Convert.ToInt32(de.Key)] = new Tuple<string, string>(Statics.Robes[Convert.ToInt32(de.Key)].Item1, de.Value.ToString().Korean());
+                    Statics.Robes[Convert.ToInt32(de.Key)] = new Tuple<string, string>(Statics.Robes[Convert.ToInt32(de.Key)].Item1, de.Value.ToString());
         }
 
         private void LoadNpcIdentity()
@@ -94,7 +94,7 @@ namespace FimbulwinterClient.Lua
             tbl = _luaparser.GetTable("JobNameTable");
             foreach (DictionaryEntry de in tbl)
                 if (Statics.NpcIdentity.ContainsKey(Convert.ToInt16(de.Key)))
-                    Statics.NpcIdentity[Convert.ToInt16(de.Key)] = new Tuple<string, string>(Statics.NpcIdentity[Convert.ToInt16(de.Key)].Item1, de.Value.ToString().Korean());
+                    Statics.NpcIdentity[Convert.ToInt16(de.Key)] = new Tuple<string, string>(Statics.NpcIdentity[Convert.ToInt16(de.Key)].Item1, de.Value.ToString());
         }
 
     }

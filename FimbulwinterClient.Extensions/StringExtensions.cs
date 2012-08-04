@@ -18,4 +18,9 @@ public static class StringExtensions
     {
         return _encoding.GetString(_encoding2.GetBytes(text));
     }
+
+    public static string Ascii(this string text)
+    {
+        return _encoding2.GetString(_encoding.GetBytes(text));
+    }
 }

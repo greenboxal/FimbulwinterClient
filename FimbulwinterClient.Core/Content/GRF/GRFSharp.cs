@@ -328,7 +328,7 @@ namespace GRFSharp
 
             for (int x = 0; x < _fileCount; x++)
             {
-                string fileName = bodyReader.ReadCString().Korean();
+                string fileName = bodyReader.ReadCString();
 
                 int fileCompressedLength = 0,
                     fileCompressedLengthAligned = 0,

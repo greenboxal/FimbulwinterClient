@@ -301,7 +301,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
 
-                _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName.Korean());
+                _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName);
             }
 
             public void Draw(Effect effect, GameTime gameTime)
@@ -508,7 +508,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     if (sj.Length == 1)
                         sj = "0" + sj;
 
-                    _waterTextures[i][j] = SharedInformation.ContentManager.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1}.jpg", i, sj).Korean());
+                    _waterTextures[i][j] = SharedInformation.ContentManager.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1}.jpg", i, sj));
                 }
             }
         }

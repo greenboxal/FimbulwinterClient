@@ -73,7 +73,16 @@ namespace FimbulwinterClient.Core.Content
             stream = OpenStream(assetName);
 
             if (stream == null)
+            {
+#if DEBUG
+                Logger.WriteLine("Loading " + assetName + "..." + " Error!");
+#endif
                 return value;
+            }
+            
+#if DEBUG
+            Logger.WriteLine("Loading " + assetName + "...");
+#endif
 
             if (_contentLoaders.ContainsKey(typeof(T)))
                 value = (T)_contentLoaders[typeof(T)].Load(stream, assetName);

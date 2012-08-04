@@ -93,11 +93,7 @@ namespace FimbulwinterClient.Core.Assets
             _textures = new Texture2D[br.ReadInt32()];
             for (int i = 0; i < _textures.Length; i++)
             {
-                string texName = br.ReadCString(40);
-
-                Logger.WriteLine("Loading texture {0}...", texName);
-
-                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(@"data\texture\" + texName.Korean());
+                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(@"data\texture\" + br.ReadCString(40));
             }
 
             _mainNodeName = br.ReadCString(40);

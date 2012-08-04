@@ -310,11 +310,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             for (int i = 0; i < _textures.Length; i++)
             {
-                string fn = br.ReadCString(texChunkSize);
-
-                Logger.WriteLine("Loading {0}...", fn);
-
-                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(Path.Combine("data\\texture\\", fn.Korean()));
+                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(@"data\texture\" + br.ReadCString(texChunkSize));
             }
 
             if (majorVersion == 0 && minorVersion == 0)
