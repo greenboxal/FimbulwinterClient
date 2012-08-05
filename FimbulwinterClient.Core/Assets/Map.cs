@@ -3,14 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+using IrrlichtLime.Core;
 using FimbulwinterClient.Core.Assets.MapInternals;
+using IrrlichtLime.Video;
 
 namespace FimbulwinterClient.Core.Assets
 {
     public class Map
     {
+        private AABBox _boundingBox;
+        public AABBox BoundingBox
+        {
+            get { return _boundingBox; }
+            set { _boundingBox = value; }
+        }
+
         private Ground _ground;
         public Ground Ground
         {
@@ -23,59 +30,46 @@ namespace FimbulwinterClient.Core.Assets
             get { return _altitude; }
         }
 
-        private World _world;
+        /*private World _world;
         public World World
         {
             get { return _world; }
         }
 
-        private Texture2D _lightmap;
-        public Texture2D Lightmap
+        private Texture _lightmap;
+        public Texture Lightmap
         {
             get { return _lightmap; }
-        }
+        }*/
 
-        private Effect _effect;
-        public Effect Effect
+        public Map()
         {
-            get { return _effect; }
-        }
-
-        private GraphicsDevice _graphicsDevice;
-        public GraphicsDevice GraphicsDevice
-        {
-            get { return _graphicsDevice; }
-        }
-
-        public Map(GraphicsDevice gd)
-        {
-            _graphicsDevice = gd;
-
-            _effect = SharedInformation.ContentManager.Load<Effect>(@"fb\Ragnarok.xnb");
-            _effect.CurrentTechnique = _effect.Techniques["MapGround"];
+            _boundingBox = new AABBox();
+            //_effect = SharedInformation.ContentManager.Load<Effect>(@"fb\Ragnarok.xnb");
+            //_effect.CurrentTechnique = _effect.Techniques["MapGround"];
         }
 
         public bool Load(Stream gat, Stream gnd, Stream rsw)
         {
-            Logger.WriteLine("Loading altitude...");
+            SharedInformation.Logger.Write("Loading altitude...");
             _altitude = new Altitude();
             if (!_altitude.Load(gat))
                 return false;
 
-            Logger.WriteLine("Loading ground...");
-            _ground = new Ground(_graphicsDevice);
+            SharedInformation.Logger.Write("Loading ground...");
+            _ground = new Ground();
             if (!_ground.Load(gnd))
                 return false;
 
-            Logger.WriteLine("Loading world...");
+            /*Logger.WriteLine("Loading world...");
             _world = new World(_graphicsDevice);
             if (!_world.Load(rsw, this))
-                return false;
+                return false;*/
 
-            Logger.WriteLine("Creating ground vertex buffer...");
+            SharedInformation.Logger.Write("Creating ground vertex buffer...");
             _ground.SetupVertices();
 
-            Logger.WriteLine("Building lightmaps...");
+            /*Logger.WriteLine("Building lightmaps...");
             BuildLightmaps();
 
             _effect.Parameters["Lightmap"].SetValue(_lightmap);
@@ -84,12 +78,12 @@ namespace FimbulwinterClient.Core.Assets
             _effect.Parameters["DiffuseColor"].SetValue(new Vector3(0, 0, 0));
 
             // FIXME: Where I put the light? O_O
-            _effect.Parameters["LightPosition"].SetValue(new Vector3(0, 0, 0));
+            _effect.Parameters["LightPosition"].SetValue(new Vector3(0, 0, 0));*/
 
             return true;
         }
 
-        private void BuildLightmaps()
+        /*private void BuildLightmaps()
         {
             // Nothing to be built
             if (_ground.Lightmaps.Length == 0)
@@ -124,18 +118,17 @@ namespace FimbulwinterClient.Core.Assets
 
             _lightmap = new Texture2D(_graphicsDevice, w * 8, h * 8, false, SurfaceFormat.Color);
             _lightmap.SetData(color);
+        }*/
+
+        public void Update()
+        {
+            //_world.UpdateWater(gametime);
+            //_world.UpdateModels(gametime);
         }
 
-        public void Update(GameTime gametime)
+        public void Render()
         {
-            _world.UpdateWater(gametime);
-            _world.UpdateModels(gametime);
-        }
-
-        BasicEffect eff2 = new BasicEffect(SharedInformation.GraphicsDevice);
-        public void Draw(GameTime gametime, Matrix view, Matrix projection, Matrix world)
-        {
-            _effect.Parameters["View"].SetValue(view);
+            /*_effect.Parameters["View"].SetValue(view);
             _effect.Parameters["Projection"].SetValue(projection);
             _effect.Parameters["World"].SetValue(world);
 
@@ -146,22 +139,9 @@ namespace FimbulwinterClient.Core.Assets
             _world.DrawWater(_effect);
 
             _effect.CurrentTechnique = _effect.Techniques["Model"];
-            _world.DrawModels(_effect);
+            _world.DrawModels(_effect);*/
+
+            _ground.Draw();
         }
-
-        public struct VertexPositionColorNormal
-        {
-            public Vector3 Position;
-            public Color Color;
-            public Vector3 Normal;
-
-            public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-                new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
-            );
-        }
-
     }
 }

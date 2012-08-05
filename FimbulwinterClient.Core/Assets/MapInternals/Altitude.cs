@@ -82,7 +82,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _cells[i] = c;
             }
 
-            Logger.WriteLine("Altitude v{0}.{1} status: {2}x{3} - {4} cells", majorVersion, minorVersion, _width, _height, _cells.Length);
+            SharedInformation.Logger.Write("Altitude v{0}.{1} status: {2}x{3} - {4} cells", majorVersion, minorVersion, _width, _height, _cells.Length);
 
             return true;
         }

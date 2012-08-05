@@ -5,15 +5,14 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using FimbulwinterClient.Core.Content.Loaders;
+using IrrlichtLime.Video;
 using FimbulwinterClient.Core.Assets;
-using Microsoft.Xna.Framework.Audio;
+using IrrlichtLime.IO;
 
 namespace FimbulwinterClient.Core.Content
 {
-    public class AdvancedContentManager : ContentManager
+    public class AdvancedContentManager
     {
         private static List<IFileSystem> _fileSystems;
         public static List<IFileSystem> FileSystems
@@ -36,13 +35,14 @@ namespace FimbulwinterClient.Core.Content
             _fileSystems.Add(new GrfFileSystem());
 
             _contentLoaders.Add(typeof(Stream), new StreamLoader());
-            _contentLoaders.Add(typeof(Texture2D), new Texture2DLoader());
-            _contentLoaders.Add(typeof(SoundEffect), new SoundEffectLoader());
+            _contentLoaders.Add(typeof(String), new StringLoader());
+            _contentLoaders.Add(typeof(Texture), new TextureLoader());
+            /*_contentLoaders.Add(typeof(SoundEffect), new SoundEffectLoader());
             _contentLoaders.Add(typeof(Sprite), new SpriteLoader());
             _contentLoaders.Add(typeof(SpriteAction), new SpriteActionLoader());
-            _contentLoaders.Add(typeof(Palette), new PaletteLoader());
+            _contentLoaders.Add(typeof(Palette), new PaletteLoader());*/
             _contentLoaders.Add(typeof(Map), new MapLoader());
-            _contentLoaders.Add(typeof(GravityModel), new GravityModelLoader());
+            //_contentLoaders.Add(typeof(GravityModel), new GravityModelLoader());*/
         }
 
         private Hashtable _cache;
@@ -51,41 +51,62 @@ namespace FimbulwinterClient.Core.Content
             get { return _cache; }
         }
 
-        public AdvancedContentManager(IServiceProvider serviceProvider, GraphicsDevice graphicsDevice)
-            : base(serviceProvider, "data")
+        public AdvancedContentManager()
         {
             _cache = CollectionsUtil.CreateCaseInsensitiveHashtable();
         }
 
-        public override T Load<T>(string assetName)
+        public T Load<T>(string assetName)
         {
             T value = default(T);
-            Stream stream;
-
-            if (assetName.EndsWith(".xnb"))
-                return base.Load<T>(Path.Combine(RootDirectory, assetName));
 
             object cached = (T)_cache[assetName];
 
             if (cached != null)
                 return (T)cached;
 
-            stream = OpenStream(assetName);
-
-            if (stream == null)
-            {
-#if DEBUG
-                Logger.WriteLine("Loading " + assetName + "..." + " Error!");
-#endif
-                return value;
-            }
-            
-#if DEBUG
-            Logger.WriteLine("Loading " + assetName + "...");
-#endif
-
             if (_contentLoaders.ContainsKey(typeof(T)))
-                value = (T)_contentLoaders[typeof(T)].Load(stream, assetName);
+            {
+                IContentLoader loader = _contentLoaders[typeof(T)];
+
+                if (loader.Type == LoadType.Stream)
+                {
+                    Stream stream = OpenStream(assetName);
+
+                    if (stream == null)
+                    {
+#if DEBUG
+                        SharedInformation.Logger.Write("Loading " + assetName + "..." + " Error!");
+#endif
+                        return value;
+                    }
+
+#if DEBUG
+                    SharedInformation.Logger.Write("Loading " + assetName + "...");
+#endif
+
+                    value = (T)loader.Load(stream, assetName);
+                }
+                else if (loader.Type == LoadType.ReadFile)
+                {
+                    ReadFile readFile = OpenReadFile(assetName);
+
+                    if (readFile == null)
+                    {
+#if DEBUG
+                        SharedInformation.Logger.Write("Loading " + assetName + "..." + " Error!");
+#endif
+                        return value;
+                    }
+
+#if DEBUG
+                    SharedInformation.Logger.Write("Loading " + assetName + "...");
+#endif
+
+                    value = (T)loader.Load(readFile, assetName);
+                    readFile.Drop();
+                }
+            }
 
             if (value == null)
                 return value;
@@ -95,14 +116,27 @@ namespace FimbulwinterClient.Core.Content
             return value;
         }
 
-        protected override Stream OpenStream(string assetName)
+        protected Stream OpenStream(string assetName)
         {
             foreach (IFileSystem fs in _fileSystems)
             {
-                Stream stream = fs.Load(assetName);
+                Stream stream = fs.LoadStream(assetName);
 
                 if (stream != null)
                     return stream;
+            }
+
+            return null;
+        }
+
+        protected ReadFile OpenReadFile(string assetName)
+        {
+            foreach (IFileSystem fs in _fileSystems)
+            {
+                ReadFile readFile = fs.LoadReadFile(assetName);
+
+                if (readFile != null)
+                    return readFile;
             }
 
             return null;

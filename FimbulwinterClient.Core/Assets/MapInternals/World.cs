@@ -272,6 +272,18 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 get { return _model; }
             }
 
+            private GravityModelMesh _mesh;
+            public GravityModelMesh Mesh
+            {
+                get { return _mesh; }
+            }
+
+            private Matrix _world;
+            public Matrix World
+            {
+                get { return _world; }
+            }
+
             public void Load(BinaryReader br, int major, int minor, MapInternals.Ground gnd)
             {
                 if ((major == 1 && minor >= 3) || major > 1)
@@ -302,21 +314,22 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 _scale.Z = br.ReadSingle();
 
                 _model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + _modelName);
+                _mesh = _model.FindMesh(_nodeName);
+
+                _world = Matrix.CreateTranslation(_model.realbbrange.X, _model.realbbrange.Y, _model.realbbrange.Z);
+                _world *= Matrix.CreateScale(_scale.X, _scale.Y, _scale.Z);
+                _world *= Matrix.CreateRotationY(MathHelper.ToRadians(Rotation.Y));
+                _world *= Matrix.CreateRotationX(MathHelper.ToRadians(Rotation.X));
+                _world *= Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation.Z));
+                _world *= Matrix.CreateTranslation(_position.X, _position.Y, _position.Z);
             }
 
             public void Draw(Effect effect, GameTime gameTime)
             {
-                if (_model == null)
+                if (_mesh == null)
                     return;
 
-                Matrix world = Matrix.CreateTranslation(_position.X, _position.Y, _position.Z);
-                world *= Matrix.CreateRotationZ(-Rotation.Z);
-                world *= Matrix.CreateRotationX(-Rotation.X);
-                world *= Matrix.CreateRotationY(Rotation.Y);
-                world *= Matrix.CreateScale(_scale.X, _scale.Y, _scale.Z);
-                world *= Matrix.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
-
-                _model.Draw(world, effect, gameTime);
+                _mesh.Draw(_world, effect, gameTime);
             }
         }
 
@@ -587,7 +600,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
         #endregion
 
-        GameTime _gameTime;
+        GameTime _gameTime = new GameTime();
         public void UpdateModels(GameTime gametime)
         {
             _gameTime = gametime;

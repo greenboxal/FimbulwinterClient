@@ -29,7 +29,7 @@ namespace FimbulwinterClient.Core.Content
             _grfFiles.Add(grf);
         }
 
-        public Stream Load(string filename)
+        public Stream LoadStream(string filename)
         {
             for (int i = 0; i < _grfFiles.Count; i++)
             {
@@ -40,6 +40,24 @@ namespace FimbulwinterClient.Core.Content
                     byte[] data = _grfFiles[i].GetDataFromFile(f);
 
                     return new MemoryStream(data);
+                }
+            }
+
+            return null;
+        }
+
+
+        public IrrlichtLime.IO.ReadFile LoadReadFile(string filename)
+        {
+            for (int i = 0; i < _grfFiles.Count; i++)
+            {
+                GRFFile f = _grfFiles[i].GetFile(filename);
+
+                if (f != null)
+                {
+                    byte[] data = _grfFiles[i].GetDataFromFile(f);
+
+                    return SharedInformation.Device.FileSystem.CreateMemoryReadFile(filename, data);
                 }
             }
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using IrrlichtLime.Video;
+using IrrlichtLime.Core;
 
 namespace FimbulwinterClient.Core.Assets.MapInternals
 {
@@ -66,8 +66,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 get { return _tileOtherSide; }
             }
 
-            private Vector3[] _normal;
-            public Vector3[] Normal
+            private Vector3Df[] _normal;
+            public Vector3Df[] Normal
             {
                 get { return _normal; }
             }
@@ -108,22 +108,22 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             public void CalculateNormal(Ground ground)
             {
-                Vector3 b1 = default(Vector3);
-                Vector3 b2 = default(Vector3);
+                Vector3Df b1 = default(Vector3Df);
+                Vector3Df b2 = default(Vector3Df);
 
-                b1 = new Vector3(ground.Zoom, _height[1], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
-                b2 = new Vector3(ground.Zoom, _height[2], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
-
-                _normal = new Vector3[5];
-                _normal[0] = Vector3.Cross(b1, b2);
+                b1 = new Vector3Df(ground.Zoom, _height[1], ground.Zoom) - new Vector3Df(ground.Zoom, _height[3], ground.Zoom);
+                b2 = new Vector3Df(ground.Zoom, _height[2], ground.Zoom) - new Vector3Df(ground.Zoom, _height[3], ground.Zoom);
+                
+                _normal = new Vector3Df[5];
+                _normal[0] = b1.CrossProduct(b2);
                 _normal[0].Normalize();
             }
         }
 
         public class Surface
         {
-            private Vector2[] _texCoord;
-            public Vector2[] TexCoord
+            private Vector2Df[] _texCoord;
+            public Vector2Df[] TexCoord
             {
                 get { return _texCoord; }
             }
@@ -148,7 +148,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion, int texture)
             {
-                _texCoord = new Vector2[4];
+                _texCoord = new Vector2Df[4];
 
                 if (majorVersion == 0 && minorVersion == 0)
                 {
@@ -166,12 +166,14 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
                     _texture = texture;
                     _lightmap = 0;
-
-                    // Is it white?? Seems too bright...
-                    _color = Color.White;
                 }
                 else
                 {
+                    _texCoord[0] = new Vector2Df();
+                    _texCoord[1] = new Vector2Df();
+                    _texCoord[2] = new Vector2Df();
+                    _texCoord[3] = new Vector2Df();
+
                     _texCoord[0].X = br.ReadSingle();
                     _texCoord[1].X = br.ReadSingle();
                     _texCoord[2].X = br.ReadSingle();
@@ -192,6 +194,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
                     _color = new Color(r, g, b, a);
                 }
+
+                _color = new Color(255, 255, 255);
             }
 
             public void Load(Ground owner, BinaryReader br, byte majorVersion, byte minorVersion)
@@ -218,8 +222,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             get { return _zoom; }
         }
 
-        private Texture2D[] _textures;
-        public Texture2D[] Textures
+        private Material[] _textures;
+        public Material[] Textures
         {
             get { return _textures; }
         }
@@ -242,31 +246,20 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             get { return _cells; }
         }
 
-        private VertexBuffer _vertices;
-        public VertexBuffer Vertices
+        private Vertex3D[] _vertices;
+        public Vertex3D[] Vertices
         {
             get { return _vertices; }
         }
 
-        private IndexBuffer[] _indexes;
-        public IndexBuffer[] Indexes
+        private uint[][] _indexes;
+        public uint[][] Indexes
         {
             get { return _indexes; }
         }
 
-        private GraphicsDevice _graphicsDevice;
-        public GraphicsDevice GraphicsDevice
-        {
-            get { return _graphicsDevice; }
-        }
-
         protected byte minorVersion;
         protected byte majorVersion;
-
-        public Ground(GraphicsDevice gd)
-        {
-            _graphicsDevice = gd;
-        }
 
         public bool Load(Stream gnd)
         {
@@ -306,11 +299,19 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 texChunkSize = 80;
             }
 
-            _textures = new Texture2D[textureCount];
+            _textures = new Material[textureCount];
 
             for (int i = 0; i < _textures.Length; i++)
             {
-                _textures[i] = SharedInformation.ContentManager.Load<Texture2D>(@"data\texture\" + br.ReadCString(texChunkSize));
+                Material m = new Material();
+                Texture t = SharedInformation.ContentManager.Load<Texture>(@"data\texture\" + br.ReadCString(texChunkSize));
+
+                m.Wireframe = false;
+                m.Lighting = false;
+                m.Type = MaterialType.Solid;
+                m.SetTexture(0, t);
+
+                _textures[i] = m;
             }
 
             if (majorVersion == 0 && minorVersion == 0)
@@ -423,13 +424,13 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 }
             }
 
-            Logger.WriteLine("Calculating normals...");
+            SharedInformation.Logger.Write("Calculating normals...");
             CalculateNormals();
 
-            Logger.WriteLine("Creating ground vertex buffer...");
+            SharedInformation.Logger.Write("Creating ground vertex buffer...");
             SetupVertices();
 
-            Logger.WriteLine("Ground v{0}.{1} status: {2} textures - {3} lightmaps - {4} surfaces - {5} cells - {6} vertices", majorVersion, minorVersion, _textures.Length, _lightmaps.Length, _surfaces.Length, _cells.Length, _vertices.VertexCount);
+            SharedInformation.Logger.Write("Ground v{0}.{1} status: {2} textures - {3} lightmaps - {4} surfaces - {5} cells - {6} vertices", majorVersion, minorVersion, _textures.Length, _lightmaps.Length, _surfaces.Length, _cells.Length, _vertices.Length);
 
             return true;
         }
@@ -534,12 +535,12 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                 }
             }
 
-            VertexPositionTextureNormalLightmap[] vertexdata = new VertexPositionTextureNormalLightmap[objectCount * 4];
-            List<int>[] indexdata = new List<int>[_textures.Length];
+            _vertices = new Vertex3D[objectCount * 4];
+            List<uint>[] indexdata = new List<uint>[_textures.Length];
 
             for (int i = 0; i < indexdata.Length; i++)
             {
-                indexdata[i] = new List<int>();
+                indexdata[i] = new List<uint>();
             }
 
             int cur_surface = 0;
@@ -553,7 +554,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileUp].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 0);
+                        SetupSurface(_vertices, indexdata[tid], _cells[idx].TileUp, cur_surface, x, y, 0);
 
                         cur_surface++;
                     }
@@ -562,7 +563,7 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileSide, cur_surface, x, y, 1);
+                        SetupSurface(_vertices, indexdata[tid], _cells[idx].TileSide, cur_surface, x, y, 1);
 
                         cur_surface++;
                     }
@@ -571,25 +572,21 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                     {
                         int tid = _surfaces[_cells[idx].TileOtherSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], _cells[idx].TileOtherSide, cur_surface, x, y, 2);
+                        SetupSurface(_vertices, indexdata[tid], _cells[idx].TileOtherSide, cur_surface, x, y, 2);
 
                         cur_surface++;
                     }
                 }
             }
 
-            _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionTextureNormalLightmap), vertexdata.Length, BufferUsage.WriteOnly);
-            _vertices.SetData(vertexdata);
-
-            _indexes = new IndexBuffer[_textures.Length];
+            _indexes = new uint[_textures.Length][];
             for (int i = 0; i < _indexes.Length; i++)
             {
-                _indexes[i] = new IndexBuffer(_graphicsDevice, typeof(int), indexdata[i].Count, BufferUsage.WriteOnly);
-                _indexes[i].SetData(indexdata[i].ToArray());
+                _indexes[i] = indexdata[i].ToArray();
             }
         }
 
-        private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
+        private void SetupSurface(Vertex3D[] vertexdata, List<uint> indexdata, int surface_id, int current_surface, int x, int y, int type)
         {
             int idx = current_surface * 4;
             int cell_idx = y * _width + x;
@@ -597,8 +594,8 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
             Surface surface = _surfaces[surface_id];
 
-            Vector3[] position = new Vector3[4];
-            Vector3[] normal = new Vector3[4];
+            Vector3Df[] position = new Vector3Df[4];
+            Vector3Df[] normal = new Vector3Df[4];
 
             switch (type)
             {
@@ -610,10 +607,10 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         float z0 = (y - _height / 2) * _zoom;
                         float z1 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(x0, cell.Height[0], z0);
-                        position[1] = new Vector3(x1, cell.Height[1], z0);
-                        position[2] = new Vector3(x0, cell.Height[2], z1);
-                        position[3] = new Vector3(x1, cell.Height[3], z1);
+                        position[0] = new Vector3Df(x0, cell.Height[0], z0);
+                        position[1] = new Vector3Df(x1, cell.Height[1], z0);
+                        position[2] = new Vector3Df(x0, cell.Height[2], z1);
+                        position[3] = new Vector3Df(x1, cell.Height[3], z1);
 
                         normal[0] = cell.Normal[1];
                         normal[1] = cell.Normal[2];
@@ -630,12 +627,12 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
 
                         float z0 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(x0, cell.Height[2], z0);
-                        position[1] = new Vector3(x1, cell.Height[3], z0);
-                        position[2] = new Vector3(x0, cell2.Height[0], z0);
-                        position[3] = new Vector3(x1, cell2.Height[1], z0);
+                        position[0] = new Vector3Df(x0, cell.Height[2], z0);
+                        position[1] = new Vector3Df(x1, cell.Height[3], z0);
+                        position[2] = new Vector3Df(x0, cell2.Height[0], z0);
+                        position[3] = new Vector3Df(x1, cell2.Height[1], z0);
 
-                        normal[0] = new Vector3(0, 0, cell2.Height[0] > cell.Height[3] ? -1 : 1);
+                        normal[0] = new Vector3Df(0, 0, cell2.Height[0] > cell.Height[3] ? -1 : 1);
                         normal[1] = normal[0];
                         normal[2] = normal[0];
                         normal[3] = normal[0];
@@ -650,12 +647,12 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
                         float z0 = (y - _height / 2) * _zoom;
                         float z1 = (y - _height / 2 + 1) * _zoom;
 
-                        position[0] = new Vector3(x0, cell.Height[3], z1);
-                        position[1] = new Vector3(x0, cell.Height[1], z0);
-                        position[2] = new Vector3(x0, cell2.Height[2], z1);
-                        position[3] = new Vector3(x0, cell2.Height[0], z0);
+                        position[0] = new Vector3Df(x0, cell.Height[3], z1);
+                        position[1] = new Vector3Df(x0, cell.Height[1], z0);
+                        position[2] = new Vector3Df(x0, cell2.Height[2], z1);
+                        position[3] = new Vector3Df(x0, cell2.Height[0], z0);
 
-                        normal[0] = new Vector3(cell.Height[3] > cell2.Height[2] ? -1 : 1, 0, 0);
+                        normal[0] = new Vector3Df(cell.Height[3] > cell2.Height[2] ? -1 : 1, 0, 0);
                         normal[1] = normal[0];
                         normal[2] = normal[0];
                         normal[3] = normal[0];
@@ -675,34 +672,25 @@ namespace FimbulwinterClient.Core.Assets.MapInternals
             lightmapV[0] = (float)(0.1f + lm_y) / lm_h;
             lightmapV[1] = (float)(0.9f + lm_y) / lm_h;
 
-            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
-            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
-            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], normal[2], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
-            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], normal[3], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
+            vertexdata[idx + 0] = new Vertex3D(position[0], normal[0], surface.Color, surface.TexCoord[0]);
+            vertexdata[idx + 1] = new Vertex3D(position[1], normal[1], surface.Color, surface.TexCoord[1]);
+            vertexdata[idx + 2] = new Vertex3D(position[2], normal[2], surface.Color, surface.TexCoord[2]);
+            vertexdata[idx + 3] = new Vertex3D(position[3], normal[3], surface.Color, surface.TexCoord[3]);
 
-            indexdata.Add(idx + 0);
-            indexdata.Add(idx + 1);
-            indexdata.Add(idx + 2);
-            indexdata.Add(idx + 2);
-            indexdata.Add(idx + 1);
-            indexdata.Add(idx + 3);
+            indexdata.Add((uint)(idx + 0));
+            indexdata.Add((uint)(idx + 1));
+            indexdata.Add((uint)(idx + 2));
+            indexdata.Add((uint)(idx + 2));
+            indexdata.Add((uint)(idx + 1));
+            indexdata.Add((uint)(idx + 3));
         }
 
-        public void Draw(Effect effect)
+        public void Draw()
         {
-            _graphicsDevice.SetVertexBuffer(_vertices);
-
             for (int i = 0; i < _textures.Length; i++)
             {
-                _graphicsDevice.Indices = _indexes[i];
-                effect.Parameters["Texture"].SetValue(_textures[i]);
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                }
-
-                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
+                SharedInformation.Graphics.SetMaterial(_textures[i]);
+                SharedInformation.Graphics.DrawVertexPrimitiveList(_vertices, _indexes[i]); //.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
             }
         }
     }
