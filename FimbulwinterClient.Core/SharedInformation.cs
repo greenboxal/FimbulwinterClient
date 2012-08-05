@@ -5,6 +5,7 @@ using System.Text;
 using Axiom.Core;
 using Axiom.Graphics;
 using FimbulwinterClient.Core.Content;
+using Axiom.Framework;
 
 namespace FimbulwinterClient.Core
 {
@@ -15,7 +16,6 @@ namespace FimbulwinterClient.Core
 
         }
 
-        public static Root Engine { get; set; }
-        public static RenderWindow Window { get; set; }
+        public static Game Game { get; set; }
     }
 }

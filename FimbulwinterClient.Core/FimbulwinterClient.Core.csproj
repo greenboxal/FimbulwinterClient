@@ -92,19 +92,19 @@
     <Compile Include="Content\GRF\GRFSharp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedInformation.cs" />
-    <Compile Include="ZLib\CRC32.cs" />
-    <Compile Include="ZLib\Deflate.cs" />
-    <Compile Include="ZLib\DeflateStream.cs" />
-    <Compile Include="ZLib\GZipStream.cs" />
-    <Compile Include="ZLib\Inflate.cs" />
-    <Compile Include="ZLib\InfTree.cs" />
-    <Compile Include="ZLib\ParallelDeflateOutputStream.cs" />
-    <Compile Include="ZLib\Tree.cs" />
-    <Compile Include="ZLib\Zlib.cs" />
-    <Compile Include="ZLib\ZlibBaseStream.cs" />
-    <Compile Include="ZLib\ZlibCodec.cs" />
-    <Compile Include="ZLib\ZlibConstants.cs" />
-    <Compile Include="ZLib\ZlibStream.cs" />
+    <Compile Include="Content\ZLib\CRC32.cs" />
+    <Compile Include="Content\ZLib\Deflate.cs" />
+    <Compile Include="Content\ZLib\DeflateStream.cs" />
+    <Compile Include="Content\ZLib\GZipStream.cs" />
+    <Compile Include="Content\ZLib\Inflate.cs" />
+    <Compile Include="Content\ZLib\InfTree.cs" />
+    <Compile Include="Content\ZLib\ParallelDeflateOutputStream.cs" />
+    <Compile Include="Content\ZLib\Tree.cs" />
+    <Compile Include="Content\ZLib\Zlib.cs" />
+    <Compile Include="Content\ZLib\ZlibBaseStream.cs" />
+    <Compile Include="Content\ZLib\ZlibCodec.cs" />
+    <Compile Include="Content\ZLib\ZlibConstants.cs" />
+    <Compile Include="Content\ZLib\ZlibStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FimbulwinterClient.Extensions\FimbulwinterClient.Extensions.csproj">

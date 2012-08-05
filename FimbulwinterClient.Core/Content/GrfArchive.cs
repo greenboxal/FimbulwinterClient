@@ -5,6 +5,7 @@ using System.Text;
 using Axiom.FileSystem;
 using GRFSharp;
 using System.IO;
+using System.Collections;
 
 namespace FimbulwinterClient.Core.Content
 {
@@ -16,55 +17,74 @@ namespace FimbulwinterClient.Core.Content
             get { return _grf; }
         }
 
-        private GRFFile _file;
-        public GRFFile File
-        {
-            get { return _file; }
-        }
-
         private byte[] _data;
         public byte[] Data
         {
             get { return _data; }
         }
 
-        public GrfArchive(GRF grf, GRFFile file)
-            : base(file.Name, "GrfFile")
+        public GrfArchive(GRF grf, string name)
+            : base(name, GrfArchiveFactory.ArchiveType)
         {
-            _file = file;
+            _grf = grf;
         }
 
         public override void Load()
         {
-            _data = _grf.GetDataFromFile(_file);
+            _grf.Open();
         }
 
-        public override Stream Open(string filename, bool readOnly)
+        public override Stream Open(string fileName, bool readOnly)
         {
-            if (_data == null)
+            if (!_grf.IsOpen)
                 Load();
 
-            return new MemoryStream(_data);
+            GRFFile file = _grf.GetFile(fileName);
+
+            if (file == null)
+                return null;
+
+            return new MemoryStream(_grf.GetDataFromFile(file));
         }
 
         public override bool Exists(string fileName)
         {
-            throw new NotImplementedException();
+            if (!_grf.IsOpen)
+                Load();
+
+            return _grf.GetFile(fileName) != null;
         }
 
         public override List<string> Find(string pattern, bool recursive)
         {
-            throw new NotImplementedException();
+            List<string> files = new List<string>();
+
+            if (pattern == "*" && recursive == true)
+            {
+                foreach (DictionaryEntry file in _grf.Files)
+                    files.Add((string)file.Key);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            return files;
         }
 
         public override FileInfoList FindFileInfo(string pattern, bool recursive)
         {
-            throw new NotImplementedException();
+            return new FileInfoList();
         }
 
         public override bool IsCaseSensitive
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
+        }
+
+        public override bool IsMonitorable
+        {
+            get { return false; }
         }
 
         public override List<string> List(bool recursive)
@@ -79,7 +99,7 @@ namespace FimbulwinterClient.Core.Content
 
         public override void Unload()
         {
-            throw new NotImplementedException();
+            _grf.Close();
         }
     }
 }
