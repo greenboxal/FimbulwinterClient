@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IrrlichtLime.Scene;
 using FimbulwinterClient.Core;
-using FimbulwinterClient.Core.Assets;
 using System.Threading;
 
 namespace FimbulwinterClient.GameModes
 {
-    public class LoadingGameMode : SceneNode
+  /*  public class LoadingGameMode : SceneNode
     {
         // Map
         private string _mapName;
@@ -60,5 +58,5 @@ namespace FimbulwinterClient.GameModes
         {
 
         }
-    }
+    }*/
 }

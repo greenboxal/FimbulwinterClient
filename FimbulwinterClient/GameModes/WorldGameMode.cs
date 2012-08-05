@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FimbulwinterClient.Core;
-using IrrlichtLime.Scene;
-using FimbulwinterClient.Core.Assets;
-using IrrlichtLime.Core;
-using IrrlichtLime.Video;
+using Axiom.Core;
 
 namespace FimbulwinterClient.GameModes
 {
-    public class WorldGameMode : SceneNode
+    /*public class WorldGameMode : SceneNode
     {
-        private AABBox _boundingBox;
-
         private Map _map;
         public Map Map
         {
@@ -58,5 +53,5 @@ namespace FimbulwinterClient.GameModes
         {
             
         }
-    }
+    }*/
 }

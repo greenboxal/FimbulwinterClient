@@ -99,8 +99,8 @@ namespace FimbulwinterClient.Core.Config
 
         public void ReadConfig()
         {
-            GrfFileSystem.AddGrf(@"rdata.grf");
-            GrfFileSystem.AddGrf(@"data.grf");
+            GrfArchiveFactory.AddGrf(@"rdata.grf");
+            GrfArchiveFactory.AddGrf(@"data.grf");
 
             using (Stream s = SharedInformation.ContentManager.Load<Stream>(@"data\fb\config\serverinfo.xml"))
             {

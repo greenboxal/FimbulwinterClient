@@ -63,8 +63,20 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IrrlichtLime">
-      <HintPath>..\Deps\IrrlichtLime.dll</HintPath>
+    <Reference Include="Axiom">
+      <HintPath>..\Deps\Axiom.dll</HintPath>
+    </Reference>
+    <Reference Include="Axiom.Framework">
+      <HintPath>..\Deps\Axiom.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Axiom.Platforms.Win32">
+      <HintPath>..\Deps\Axiom.Platforms.Win32.dll</HintPath>
+    </Reference>
+    <Reference Include="Axiom.Plugins.DevILCodecs">
+      <HintPath>..\Deps\Axiom.Plugins.DevILCodecs.dll</HintPath>
+    </Reference>
+    <Reference Include="Axiom.Plugins.FreeImageCodecs">
+      <HintPath>..\Deps\Axiom.Plugins.FreeImageCodecs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -77,7 +89,6 @@
   <ItemGroup>
     <Compile Include="BinaryReaderExtensions.cs" />
     <Compile Include="BinaryWriterExtensions.cs" />
-    <Compile Include="LoggerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
