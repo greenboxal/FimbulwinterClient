@@ -162,7 +162,7 @@ namespace Axiom.Core
 				else
 				{
 					var isWindows = IsWindowsOS;
-					var platform = IsWindowsOS ? "Win32" : "OpenTK";
+					var platform = IsWindowsOS ? "Windows" : "Linux";
 
 					if ( files.Length == 1 )
 					{

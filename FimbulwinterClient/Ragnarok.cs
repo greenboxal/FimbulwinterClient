@@ -27,28 +27,6 @@ namespace FimbulwinterClient
             Instance = this;
         }
 
-        /*public void Run()
-        {
-            using (var engine = new Root("Ragnarök.log"))
-            {
-                engine.RenderSystem = engine.RenderSystems[0];
-                
-                using (var renderWindow = engine.Initialize(true, "Ragnarök Online"))
-                {
-                    SharedInformation.Engine = engine;
-                    SharedInformation.Window = renderWindow;
-
-                    Initialize();
-                    CreateScene();
-
-                    engine.FrameRenderingQueued += OnRenderFrame;
-                    engine.StartRendering();
-
-                    OnUnload();
-                }
-            }
-        }*/
-
         public void OnLoad()
         {
             ArchiveManager.Instance.AddArchiveFactory(new GrfArchiveFactory());

@@ -34,23 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Axiom">
-      <HintPath>..\Deps\Axiom.dll</HintPath>
+    <Reference Include="Axiom, Version=0.8.3101.12095, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Axiom.dll</HintPath>
     </Reference>
-    <Reference Include="Axiom.Framework">
-      <HintPath>..\Deps\Axiom.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Axiom.Platforms.Win32">
-      <HintPath>..\Deps\Axiom.Platforms.Win32.dll</HintPath>
-    </Reference>
-    <Reference Include="Axiom.Plugins.CGProgramManager">
-      <HintPath>..\Deps\Axiom.Plugins.CGProgramManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Axiom.Plugins.DevILCodecs">
-      <HintPath>..\Deps\Axiom.Plugins.DevILCodecs.dll</HintPath>
-    </Reference>
-    <Reference Include="Axiom.Plugins.FreeImageCodecs">
-      <HintPath>..\Deps\Axiom.Plugins.FreeImageCodecs.dll</HintPath>
+    <Reference Include="Axiom.Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Axiom.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
