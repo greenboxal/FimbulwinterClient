@@ -6,12 +6,12 @@ using Axiom.Core;
 using System.IO;
 using Axiom.Collections;
 
-namespace FimbulwinterClient.Core.Content.World
+namespace FimbulwinterClient.Core.Content.World.Internals
 {
-    public class GatResourceManager : ResourceManager, ISingleton<GatResourceManager>
+    public class GndResourceManager : ResourceManager, ISingleton<GndResourceManager>
     {
-        protected static GatResourceManager _instance;
-        public static GatResourceManager Instance
+        protected static GndResourceManager _instance;
+        public static GndResourceManager Instance
         {
             get
             {
@@ -19,12 +19,12 @@ namespace FimbulwinterClient.Core.Content.World
             }
         }
 
-        public GatResourceManager()
+        public GndResourceManager()
         {
             if (_instance == null)
             {
                 _instance = this;
-                ResourceType = "GatWorld";
+                ResourceType = "GndWorld";
 
                 ResourceGroupManager.Instance.RegisterResourceManager(ResourceType, this);
             }
@@ -39,11 +39,11 @@ namespace FimbulwinterClient.Core.Content.World
             return true;
         }
 
-        public GatWorld Load(Stream stream, string group)
+        public GndWorld Load(Stream stream, string group)
         {
             RemoveAll();
 
-            GatWorld world = (GatWorld)Create("GatWorld", "World", true, null, null);
+            GndWorld world = (GndWorld)Create("GndWorld", "World", true, null, null);
             world.Load(stream);
 
             return world;
@@ -58,7 +58,7 @@ namespace FimbulwinterClient.Core.Content.World
 
         protected override Resource _create(string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
         {
-            return new GatWorld(this, name, handle, group, isManual, loader, createParams);
+            return new GndWorld(this, name, handle, group, isManual, loader, createParams);
         }
     }
 }

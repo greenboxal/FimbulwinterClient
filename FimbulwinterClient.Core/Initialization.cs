@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Axiom.Core;
 using FimbulwinterClient.Core.Content.World;
+using FimbulwinterClient.Core.Content.World.Internals;
 
 namespace FimbulwinterClient.Core
 {

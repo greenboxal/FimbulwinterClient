@@ -97,6 +97,7 @@ namespace FimbulwinterClient
             _engine.FrameStarted += Update;
 
             ArchiveManager.Instance.AddArchiveFactory(new GrfArchiveFactory());
+            Initialization.DoInit();
 
             _configurationManager.RestoreConfiguration(_engine);
         }
@@ -163,8 +164,6 @@ namespace FimbulwinterClient
         public void LoadContent()
         {
             ResourceGroupManager.Instance.InitializeAllResourceGroups();
-
-            Initialization.DoInit();
         }
 
         public void Initialize()

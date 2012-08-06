@@ -6,12 +6,12 @@ using Axiom.Core;
 using System.IO;
 using Axiom.Collections;
 
-namespace FimbulwinterClient.Core.Content.World
+namespace FimbulwinterClient.Core.Content.World.Internals
 {
-    public class GndResourceManager : ResourceManager, ISingleton<GndResourceManager>
+    public class RswResourceManager : ResourceManager, ISingleton<RswResourceManager>
     {
-        protected static GndResourceManager _instance;
-        public static GndResourceManager Instance
+        protected static RswResourceManager _instance;
+        public static RswResourceManager Instance
         {
             get
             {
@@ -19,12 +19,12 @@ namespace FimbulwinterClient.Core.Content.World
             }
         }
 
-        public GndResourceManager()
+        public RswResourceManager()
         {
             if (_instance == null)
             {
                 _instance = this;
-                ResourceType = "GndWorld";
+                ResourceType = "RswWorld";
 
                 ResourceGroupManager.Instance.RegisterResourceManager(ResourceType, this);
             }
@@ -39,11 +39,11 @@ namespace FimbulwinterClient.Core.Content.World
             return true;
         }
 
-        public GndWorld Load(Stream stream, string group)
+        public RswWorld Load(Stream stream, string group)
         {
             RemoveAll();
 
-            GndWorld world = (GndWorld)Create("GndWorld", "World", true, null, null);
+            RswWorld world = (RswWorld)Create("RswWorld", "World", true, null, null);
             world.Load(stream);
 
             return world;
@@ -58,7 +58,7 @@ namespace FimbulwinterClient.Core.Content.World
 
         protected override Resource _create(string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
         {
-            return new GndWorld(this, name, handle, group, isManual, loader, createParams);
+            return new RswWorld(this, name, handle, group, isManual, loader, createParams);
         }
     }
 }

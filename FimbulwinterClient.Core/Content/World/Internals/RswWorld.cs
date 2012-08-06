@@ -6,7 +6,7 @@ using System.Text;
 using Axiom.Collections;
 using Axiom.Core;
 
-namespace FimbulwinterClient.Core.Content.World
+namespace FimbulwinterClient.Core.Content.World.Internals
 {
     public class RswWorld : Resource
     {
