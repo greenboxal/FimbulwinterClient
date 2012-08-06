@@ -91,10 +91,12 @@ namespace FimbulwinterClient
 
         private void CreateEngine()
         {
-            _configurationManager = new DefaultConfigurationManager(Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location));
+            _configurationManager = ConfigurationManagerFactory.CreateDefault();
             
             _engine = new Root(_configurationManager.LogFilename);
             _engine.FrameStarted += Update;
+
+            ArchiveManager.Instance.AddArchiveFactory(new GrfArchiveFactory());
 
             _configurationManager.RestoreConfiguration(_engine);
         }
@@ -103,7 +105,27 @@ namespace FimbulwinterClient
         {
             if (_engine.RenderSystem == null)
             {
-                _renderSystem = _engine.RenderSystem = _engine.RenderSystems.First().Value;
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32S || Environment.OSVersion.Platform == PlatformID.Win32Windows)
+                {
+                    bool foundDX = false;
+
+                    foreach (RenderSystem rs in _engine.RenderSystems)
+                    {
+                        if (rs.Name.Contains("DirectX"))
+                        {
+                            _renderSystem = _engine.RenderSystem = rs;
+                            foundDX = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundDX)
+                        _renderSystem = _engine.RenderSystem = _engine.RenderSystems.First().Value;
+                }
+                else
+                {
+                    _renderSystem = _engine.RenderSystem = _engine.RenderSystems.First().Value;
+                }
             }
             else
             {
@@ -140,9 +162,6 @@ namespace FimbulwinterClient
 
         public void LoadContent()
         {
-            ArchiveManager.Instance.AddArchiveFactory(new GrfArchiveFactory());
-            ResourceGroupManager.Instance.AddResourceLocation("data.grf", GrfArchiveFactory.ArchiveType, true);
-            ResourceGroupManager.Instance.AddResourceLocation("rdata.grf", GrfArchiveFactory.ArchiveType, true);
             ResourceGroupManager.Instance.InitializeAllResourceGroups();
 
             Initialization.DoInit();
