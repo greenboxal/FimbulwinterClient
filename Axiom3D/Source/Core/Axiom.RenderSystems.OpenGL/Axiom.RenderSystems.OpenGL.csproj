@@ -15,15 +15,15 @@
   <ItemGroup>
     <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dependencies\OpenTK.dll</HintPath>
+      <HintPath>..\..\..\..\Dependencies\Axiom\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.Compatibility, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dependencies\OpenTK.Compatibility.dll</HintPath>
+      <HintPath>..\..\..\..\Dependencies\Axiom\OpenTK.Compatibility.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dependencies\OpenTK.GLControl.dll</HintPath>
+      <HintPath>..\..\..\..\Dependencies\Axiom\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -159,7 +159,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Axiom\Axiom.csproj">
       <Project>{BAA6AE8A-B259-4883-9805-CE538660A59A}</Project>
-      <Name>Axiom</Name>
+      <Name>Axiom %28Axiom\Axiom%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />

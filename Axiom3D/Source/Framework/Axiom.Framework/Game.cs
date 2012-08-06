@@ -49,6 +49,7 @@ namespace Axiom.Framework
 
 		public virtual void Run()
 		{
+            ReadConfiguration();
 			PreInitialize();
 			LoadConfiguration();
 			Initialize();
@@ -63,10 +64,13 @@ namespace Axiom.Framework
 			this.Engine.StartRendering();
 		}
 
+        protected virtual void ReadConfiguration()
+        {
+            this.ConfigurationManager = new DefaultConfigurationManager();
+        }
+
 		private void PreInitialize()
 		{
-			this.ConfigurationManager = new DefaultConfigurationManager();
-
 			// instantiate the Root singleton
 			this.Engine = new Root( this.ConfigurationManager.LogFilename );
 

@@ -1,87 +1,247 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FimbulwinterClient.Core;
 using System.IO;
-using FimbulwinterClient.GameModes;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using Axiom.Core;
-using Axiom.Framework;
 using Axiom.FileSystem;
+using Axiom.Framework;
+using Axiom.Framework.Configuration;
+using FimbulwinterClient.Core;
 using FimbulwinterClient.Core.Content;
+using FimbulwinterClient.GameStates;
+using SharpInputSystem;
+using Axiom.Graphics;
+
+using RenderSystem = Axiom.Graphics.RenderSystem;
 
 namespace FimbulwinterClient
 {
-    public class Ragnarok : Game
+    public class Ragnarok : IWindowEventListener, IKeyboardListener, IMouseListener
     {
         public static Ragnarok Instance { get; private set; }
 
-        private SceneNode _gameMode;
-        public SceneNode GameMode
+        private Root _engine;
+        public Root Engine
         {
-            get { return _gameMode; }
+            get { return _engine; }
+        }
+
+        private IConfigurationManager _configurationManager;
+        public IConfigurationManager ConfigurationManager
+        {
+            get { return _configurationManager; }
+        }
+
+        private RenderWindow _window;
+        public RenderWindow Window
+        {
+            get { return _window; }
+        }
+
+        private RenderSystem _renderSystem;
+        public RenderSystem RenderSystem
+        {
+            get { return _renderSystem; }
+        }
+
+        private InputManager _inputManager;
+        public InputManager InputManager
+        {
+            get { return _inputManager; }
+        }
+
+        private Keyboard _keyboard;
+        public Keyboard Keyboard
+        {
+            get { return _keyboard; }
+        }
+
+        private Mouse _mouse;
+        public Mouse Mouse
+        {
+            get { return _mouse; }
+        }
+
+        private GameState _gameState;
+        public GameState GameState
+        {
+            get { return _gameState; }
         }
 
         public Ragnarok()
         {
+            if (Instance != null)
+                throw new Exception("This class can have only one instance, use Ragnarok.Instance.");
+
             Instance = this;
         }
 
-        public void OnLoad()
+        public void Run()
+        {
+            CreateEngine();
+            CreateRenderSystem();
+            CreateRenderWindow();
+            CreateInput();
+            LoadContent();
+            Initialize();
+            _engine.StartRendering();
+        }
+
+        private void CreateEngine()
+        {
+            _configurationManager = new DefaultConfigurationManager(Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location));
+            
+            _engine = new Root(_configurationManager.LogFilename);
+            _engine.FrameStarted += Update;
+
+            _configurationManager.RestoreConfiguration(_engine);
+        }
+
+        private void CreateRenderSystem()
+        {
+            if (_engine.RenderSystem == null)
+            {
+                _renderSystem = _engine.RenderSystem = _engine.RenderSystems.First().Value;
+            }
+            else
+            {
+                _renderSystem = _engine.RenderSystem;
+            }
+        }
+
+        public void CreateRenderWindow()
+        {
+            _window = Root.Instance.Initialize(true, "Ragnarök");
+
+            WindowEventMonitor.Instance.RegisterListener(this.Window, this);
+        }
+
+        public void CreateInput()
+        {
+            ParameterList pl = new ParameterList();
+            pl.Add(new Parameter("WINDOW", this.Window["WINDOW"]));
+
+            if (_renderSystem.Name.Contains("DirectX"))
+            {
+                pl.Add(new SharpInputSystem.Parameter("w32_mouse", "CLF_BACKGROUND"));
+                pl.Add(new SharpInputSystem.Parameter("w32_mouse", "CLF_NONEXCLUSIVE"));
+            }
+
+            _inputManager = InputManager.CreateInputSystem(pl);
+
+            _keyboard = this.InputManager.CreateInputObject<Keyboard>(true, String.Empty);
+            _keyboard.EventListener = this;
+
+            _mouse = this.InputManager.CreateInputObject<Mouse>(true, String.Empty);
+            _mouse.EventListener = this;
+        }
+
+        public void LoadContent()
         {
             ArchiveManager.Instance.AddArchiveFactory(new GrfArchiveFactory());
-            ResourceGroupManager.Instance.AddResourceLocation("data.grf", "GrfFile");
-
+            ResourceGroupManager.Instance.AddResourceLocation("data.grf", GrfArchiveFactory.ArchiveType, true);
+            ResourceGroupManager.Instance.AddResourceLocation("rdata.grf", GrfArchiveFactory.ArchiveType, true);
             ResourceGroupManager.Instance.InitializeAllResourceGroups();
-            /*try
-            {
-                Stream s = ArchiveManager.Instance.Load(@"data\fb\config\config.xml", "File");
-                SharedInformation.Config = Configuration.FromStream(s);
-                s.Close();
-            }
-            catch
-            {
-                SharedInformation.Config = new Configuration();
-            }
 
-            SharedInformation.Config.ReadConfig();
-
-            ChangeMap("prontera");*/
+            Initialization.DoInit();
         }
 
-        public void OnRenderFrame(object sender, FrameEventArgs e)
+        public void Initialize()
         {
-
+            ChangeWorld("prontera");
         }
 
-        public override void CreateScene()
+        private void Update(object sender, FrameEventArgs e)
         {
             
         }
 
-        public void OnUnload()
+        public void ChangeWorld(string name)
         {
-
+            ChangeGameState(new WorldGameState(name));
         }
 
-        public void ChangeMap(string mapname)
+        public void ChangeGameState(GameState state)
         {
-            //ChangeGameMode(new LoadingGameMode(mapname));
-        }
-
-        public void ChangeGameMode(SceneNode gameMode)
-        {
-            if (_gameMode != null)
+            if (_gameState != null)
             {
-                _gameMode.RemoveAndDestroyAllChildren();
+                _gameState.Shutdown();
             }
 
-            _gameMode = gameMode;
+            Window.RemoveAllViewports();
+
+            if (state != null)
+            {
+                state.Setup(Window, Keyboard, Mouse);
+            }
+
+            _gameState = state;
         }
 
-        public void Dispose()
+        public void WindowClosed(RenderWindow rw)
         {
-            
+            if (_gameState != null)
+                _gameState.WindowClosed(rw);
+        }
+
+        public void WindowFocusChange(RenderWindow rw)
+        {
+            if (_gameState != null)
+                _gameState.WindowFocusChange(rw);
+        }
+
+        public void WindowMoved(RenderWindow rw)
+        {
+            if (_gameState != null)
+                _gameState.WindowMoved(rw);
+        }
+
+        public void WindowResized(RenderWindow rw)
+        {
+            if (_gameState != null)
+                _gameState.WindowResized(rw);
+        }
+
+        public bool KeyPressed(KeyEventArgs e)
+        {
+            if (_gameState != null)
+                return _gameState.KeyPressed(e);
+
+            return false;
+        }
+
+        public bool KeyReleased(KeyEventArgs e)
+        {
+            if (_gameState != null)
+                return _gameState.KeyReleased(e);
+
+            return false;
+        }
+
+        public bool MouseMoved(MouseEventArgs arg)
+        {
+            if (_gameState != null)
+                return _gameState.MouseMoved(arg);
+
+            return false;
+        }
+
+        public bool MousePressed(MouseEventArgs arg, MouseButtonID id)
+        {
+            if (_gameState != null)
+                return _gameState.MousePressed(arg, id);
+
+            return false;
+        }
+
+        public bool MouseReleased(MouseEventArgs arg, MouseButtonID id)
+        {
+            if (_gameState != null)
+                return _gameState.MouseReleased(arg, id);
+
+            return false;
         }
     }
 }

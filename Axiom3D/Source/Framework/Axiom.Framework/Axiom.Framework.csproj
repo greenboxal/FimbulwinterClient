@@ -12,9 +12,8 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpInputSystem.Core, Version=0.4.0.15896, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dependencies\SharpInputSystem.Core.dll</HintPath>
+    <Reference Include="SharpInputSystem.Core">
+      <HintPath>..\..\..\..\Dependencies\SharpInputSystem.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -93,7 +92,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Axiom\Axiom.csproj">
       <Project>{BAA6AE8A-B259-4883-9805-CE538660A59A}</Project>
-      <Name>Axiom</Name>
+      <Name>Axiom %28Axiom\Axiom%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

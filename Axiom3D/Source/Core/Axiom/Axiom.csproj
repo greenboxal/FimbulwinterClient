@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Net40Debug|x86'">
+    <OutputPath>%24%28SolutionDir%29Built\%24%28Configuration%29\</OutputPath>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)\Axiom.PreSettings.targets" />
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -55,7 +58,7 @@
     <Compile Include="Collections\TextureLayerCollection.cs" />
     <Compile Include="Collections\UnsortedCollection.cs" />
     <Compile Include="Controllers\Canned\PassthroughControllerFunction.cs" />
-    <Compile Include="Core\AbstractFactory~1.cs" />
+    <Compile Include="Core\AbstractFactory.cs" />
     <Compile Include="Core\BillboardChain.cs" />
     <Compile Include="Core\BitConverterEx.cs" />
     <Compile Include="Core\ChainedEvent.cs" />

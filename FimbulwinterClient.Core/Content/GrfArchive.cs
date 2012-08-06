@@ -17,12 +17,6 @@ namespace FimbulwinterClient.Core.Content
             get { return _grf; }
         }
 
-        private byte[] _data;
-        public byte[] Data
-        {
-            get { return _data; }
-        }
-
         public GrfArchive(GRF grf, string name)
             : base(name, GrfArchiveFactory.ArchiveType)
         {
