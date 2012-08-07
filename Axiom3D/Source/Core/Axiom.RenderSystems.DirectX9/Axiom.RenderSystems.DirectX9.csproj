@@ -13,7 +13,8 @@
     <DefineConstants>$(DefineConstants);AXIOM_D3D_MANAGE_BUFFERS</DefineConstants>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX">

@@ -10,7 +10,8 @@
     <RootNamespace>Axiom.Plugins.DevILCodecs</RootNamespace>
     <AssemblyName>Axiom.Plugins.DevILCodecs</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -11,7 +11,8 @@
     <RootNamespace>Axiom.Platforms.Windows</RootNamespace>
     <AssemblyName>Axiom.Platforms.Windows</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

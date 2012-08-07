@@ -9,7 +9,8 @@
     <RootNamespace>Axiom.Framework</RootNamespace>
     <AssemblyName>Axiom.Framework</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpInputSystem.Core">

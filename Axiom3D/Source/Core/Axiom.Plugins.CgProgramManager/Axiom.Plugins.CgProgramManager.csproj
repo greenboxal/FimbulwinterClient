@@ -11,7 +11,8 @@
     <RootNamespace>Axiom.Plugins.CgProgramManager</RootNamespace>
     <AssemblyName>Axiom.Plugins.CgProgramManager</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
