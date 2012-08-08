@@ -29,18 +29,21 @@ namespace FimbulwinterClient.Core.Content.World
         }
 
         private GndWorld _ground;
+
         public GndWorld Ground
         {
             get { return _ground; }
         }
 
         private RswWorld _world;
+
         public RswWorld World
         {
             get { return _world; }
         }
 
         private AxisAlignedBox _boudingBox;
+
         public override AxisAlignedBox BoundingBox
         {
             get { return _boudingBox; }
@@ -113,7 +116,7 @@ namespace FimbulwinterClient.Core.Content.World
 
         public override uint TypeFlags
         {
-            get { return (uint)SceneQueryTypeMask.WorldGeometry; }
+            get { return (uint) SceneQueryTypeMask.WorldGeometry; }
         }
 
         public void GetWorldTransforms(Matrix4[] matrices)
@@ -128,7 +131,7 @@ namespace FimbulwinterClient.Core.Content.World
 
         public Real GetSquaredViewDepth(Camera camera)
         {
-            return 0;// (_center - camera.DerivedPosition).LengthSquared;
+            return 0; // (_center - camera.DerivedPosition).LengthSquared;
         }
 
         public Vector4 GetCustomParameter(int index)
@@ -138,27 +141,29 @@ namespace FimbulwinterClient.Core.Content.World
 
         public void SetCustomParameter(int index, Vector4 val)
         {
-            
         }
 
-        public void UpdateCustomGpuParameter(GpuProgramParameters.AutoConstantEntry constant, GpuProgramParameters parameters)
+        public void UpdateCustomGpuParameter(GpuProgramParameters.AutoConstantEntry constant,
+                                             GpuProgramParameters parameters)
         {
-
         }
 
         private Material[] _materials;
+
         public Material[] Materials
         {
             get { return _materials; }
         }
 
         private VertexData _vertices;
+
         public VertexData Vertices
         {
             get { return _vertices; }
         }
 
         private HardwareIndexBuffer[] _indexes;
+
         public HardwareIndexBuffer[] Indexes
         {
             get { return _indexes; }
@@ -180,7 +185,7 @@ namespace FimbulwinterClient.Core.Content.World
             _materials = new Material[_ground.Textures.Length];
             for (int i = 0; i < _ground.Textures.Length; i++)
             {
-                Material m = (Material)MaterialManager.Instance.Create("worldTexture" + i, "World");
+                Material m = (Material) MaterialManager.Instance.Create("worldTexture" + i, "World");
                 Pass p = m.GetTechnique(0).GetPass(0);
                 TextureUnitState t = p.CreateTextureUnitState(@"data\texture\" + _ground.Textures[i]);
 
@@ -197,8 +202,9 @@ namespace FimbulwinterClient.Core.Content.World
                 _materials[i] = m;
             }
         }
-        
+
         private int objectCount;
+
         public void SetupVertices()
         {
             objectCount = 0;
@@ -207,7 +213,7 @@ namespace FimbulwinterClient.Core.Content.World
             {
                 for (int y = 0; y < _ground.Height; y++)
                 {
-                    int idx = y * _ground.Width + x;
+                    int idx = y*_ground.Width + x;
 
                     if (_ground.Cells[idx].TileUp != -1)
                         objectCount++;
@@ -220,7 +226,7 @@ namespace FimbulwinterClient.Core.Content.World
                 }
             }
 
-            GndVertex[] vertexdata = new GndVertex[objectCount * 4];
+            GndVertex[] vertexdata = new GndVertex[objectCount*4];
             List<int>[] indexdata = new List<int>[_materials.Length];
             for (int i = 0; i < indexdata.Length; i++)
             {
@@ -232,7 +238,7 @@ namespace FimbulwinterClient.Core.Content.World
             {
                 for (int y = 0; y < _ground.Height; y++)
                 {
-                    int idx = y * _ground.Width + x;
+                    int idx = y*_ground.Width + x;
 
                     if (_ground.Cells[idx].TileUp != -1)
                     {
@@ -276,8 +282,10 @@ namespace FimbulwinterClient.Core.Content.World
             //decl.AddElement(0, offset, VertexElementType.Float2, VertexElementSemantic.TexCoords, 1);
             //offset += VertexElement.GetTypeSize(VertexElementType.Float2);
 
-            HardwareVertexBuffer vbuff = HardwareBufferManager.Instance.CreateVertexBuffer(decl.Clone(0), vertexdata.Length, BufferUsage.DynamicWriteOnly);
-            vbuff.WriteData(0, Memory.SizeOf(typeof(GndVertex)) * vertexdata.Length, vertexdata.ToArray());
+            HardwareVertexBuffer vbuff = HardwareBufferManager.Instance.CreateVertexBuffer(decl.Clone(0),
+                                                                                           vertexdata.Length,
+                                                                                           BufferUsage.DynamicWriteOnly);
+            vbuff.WriteData(0, Memory.SizeOf(typeof (GndVertex))*vertexdata.Length, vertexdata.ToArray());
 
             _vertices.vertexBufferBinding.SetBinding(0, vbuff);
             _vertices.vertexStart = 0;
@@ -286,18 +294,22 @@ namespace FimbulwinterClient.Core.Content.World
             _indexes = new HardwareIndexBuffer[_materials.Length];
             for (int i = 0; i < _indexes.Length; i++)
             {
-                HardwareIndexBuffer ibuff = HardwareBufferManager.Instance.CreateIndexBuffer(IndexType.Size32, indexdata[i].Count, BufferUsage.DynamicWriteOnly);
+                HardwareIndexBuffer ibuff = HardwareBufferManager.Instance.CreateIndexBuffer(IndexType.Size32,
+                                                                                             indexdata[i].Count,
+                                                                                             BufferUsage.
+                                                                                                 DynamicWriteOnly);
 
-                ibuff.WriteData(0, Memory.SizeOf(typeof(int)) * indexdata[i].Count, indexdata[i].ToArray());
-                
+                ibuff.WriteData(0, Memory.SizeOf(typeof (int))*indexdata[i].Count, indexdata[i].ToArray());
+
                 _indexes[i] = ibuff;
             }
         }
 
-        private void SetupSurface(GndVertex[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
+        private void SetupSurface(GndVertex[] vertexdata, List<int> indexdata, int surface_id, int current_surface,
+                                  int x, int y, int type)
         {
-            int idx = current_surface * 4;
-            int cell_idx = y * _ground.Width + x;
+            int idx = current_surface*4;
+            int cell_idx = y*_ground.Width + x;
             GndWorld.Cell cell = _ground.Cells[cell_idx];
 
             GndWorld.Surface surface = _ground.Surfaces[surface_id];
@@ -309,11 +321,11 @@ namespace FimbulwinterClient.Core.Content.World
             {
                 case 0:
                     {
-                        float x0 = (x - _ground.Width / 2) * _ground.Zoom;
-                        float x1 = (x - _ground.Width / 2 + 1) * _ground.Zoom;
+                        float x0 = (x - _ground.Width/2)*_ground.Zoom;
+                        float x1 = (x - _ground.Width/2 + 1)*_ground.Zoom;
 
-                        float z0 = (y - _ground.Height / 2) * _ground.Zoom;
-                        float z1 = (y - _ground.Height / 2 + 1) * _ground.Zoom;
+                        float z0 = (y - _ground.Height/2)*_ground.Zoom;
+                        float z1 = (y - _ground.Height/2 + 1)*_ground.Zoom;
 
                         position[0] = new Vector3(x0, cell.Height[0], z0);
                         position[1] = new Vector3(x1, cell.Height[1], z0);
@@ -328,12 +340,12 @@ namespace FimbulwinterClient.Core.Content.World
                     break;
                 case 1:
                     {
-                        GndWorld.Cell cell2 = _ground.Cells[(y + 1) * _ground.Width + x];
+                        GndWorld.Cell cell2 = _ground.Cells[(y + 1)*_ground.Width + x];
 
-                        float x0 = (x - _ground.Width / 2) * _ground.Zoom;
-                        float x1 = (x - _ground.Width / 2 + 1) * _ground.Zoom;
+                        float x0 = (x - _ground.Width/2)*_ground.Zoom;
+                        float x1 = (x - _ground.Width/2 + 1)*_ground.Zoom;
 
-                        float z0 = (y - _ground.Height / 2 + 1) * _ground.Zoom;
+                        float z0 = (y - _ground.Height/2 + 1)*_ground.Zoom;
 
                         position[0] = new Vector3(x0, cell.Height[2], z0);
                         position[1] = new Vector3(x1, cell.Height[3], z0);
@@ -348,12 +360,12 @@ namespace FimbulwinterClient.Core.Content.World
                     break;
                 case 2:
                     {
-                        GndWorld.Cell cell2 = _ground.Cells[y * _ground.Width + x + 1];
+                        GndWorld.Cell cell2 = _ground.Cells[y*_ground.Width + x + 1];
 
-                        float x0 = (x - _ground.Width / 2 + 1) * _ground.Zoom;
+                        float x0 = (x - _ground.Width/2 + 1)*_ground.Zoom;
 
-                        float z0 = (y - _ground.Height / 2) * _ground.Zoom;
-                        float z1 = (y - _ground.Height / 2 + 1) * _ground.Zoom;
+                        float z0 = (y - _ground.Height/2)*_ground.Zoom;
+                        float z1 = (y - _ground.Height/2 + 1)*_ground.Zoom;
 
                         position[0] = new Vector3(x0, cell.Height[3], z1);
                         position[1] = new Vector3(x0, cell.Height[1], z0);
@@ -368,22 +380,26 @@ namespace FimbulwinterClient.Core.Content.World
                     break;
             }
 
-            int lm_w = (int)Math.Floor(Math.Sqrt(_ground.Lightmaps.Length));
-            int lm_h = (int)Math.Ceiling((float)_ground.Lightmaps.Length / lm_w);
-            int lm_x = (int)Math.Floor((float)surface.Lightmap / lm_h);
-            int lm_y = surface.Lightmap % lm_h;
+            int lm_w = (int) Math.Floor(Math.Sqrt(_ground.Lightmaps.Length));
+            int lm_h = (int) Math.Ceiling((float) _ground.Lightmaps.Length/lm_w);
+            int lm_x = (int) Math.Floor((float) surface.Lightmap/lm_h);
+            int lm_y = surface.Lightmap%lm_h;
 
             float[] lightmapU = new float[2];
             float[] lightmapV = new float[2];
-            lightmapU[0] = (float)(0.1f + lm_x) / lm_w;
-            lightmapU[1] = (float)(0.9f + lm_x) / lm_w;
-            lightmapV[0] = (float)(0.1f + lm_y) / lm_h;
-            lightmapV[1] = (float)(0.9f + lm_y) / lm_h;
+            lightmapU[0] = (0.1f + lm_x)/lm_w;
+            lightmapU[1] = (0.9f + lm_x)/lm_w;
+            lightmapV[0] = (0.1f + lm_y)/lm_h;
+            lightmapV[1] = (0.9f + lm_y)/lm_h;
 
-            vertexdata[idx + 0] = new GndVertex(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
-            vertexdata[idx + 1] = new GndVertex(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
-            vertexdata[idx + 2] = new GndVertex(position[2], normal[2], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
-            vertexdata[idx + 3] = new GndVertex(position[3], normal[3], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
+            vertexdata[idx + 0] = new GndVertex(position[0], normal[0], surface.TexCoord[0],
+                                                new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
+            vertexdata[idx + 1] = new GndVertex(position[1], normal[1], surface.TexCoord[1],
+                                                new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
+            vertexdata[idx + 2] = new GndVertex(position[2], normal[2], surface.TexCoord[2],
+                                                new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
+            vertexdata[idx + 3] = new GndVertex(position[3], normal[3], surface.TexCoord[3],
+                                                new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
 
             indexdata.Add(idx + 0);
             indexdata.Add(idx + 1);

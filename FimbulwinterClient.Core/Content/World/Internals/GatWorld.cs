@@ -13,12 +13,14 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         public class Cell
         {
             private float[] _height;
+
             public float[] Height
             {
                 get { return _height; }
             }
 
             private int _type;
+
             public int Type
             {
                 get { return _type; }
@@ -37,18 +39,21 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         }
 
         private int _width;
+
         public int Width
         {
             get { return _width; }
         }
 
         private int _height;
+
         public int Height
         {
             get { return _height; }
         }
 
         private Cell[] _cells;
+
         public Cell[] Cells
         {
             get { return _cells; }
@@ -57,7 +62,8 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         protected byte minorVersion;
         protected byte majorVersion;
 
-        public GatWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
+        public GatWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual,
+                        IManualResourceLoader loader, NameValuePairList createParams)
             : base(parent, name, handle, group, isManual, loader)
         {
         }
@@ -65,7 +71,8 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         public void Load(Stream gnd)
         {
             BinaryReader br = new BinaryReader(gnd);
-            string header = ((char)br.ReadByte()).ToString() + ((char)br.ReadByte()) + ((char)br.ReadByte()) + ((char)br.ReadByte());
+            string header = ((char) br.ReadByte()).ToString() + ((char) br.ReadByte()) + ((char) br.ReadByte()) +
+                            ((char) br.ReadByte());
 
             if (header != "GRAT")
                 throw new AxiomException("Invalid GAT header: {0}", header);
@@ -79,7 +86,7 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             _width = br.ReadInt32();
             _height = br.ReadInt32();
 
-            _cells = new Cell[_width * _height];
+            _cells = new Cell[_width*_height];
             for (int i = 0; i < _cells.Length; i++)
             {
                 Cell c = new Cell();

@@ -11,9 +11,9 @@ public static class BinaryWriterExtensions
         for (int i = 0; i < size; i++)
         {
             if (i < str.Length)
-                bw.Write((byte)str[i]);
+                bw.Write((byte) str[i]);
             else
-                bw.Write((byte)0);
+                bw.Write((byte) 0);
         }
     }
 }

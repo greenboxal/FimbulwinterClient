@@ -10,14 +10,14 @@ namespace FimbulwinterClient.Core.Content.World.Internals
 {
     public class RswWorld : Resource
     {
-        public RswWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
+        public RswWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual,
+                        IManualResourceLoader loader, NameValuePairList createParams)
             : base(parent, name, handle, group, isManual, loader)
         {
         }
 
         public void Load(Stream stream)
         {
-            
         }
 
         protected override void load()
@@ -29,7 +29,6 @@ namespace FimbulwinterClient.Core.Content.World.Internals
 
         protected override void unload()
         {
-            
         }
     }
 }

@@ -13,18 +13,21 @@ namespace FimbulwinterClient.GameStates
     public class WorldGameState : GameState
     {
         private string _worldName;
+
         public string WorldName
         {
             get { return _worldName; }
         }
 
         private Camera _camera;
+
         public Camera Camera
         {
             get { return _camera; }
         }
 
         private Viewport _viewport;
+
         public Viewport Viewport
         {
             get { return _viewport; }
@@ -62,7 +65,7 @@ namespace FimbulwinterClient.GameStates
             _camera = SceneManager.CreateCamera("MainCamera");
             _viewport = Window.AddViewport(_camera);
 
-            _camera.AspectRatio = (Real)_viewport.ActualWidth / (Real)_viewport.ActualHeight;
+            _camera.AspectRatio = _viewport.ActualWidth/(Real) _viewport.ActualHeight;
             _camera.Near = 1.0F;
             _camera.Far = 5000.0F;
         }

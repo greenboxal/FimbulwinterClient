@@ -12,24 +12,28 @@ namespace FimbulwinterClient.Core.Content.World
     public class RagnarokSceneManager : SceneManager
     {
         private RswWorld _rswWorld;
+
         public RswWorld RswWorld
         {
             get { return _rswWorld; }
         }
 
         private GndWorld _gndWorld;
+
         public GndWorld GndWorld
         {
             get { return _gndWorld; }
         }
 
         private GatWorld _gatWorld;
+
         public GatWorld GatWorld
         {
             get { return _gatWorld; }
         }
 
         private SceneNode _groundNode;
+
         public SceneNode GroundNode
         {
             get { return _groundNode; }
@@ -43,22 +47,28 @@ namespace FimbulwinterClient.Core.Content.World
         public RagnarokSceneManager(string name)
             : base(name)
         {
-
         }
 
         public override void SetWorldGeometry(string filename)
         {
-            _rswWorld = RswResourceManager.Instance.Load(ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".rsw", "World"), "World");
-            _gatWorld = GatResourceManager.Instance.Load(ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".gat", "World"), "World");
-            _gndWorld = GndResourceManager.Instance.Load(ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".gnd", "World"), "World");
+            _rswWorld =
+                RswResourceManager.Instance.Load(
+                    ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".rsw", "World"), "World");
+            _gatWorld =
+                GatResourceManager.Instance.Load(
+                    ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".gat", "World"), "World");
+            _gndWorld =
+                GndResourceManager.Instance.Load(
+                    ResourceGroupManager.Instance.OpenResource(@"data\" + filename + ".gnd", "World"), "World");
 
             _groundNode = RootSceneNode.CreateChildSceneNode("GroundRoot");
             _groundNode.AttachObject(new GroundRenderable(_gndWorld, _rswWorld));
         }
 
-        protected override void RenderSingleObject(IRenderable renderable, Pass pass, bool doLightIteration, LightList manualLightList)
+        protected override void RenderSingleObject(IRenderable renderable, Pass pass, bool doLightIteration,
+                                                   LightList manualLightList)
         {
-            if (typeof(GroundRenderable) == renderable.GetType())
+            if (typeof (GroundRenderable) == renderable.GetType())
             {
                 GroundRenderable gr = renderable as GroundRenderable;
                 RenderOperation op = new RenderOperation();

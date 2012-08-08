@@ -12,6 +12,7 @@ namespace FimbulwinterClient.Core.Content
     public class GrfArchive : Archive
     {
         private GRF _grf;
+
         public GRF Grf
         {
             get { return _grf; }
@@ -53,10 +54,10 @@ namespace FimbulwinterClient.Core.Content
         {
             List<string> files = new List<string>();
 
-            if (pattern == "*" && recursive == true)
+            if (pattern == "*" && recursive)
             {
                 foreach (DictionaryEntry file in _grf.Files)
-                    files.Add((string)file.Key);
+                    files.Add((string) file.Key);
             }
             else
             {

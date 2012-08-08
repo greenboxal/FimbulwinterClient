@@ -12,10 +12,6 @@ namespace FimbulwinterClient.Core.Content
     {
         public const string ArchiveType = "GrfFile";
 
-        public GrfArchiveFactory()
-        {
-        }
-
         public override Archive CreateInstance(string name)
         {
             return CreateInstance(name, null);
@@ -28,14 +24,8 @@ namespace FimbulwinterClient.Core.Content
 
         public override string Type
         {
-            get
-            {
-                return ArchiveType;
-            }
-            protected set
-            {
-                
-            }
+            get { return ArchiveType; }
+            protected set { }
         }
     }
 }

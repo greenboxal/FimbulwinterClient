@@ -13,7 +13,6 @@ using FimbulwinterClient.Core.Content;
 using FimbulwinterClient.GameStates;
 using SharpInputSystem;
 using Axiom.Graphics;
-
 using RenderSystem = Axiom.Graphics.RenderSystem;
 
 namespace FimbulwinterClient
@@ -23,48 +22,56 @@ namespace FimbulwinterClient
         public static Ragnarok Instance { get; private set; }
 
         private Root _engine;
+
         public Root Engine
         {
             get { return _engine; }
         }
 
         private IConfigurationManager _configurationManager;
+
         public IConfigurationManager ConfigurationManager
         {
             get { return _configurationManager; }
         }
 
         private RenderWindow _window;
+
         public RenderWindow Window
         {
             get { return _window; }
         }
 
         private RenderSystem _renderSystem;
+
         public RenderSystem RenderSystem
         {
             get { return _renderSystem; }
         }
 
         private InputManager _inputManager;
+
         public InputManager InputManager
         {
             get { return _inputManager; }
         }
 
         private Keyboard _keyboard;
+
         public Keyboard Keyboard
         {
             get { return _keyboard; }
         }
 
         private Mouse _mouse;
+
         public Mouse Mouse
         {
             get { return _mouse; }
         }
 
         private GameState _gameState;
+
         public GameState GameState
         {
             get { return _gameState; }
@@ -92,7 +99,7 @@ namespace FimbulwinterClient
         private void CreateEngine()
         {
             _configurationManager = ConfigurationManagerFactory.CreateDefault();
-            
+
             _engine = new Root(_configurationManager.LogFilename);
             _engine.FrameStarted += Update;
 
@@ -106,7 +113,9 @@ namespace FimbulwinterClient
         {
             if (_engine.RenderSystem == null)
             {
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32S || Environment.OSVersion.Platform == PlatformID.Win32Windows)
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT ||
+                    Environment.OSVersion.Platform == PlatformID.Win32S ||
+                    Environment.OSVersion.Platform == PlatformID.Win32Windows)
                 {
                     bool foundDX = false;
 
@@ -173,7 +182,6 @@ namespace FimbulwinterClient
 
         private void Update(object sender, FrameEventArgs e)
         {
-            
         }
 
         public void ChangeWorld(string name)

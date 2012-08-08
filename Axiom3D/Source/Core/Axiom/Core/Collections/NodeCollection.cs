@@ -1,29 +1,3 @@
-#region LGPL License
-
-// Axiom Graphics Engine Library
-// Copyright © 2003-2011 Axiom Project Team
-// 
-// The overall design, and a majority of the core engine and rendering code 
-// contained within this library is a derivative of the open source Object Oriented 
-// Graphics Engine OGRE, which can be found at http://ogre.sourceforge.net.  
-// Many thanks to the OGRE team for maintaining such a high quality project.
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-// 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-#endregion
-
 #region SVN Version Information
 
 // <file>
@@ -43,34 +17,34 @@ using Axiom.Collections;
 
 namespace Axiom.Core.Collections
 {
-	/// <summary>
-	///	Represents a collection of <see cref="Node">Nodes</see> that are sorted by name.
-	/// </summary>
+    ///<summary>
+    ///  Represents a collection of <see cref="Node">Nodes</see> that are sorted by name.
+    ///</summary>
 #if !( XBOX || XBOX360 )
-	[Serializable]
+    [Serializable]
 #endif
-	public class NodeCollection : AxiomCollection<Node>
-	{
-		#region Instance Methods
+    public class NodeCollection : AxiomCollection<Node>
+    {
+        #region Instance Methods
 
-		/// <summary>
-		///	Adds a <see cref="Node"/> to the collection and uses its name automatically as key.
-		/// </summary>
-		/// <param name="item">A <see cref="Node"/> to add to the collection.</param>
-		public override void Add( Node item )
-		{
-			Add( item.Name, item );
-		}
+        ///<summary>
+        ///  Adds a <see cref="Node" /> to the collection and uses its name automatically as key.
+        ///</summary>
+        ///<param name="item"> A <see cref="Node" /> to add to the collection. </param>
+        public override void Add(Node item)
+        {
+            Add(item.Name, item);
+        }
 
-		/// <summary>
-		/// Removes the specified <see cref="Node"/>.
-		/// </summary>
-		/// <param name="item">The <see cref="Node"/> to remove.</param>
-		public void Remove( Node item )
-		{
-			base.Remove( item.Name );
-		}
+        /// <summary>
+        ///   Removes the specified <see cref="Node" />.
+        /// </summary>
+        /// <param name="item"> The <see cref="Node" /> to remove. </param>
+        public void Remove(Node item)
+        {
+            base.Remove(item.Name);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

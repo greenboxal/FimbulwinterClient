@@ -24,12 +24,14 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             }
 
             private byte[] _brightness;
+
             public byte[] Brightness
             {
                 get { return _brightness; }
             }
 
             private LightmapColor[] _intensity;
+
             public LightmapColor[] Intensity
             {
                 get { return _intensity; }
@@ -37,9 +39,9 @@ namespace FimbulwinterClient.Core.Content.World.Internals
 
             public void Load(BinaryReader br)
             {
-                _brightness = br.ReadBytes(8 * 8);
+                _brightness = br.ReadBytes(8*8);
 
-                _intensity = new LightmapColor[8 * 8];
+                _intensity = new LightmapColor[8*8];
                 for (int i = 0; i < _intensity.Length; i++)
                 {
                     _intensity[i].R = br.ReadByte();
@@ -52,30 +54,35 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         public class Cell
         {
             private float[] _height;
+
             public float[] Height
             {
                 get { return _height; }
             }
 
             private int _tileUp;
+
             public int TileUp
             {
                 get { return _tileUp; }
             }
 
             private int _tileSide;
+
             public int TileSide
             {
                 get { return _tileSide; }
             }
 
             private int _tileOtherSide;
+
             public int TileOtherSide
             {
                 get { return _tileOtherSide; }
             }
 
             private Vector3[] _normal;
+
             public Vector3[] Normal
             {
                 get { return _normal; }
@@ -120,8 +127,10 @@ namespace FimbulwinterClient.Core.Content.World.Internals
                 Vector3 b1 = default(Vector3);
                 Vector3 b2 = default(Vector3);
 
-                b1 = new Vector3(ground.Zoom, _height[1], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
-                b2 = new Vector3(ground.Zoom, _height[2], ground.Zoom) - new Vector3(ground.Zoom, _height[3], ground.Zoom);
+                b1 = new Vector3(ground.Zoom, _height[1], ground.Zoom) -
+                     new Vector3(ground.Zoom, _height[3], ground.Zoom);
+                b2 = new Vector3(ground.Zoom, _height[2], ground.Zoom) -
+                     new Vector3(ground.Zoom, _height[3], ground.Zoom);
 
                 _normal = new Vector3[5];
                 _normal[0] = b1.Cross(b2);
@@ -132,24 +141,28 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         public class Surface
         {
             private Vector2[] _texCoord;
+
             public Vector2[] TexCoord
             {
                 get { return _texCoord; }
             }
 
             private int _texture;
+
             public int Texture
             {
                 get { return _texture; }
             }
 
             private int _lightmap;
+
             public int Lightmap
             {
                 get { return _lightmap; }
             }
 
             private ColorEx _color;
+
             public ColorEx Color
             {
                 get { return _color; }
@@ -196,7 +209,7 @@ namespace FimbulwinterClient.Core.Content.World.Internals
                     int b = br.ReadByte();
                     int a = br.ReadByte();
 
-                    _color = new ColorEx(r / 255.0F, g / 255.0F, b / 255.0F, a / 255.0F);
+                    _color = new ColorEx(r/255.0F, g/255.0F, b/255.0F, a/255.0F);
                 }
 
                 _color = ColorEx.White;
@@ -209,42 +222,49 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         }
 
         private int _width;
+
         public int Width
         {
             get { return _width; }
         }
 
         private int _height;
+
         public int Height
         {
             get { return _height; }
         }
 
         private float _zoom;
+
         public float Zoom
         {
             get { return _zoom; }
         }
 
         private string[] _textures;
+
         public string[] Textures
         {
             get { return _textures; }
         }
 
         private Lightmap[] _lightmaps;
+
         public Lightmap[] Lightmaps
         {
             get { return _lightmaps; }
         }
 
         private Surface[] _surfaces;
+
         public Surface[] Surfaces
         {
             get { return _surfaces; }
         }
 
         private Cell[] _cells;
+
         public Cell[] Cells
         {
             get { return _cells; }
@@ -253,7 +273,8 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         protected byte minorVersion;
         protected byte majorVersion;
 
-        public GndWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
+        public GndWorld(ResourceManager parent, string name, ulong handle, string group, bool isManual,
+                        IManualResourceLoader loader, NameValuePairList createParams)
             : base(parent, name, handle, group, isManual, loader)
         {
         }
@@ -262,7 +283,8 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         {
             int texChunkSize, textureCount;
             BinaryReader br = new BinaryReader(gnd);
-            string header = ((char)br.ReadByte()).ToString() + ((char)br.ReadByte()) + ((char)br.ReadByte()) + ((char)br.ReadByte());
+            string header = ((char) br.ReadByte()).ToString() + ((char) br.ReadByte()) + ((char) br.ReadByte()) +
+                            ((char) br.ReadByte());
 
             if (header == "GRGN")
             {
@@ -296,7 +318,7 @@ namespace FimbulwinterClient.Core.Content.World.Internals
                 texChunkSize = 80;
             }
 
-            _textures  = new string[textureCount];
+            _textures = new string[textureCount];
             for (int i = 0; i < _textures.Length; i++)
             {
                 _textures[i] = br.ReadCString(texChunkSize);
@@ -306,10 +328,10 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             {
                 int idx = 0;
                 _lightmaps = new Lightmap[0];
-                _cells = new Cell[_width * _height];
+                _cells = new Cell[_width*_height];
                 // Biggest possible amount of surfaces in this version is 3 * Width * Height.
                 // We resize it to the real amount after iterating through the cells.
-                _surfaces = new Surface[3 * _width * _height];
+                _surfaces = new Surface[3*_width*_height];
                 for (int i = 0; i < _cells.Length; i++)
                 {
                     int textureUp, textureOtherSide, textureSide;
@@ -372,11 +394,10 @@ namespace FimbulwinterClient.Core.Content.World.Internals
                     _cells[i] = c;
                 }
 
-                Array.Resize<Surface>(ref _surfaces, idx);
+                Array.Resize(ref _surfaces, idx);
             }
             else
             {
-
                 _lightmaps = new Lightmap[br.ReadInt32()];
 
                 br.ReadInt32(); // Lightmap Width  = 8
@@ -402,7 +423,7 @@ namespace FimbulwinterClient.Core.Content.World.Internals
                     _surfaces[i] = s;
                 }
 
-                _cells = new Cell[_width * _height];
+                _cells = new Cell[_width*_height];
                 for (int i = 0; i < _cells.Length; i++)
                 {
                     Cell c = new Cell();
@@ -427,7 +448,7 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             {
                 for (int x = xfrom; x <= xto - 1; x++)
                 {
-                    _cells[y * _width + x].CalculateNormal(this);
+                    _cells[y*_width + x].CalculateNormal(this);
                 }
             }
 
@@ -435,15 +456,15 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             {
                 for (int x = xfrom; x <= xto - 1; x++)
                 {
-                    int i = y * _width + x;
-                    int iN = (y - 1) * _width + x;
-                    int iNW = (y - 1) * _width + (x - 1);
-                    int iNE = (y - 1) * _width + (x + 1);
-                    int iW = y * _width + (x - 1);
-                    int iSW = (y + 1) * _width + (x - 1);
-                    int iS = (y + 1) * _width + x;
-                    int iSE = (y + 1) * _width + (x + 1);
-                    int iE = y * _width + (x + 1);
+                    int i = y*_width + x;
+                    int iN = (y - 1)*_width + x;
+                    int iNW = (y - 1)*_width + (x - 1);
+                    int iNE = (y - 1)*_width + (x + 1);
+                    int iW = y*_width + (x - 1);
+                    int iSW = (y + 1)*_width + (x - 1);
+                    int iS = (y + 1)*_width + x;
+                    int iSE = (y + 1)*_width + (x + 1);
+                    int iE = y*_width + (x + 1);
 
                     _cells[i].Normal[1] = _cells[i].Normal[0];
                     _cells[i].Normal[2] = _cells[i].Normal[0];
@@ -503,7 +524,6 @@ namespace FimbulwinterClient.Core.Content.World.Internals
 
         protected override void unload()
         {
-
         }
     }
 }

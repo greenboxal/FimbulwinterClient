@@ -1,32 +1,4 @@
-﻿#region LGPL License
-
-/*
-Axiom Graphics Engine Library
-Copyright © 2003-2011 Axiom Project Team
-
-The overall design, and a majority of the core engine and rendering code 
-contained within this library is a derivative of the open source Object Oriented 
-Graphics Engine OGRE, which can be found at http://ogre.sourceforge.net.  
-Many thanks to the OGRE team for maintaining such a high quality project.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
-#endregion
-
-#region SVN Version Information
+﻿#region SVN Version Information
 
 // <file>
 //     <license see="http://axiom3d.net/wiki/index.php/license.txt"/>
@@ -48,42 +20,38 @@ using System.ComponentModel;
 
 namespace Axiom.RenderSystems.OpenGL
 {
-	internal class WindowMessageHandling
-	{
-		#region Fields and Properties
+    internal class WindowMessageHandling
+    {
+        #region Fields and Properties
 
-		#endregion Fields and Properties
+        #endregion Fields and Properties
 
-		#region Construction and Destruction
+        #region Construction and Destruction
 
-		public WindowMessageHandling()
-		{
-		}
+        #endregion Construction and Destruction
 
-		#endregion Construction and Destruction
+        #region Methods
 
-		#region Methods
+        private static bool firstTime = true;
 
-		private static bool firstTime = true;
+        public static void MessagePump()
+        {
+            foreach (RenderWindow renderWindow in WindowEventMonitor.Instance.Windows)
+            {
+                object window = renderWindow["nativewindow"];
+                if (null != window && window is INativeWindow)
+                {
+                    ((INativeWindow) window).ProcessEvents();
+                    if (firstTime)
+                    {
+                        ((INativeWindow) window).Closing +=
+                            (sender, args) => WindowEventMonitor.Instance.WindowClosed(renderWindow);
+                    }
+                }
+            }
+            firstTime = false;
+        }
 
-		public static void MessagePump()
-		{
-			foreach ( var renderWindow in WindowEventMonitor.Instance.Windows )
-			{
-				var window = renderWindow[ "nativewindow" ];
-				if ( null != window && window is INativeWindow )
-				{
-					( (INativeWindow)window ).ProcessEvents();
-					if ( firstTime )
-					{
-						( (INativeWindow)window ).Closing +=
-							( sender, args ) => WindowEventMonitor.Instance.WindowClosed( renderWindow );
-					}
-				}
-			}
-			firstTime = false;
-		}
-
-		#endregion Methods
-	}
+        #endregion Methods
+    }
 }

@@ -19,29 +19,19 @@ namespace FimbulwinterClient.GameStates
         protected bool ContentSetup;
 
         private SceneManager _sceneManager;
+
         public SceneManager SceneManager
         {
-            get
-            {
-                return this._sceneManager;
-            }
-            protected set
-            {
-                this._sceneManager = value;
-            }
+            get { return this._sceneManager; }
+            protected set { this._sceneManager = value; }
         }
 
         private bool _done;
+
         public bool IsDone
         {
-            get
-            {
-                return this._done;
-            }
-            protected set
-            {
-                this._done = value;
-            }
+            get { return this._done; }
+            protected set { this._done = value; }
         }
 
         public GameState()

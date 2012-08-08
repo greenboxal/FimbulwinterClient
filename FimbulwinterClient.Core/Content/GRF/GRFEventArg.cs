@@ -8,7 +8,10 @@ namespace GRFSharp
     {
         private GRFFile _file;
 
-        public GRFFile File { get { return _file; } }
+        public GRFFile File
+        {
+            get { return _file; }
+        }
 
         public GRFEventArg(GRFFile file)
         {

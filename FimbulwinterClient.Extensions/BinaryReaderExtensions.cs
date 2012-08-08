@@ -17,9 +17,8 @@ public static class BinaryReaderExtensions
             if (b == 0)
                 break;
 
-            str.Append((char)b);
-        }
-        while (true);
+            str.Append((char) b);
+        } while (true);
 
         return str.ToString();
     }
@@ -36,7 +35,7 @@ public static class BinaryReaderExtensions
             if (b == 0)
                 break;
 
-            str.Append((char)b);
+            str.Append((char) b);
         }
 
         if (i < size)
@@ -45,4 +44,3 @@ public static class BinaryReaderExtensions
         return str.ToString();
     }
 }
-

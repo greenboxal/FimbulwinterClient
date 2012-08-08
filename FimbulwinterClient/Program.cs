@@ -5,9 +5,9 @@ using System.Text;
 
 namespace FimbulwinterClient
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             new Ragnarok().Run();
         }

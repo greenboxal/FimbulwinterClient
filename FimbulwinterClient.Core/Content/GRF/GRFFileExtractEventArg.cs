@@ -7,7 +7,6 @@ namespace GRFSharp
         public GRFFileExtractEventArg(GRFFile file)
             : base(file)
         {
-           
         }
     }
 }

@@ -11,12 +11,10 @@ namespace FimbulwinterClient.Core.Content.World.Internals
     public class GndResourceManager : ResourceManager, ISingleton<GndResourceManager>
     {
         protected static GndResourceManager _instance;
+
         public static GndResourceManager Instance
         {
-            get
-            {
-                return _instance;
-            }
+            get { return _instance; }
         }
 
         public GndResourceManager()
@@ -30,7 +28,8 @@ namespace FimbulwinterClient.Core.Content.World.Internals
             }
             else
             {
-                throw new AxiomException("Cannot create another instance of {0}. Use Instance property instead", GetType().Name);
+                throw new AxiomException("Cannot create another instance of {0}. Use Instance property instead",
+                                         GetType().Name);
             }
         }
 
@@ -43,20 +42,22 @@ namespace FimbulwinterClient.Core.Content.World.Internals
         {
             RemoveAll();
 
-            GndWorld world = (GndWorld)Create("GndWorld", "World", true, null, null);
+            GndWorld world = (GndWorld) Create("GndWorld", "World", true, null, null);
             world.Load(stream);
 
             return world;
         }
 
-        public override Resource Load(string name, string group, bool isManual, IManualResourceLoader loader, NameValuePairList loadParams, bool backgroundThread)
+        public override Resource Load(string name, string group, bool isManual, IManualResourceLoader loader,
+                                      NameValuePairList loadParams, bool backgroundThread)
         {
             RemoveAll();
 
             return base.Load(name, group, isManual, loader, loadParams, backgroundThread);
         }
 
-        protected override Resource _create(string name, ulong handle, string group, bool isManual, IManualResourceLoader loader, NameValuePairList createParams)
+        protected override Resource _create(string name, ulong handle, string group, bool isManual,
+                                            IManualResourceLoader loader, NameValuePairList createParams)
         {
             return new GndWorld(this, name, handle, group, isManual, loader, createParams);
         }
