@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<Ragnarok>
+	<Window Width="1280" Height="720" Title="Ragnarök Online - Fimbulwinter Client" />
+	<Plugins>
+		<Plugin Path="FimbulvetrEngine.Plugins.DevIL.dll" />
+	</Plugins>
+	<FileSystem>
+		<Sources>
+			<Source Path="." Type="Folder" />
+			<Source Path="rdata.grf" Type="Grf" />
+			<Source Path="data.grf" Type="Grf" />
+		</Sources>
+	</FileSystem>
+</Ragnarok>

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulvetrEngine.Plugin;
@@ -13,10 +15,17 @@ namespace FimbulvetrEngine.Framework
 {
     public class Game : GameWindow
     {
+        public static Game Instance { get; private set; }
+
         public Game()
         {
-            if (Vetr.Instance == null) 
+            if (Instance != null)
+                throw new Exception("This class can have only one instance, use Game.Instance.");
+
+            if (Vetr.Instance == null)
                 new Vetr();
+
+            Instance = this;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -40,6 +49,23 @@ namespace FimbulvetrEngine.Framework
         {
             Vetr.Instance.ReadConfiguration();
             PluginManager.Instance.LoadPlugins();
+
+            ReadGameConfig();
+        }
+
+        protected void ReadGameConfig()
+        {
+            XElement window = Vetr.Instance.ConfiguartionRoot.Element("Window");
+
+            if (window != null)
+            {
+                ClientSize = new Size(int.Parse((string)window.Attribute("Width") ?? "800"), int.Parse((string)window.Attribute("Height") ?? "600"));
+                Title = (string)window.Attribute("Title") ?? "Ragnarök Online - Fimbulwinter Client";
+
+                // TODO: What should I do here?
+                X = 100;
+                Y = 100;
+            }
         }
 
         protected virtual void Initialize()

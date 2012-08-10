@@ -14,6 +14,7 @@ namespace FimbulvetrEngine
         public static Vetr Instance { get; private set; }
 
         public XDocument Configuration { get; private set; }
+        public XElement ConfiguartionRoot { get; private set; }
 
         public Vetr()
         {
@@ -33,15 +34,15 @@ namespace FimbulvetrEngine
             new TextureManager();
         }
 
-        public bool ReadConfiguration(string filename = "vetr.xml")
+        public bool ReadConfiguration(string filename = "vetr.xml", string section = "Vetr")
         {
             Configuration = XDocument.Load(filename);
 
-            XElement vetr = Configuration.Element("Vetr");
-            if (vetr != null)
+            ConfiguartionRoot = Configuration.Element(section);
+            if (ConfiguartionRoot != null)
             {
-                ReadPluginsConfig(vetr);
-                ReadFileSystemConfig(vetr);
+                ReadPluginsConfig(ConfiguartionRoot);
+                ReadFileSystemConfig(ConfiguartionRoot);
             }
 
             return true;

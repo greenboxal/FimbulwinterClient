@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Framework;
+using FimbulvetrEngine.Plugin;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.GameStates;
 using OpenTK;
@@ -14,7 +16,7 @@ namespace FimbulwinterClient
 {
     public class Ragnarok : Game
     {
-        public static Ragnarok Instance { get; private set; }
+        public new static Ragnarok Instance { get; private set; }
 
         public GameState GameState { get; private set; }
 
@@ -23,13 +25,13 @@ namespace FimbulwinterClient
             if (Instance != null)
                 throw new Exception("This class can have only one instance, use Ragnarok.Instance.");
 
+            Initialization.DoInit();
+
             Instance = this;
         }
 
         protected override void Initialize()
         {
-            Initialization.DoInit();
-
             ChangeWorld("prontera");
         }
 
@@ -63,6 +65,14 @@ namespace FimbulwinterClient
             }
 
             GameState = state;
+        }
+        
+        protected override void ReadConfiguration()
+        {
+            Vetr.Instance.ReadConfiguration("ragnarok.xml", "Ragnarok");
+            PluginManager.Instance.LoadPlugins();
+
+            ReadGameConfig();
         }
     }
 }
