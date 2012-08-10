@@ -7,7 +7,7 @@ namespace FimbulwinterClient
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             new Ragnarok().Run();
         }
