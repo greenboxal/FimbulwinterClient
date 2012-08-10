@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 
-public static class BinaryWriterExtensions
+namespace FimbulwinterClient.Extensions
 {
-    public static void WriteCString(this BinaryWriter bw, string str, int size)
+    public static class BinaryWriterExtensions
     {
-        for (int i = 0; i < size; i++)
+        public static void WriteCString(this BinaryWriter bw, string str, int size)
         {
-            if (i < str.Length)
-                bw.Write((byte) str[i]);
-            else
-                bw.Write((byte) 0);
+            for (int i = 0; i < size; i++)
+            {
+                if (i < str.Length)
+                    bw.Write((byte) str[i]);
+                else
+                    bw.Write((byte) 0);
+            }
         }
     }
 }

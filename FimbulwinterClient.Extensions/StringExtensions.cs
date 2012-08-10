@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
-public static class StringExtensions
+namespace FimbulwinterClient.Extensions
 {
-    private static Encoding _encoding;
-    private static Encoding _encoding2;
-
-    static StringExtensions()
+    public static class StringExtensions
     {
-        _encoding = System.Text.Encoding.GetEncoding("EUC-KR");
-        _encoding2 = System.Text.Encoding.GetEncoding("ISO-8859-1");
-    }
+        private static readonly Encoding Encoding;
+        private static readonly Encoding Encoding2;
 
-    public static string Korean(this string text)
-    {
-        return _encoding.GetString(_encoding2.GetBytes(text));
-    }
+        static StringExtensions()
+        {
+            Encoding = Encoding.GetEncoding("EUC-KR");
+            Encoding2 = Encoding.GetEncoding("ISO-8859-1");
+        }
 
-    public static string Ascii(this string text)
-    {
-        return _encoding2.GetString(_encoding.GetBytes(text));
+        public static string Korean(this string text)
+        {
+            return Encoding.GetString(Encoding2.GetBytes(text));
+        }
+
+        public static string Ascii(this string text)
+        {
+            return Encoding2.GetString(Encoding.GetBytes(text));
+        }
     }
 }

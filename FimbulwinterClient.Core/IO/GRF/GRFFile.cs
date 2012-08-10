@@ -1,22 +1,22 @@
 using System;
 using System.IO;
 using System.Text;
-using Ionic.Zlib;
+using FimbulwinterClient.Core.IO.ZLib;
 
-namespace GRFSharp
+namespace FimbulwinterClient.Core.IO.GRF
 {
-    public class GRFFile
+    public class GrfFile
     {
         #region local variables
 
-        private string _filename;
+        private readonly string _filename;
         private int _compressedLength;
         private int _comressedLengthAligned;
         private int _uncompressedLength;
         private byte _flags;
         private int _offset;
         private int _cycle;
-        private GRF _ownerGRF;
+        private readonly Grf _ownerGrf;
         private byte[] _uncompressedBody;
 
         //private FileInfo _fileInfo;
@@ -33,7 +33,7 @@ namespace GRFSharp
 
         public string Extension
         {
-            get { return new System.IO.FileInfo(_filename).Extension; }
+            get { return new FileInfo(_filename).Extension; }
         }
 
         public int CompressedLength
@@ -68,7 +68,7 @@ namespace GRFSharp
 
         public byte[] Data
         {
-            get { return _ownerGRF.GetDataFromFile(this); }
+            get { return _ownerGrf.GetDataFromFile(this); }
         }
 
         public byte[] UncompressedBody
@@ -81,14 +81,14 @@ namespace GRFSharp
 
         #region constructor
 
-        public GRFFile(string fileName,
+        public GrfFile(string fileName,
                        int compressedLength,
                        int compressedLengthAligned,
                        int uncompressedLength,
                        byte flags,
                        int offset,
                        int cycle,
-                       GRF ownerGRF) // Constructor
+                       Grf ownerGrf) // Constructor
         {
             _filename = fileName;
             _compressedLength = compressedLength;
@@ -97,7 +97,7 @@ namespace GRFSharp
             _flags = flags;
             _offset = offset;
             _cycle = cycle;
-            _ownerGRF = ownerGRF;
+            _ownerGrf = ownerGrf;
         }
 
         #endregion
@@ -107,11 +107,10 @@ namespace GRFSharp
         /// <summary>
         ///   Writes this file to the disk
         /// </summary>
-        /// <param name='path'> The folder path where to store the file </param>
         public void WriteToDisk(string folderPath)
         {
-            string filePath = folderPath + this.Name;
-            byte[] thisData = this.Data;
+            string filePath = folderPath + Name;
+            byte[] thisData = Data;
 
             //if (!Directory.Exists(dirPath))
             //    Directory.CreateDirectory(dirPath);
@@ -143,18 +142,14 @@ namespace GRFSharp
             //bw.Write(thisData);
             //bw.Close();
 
-            FileInfo _fileInfo = new FileInfo(filePath);
-            FileStream _fileStream;
+            FileInfo fileInfo = new FileInfo(filePath);
 
-            if (!_fileInfo.Directory.Exists)
-                _fileInfo.Directory.Create();
+            if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
+                fileInfo.Directory.Create();
 
-            if (!_fileInfo.Exists)
-                _fileStream = _fileInfo.Create();
-            else
-                _fileStream = _fileInfo.Open(FileMode.Open);
+            FileStream fileStream = !fileInfo.Exists ? fileInfo.Create() : fileInfo.Open(FileMode.Open);
 
-            _fileStream.BeginWrite(thisData, 0, thisData.Length, (IAsyncResult ar) => { _fileStream.Close(); }, null);
+            fileStream.BeginWrite(thisData, 0, thisData.Length, ar => fileStream.Close(), null);
             //_fileStream.Write(thisData, 0, thisData.Length);
             //_fileStream.Close();
         }
@@ -193,7 +188,7 @@ namespace GRFSharp
             }
             else
             {
-                byte[] data = _ownerGRF.GetCompressedDataFromFile(this);
+                byte[] data = _ownerGrf.GetCompressedDataFromFile(this);
                 _offset = (int) bw.BaseStream.Position - 46;
                 bw.Write(data, 0, data.Length);
             }

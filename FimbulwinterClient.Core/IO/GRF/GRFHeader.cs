@@ -1,51 +1,49 @@
-using System;
-
-namespace SAIB.SharpGRF
+namespace FimbulwinterClient.Core.IO.GRF
 {
     /// <summary>
-    ///   GRF header.
+    ///   Grf header.
     /// </summary>
-    public class GRFHeader
+    public class GrfHeader
     {
-        private string _signature;
-        private string _encryptionKey;
-        private int _fileTableOffset;
-        private int _version;
-        private int _m1;
-        private int _m2;
+        private readonly string _signature;
+        private readonly string _encryptionKey;
+        private readonly int _fileTableOffset;
+        private readonly int _version;
+        private readonly int _m1;
+        private readonly int _m2;
 
         public int Version
         {
-            get { return this._version; }
+            get { return _version; }
         }
 
         public int FileTableOffset
         {
-            get { return this._fileTableOffset; }
+            get { return _fileTableOffset; }
         }
 
         public string Signature
         {
-            get { return this._signature; }
+            get { return _signature; }
         }
 
 
         public string EncryptionKey
         {
-            get { return this._encryptionKey; }
+            get { return _encryptionKey; }
         }
 
         public int M2
         {
-            get { return this._m2; }
+            get { return _m2; }
         }
 
         public int M1
         {
-            get { return this._m1; }
+            get { return _m1; }
         }
 
-        public GRFHeader(string signature, string encryptionKey, int fileTableOffset, int skip, int count, int version)
+        public GrfHeader(string signature, string encryptionKey, int fileTableOffset, int skip, int count, int version)
         {
             _signature = signature;
             _encryptionKey = encryptionKey;

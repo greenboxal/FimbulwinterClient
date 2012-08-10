@@ -30,6 +30,14 @@ namespace FimbulwinterClient
             Instance = this;
         }
 
+        protected override void ReadConfiguration()
+        {
+            Vetr.Instance.ReadConfiguration("ragnarok.xml", "Ragnarok");
+            PluginManager.Instance.LoadPlugins();
+
+            ReadGameConfig();
+        }
+
         protected override void Initialize()
         {
             ChangeWorld("prontera");
@@ -65,14 +73,6 @@ namespace FimbulwinterClient
             }
 
             GameState = state;
-        }
-        
-        protected override void ReadConfiguration()
-        {
-            Vetr.Instance.ReadConfiguration("ragnarok.xml", "Ragnarok");
-            PluginManager.Instance.LoadPlugins();
-
-            ReadGameConfig();
         }
     }
 }

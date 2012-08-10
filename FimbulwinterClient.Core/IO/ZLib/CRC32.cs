@@ -1,7 +1,7 @@
 using System;
-using Interop = System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
-namespace Ionic.Crc
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     /// <summary>
     ///   Computes a CRC-32. The CRC-32 algorithm is parameterized - you
@@ -13,10 +13,10 @@ namespace Ionic.Crc
     ///   directly by applications wishing to create, read, or manipulate zip
     ///   archive files.
     /// </remarks>
-    [Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d0000C")]
-    [Interop.ComVisible(true)]
+    [Guid("ebc25cf6-9120-4283-b972-0e5520d0000C")]
+    [System.Runtime.InteropServices.ComVisible(true)]
 #if !NETCF
-    [Interop.ClassInterface(Interop.ClassInterfaceType.AutoDispatch)]
+    [System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDispatch)]
 #endif
     public class CRC32
     {

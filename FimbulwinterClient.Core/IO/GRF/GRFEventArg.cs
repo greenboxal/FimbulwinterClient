@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace GRFSharp
+namespace FimbulwinterClient.Core.IO.GRF
 {
     public class GRFEventArg : EventArgs
     {
-        private GRFFile _file;
+        private readonly GrfFile _file;
 
-        public GRFFile File
+        public GrfFile File
         {
             get { return _file; }
         }
 
-        public GRFEventArg(GRFFile file)
+        public GRFEventArg(GrfFile file)
         {
             _file = file;
         }

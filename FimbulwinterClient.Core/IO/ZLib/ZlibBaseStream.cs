@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     internal enum ZlibStreamFlavor
     {
@@ -30,7 +30,7 @@ namespace Ionic.Zlib
         protected internal CompressionStrategy Strategy = CompressionStrategy.Default;
 
         // workitem 7159
-        private Ionic.Crc.CRC32 crc;
+        private CRC32 crc;
         protected internal string _GzipFileName;
         protected internal string _GzipComment;
         protected internal DateTime _GzipMtime;
@@ -61,7 +61,7 @@ namespace Ionic.Zlib
             // workitem 7159
             if (flavor == ZlibStreamFlavor.GZIP)
             {
-                this.crc = new Ionic.Crc.CRC32();
+                this.crc = new CRC32();
             }
         }
 
@@ -94,14 +94,9 @@ namespace Ionic.Zlib
         }
 
 
-        private byte[] workingBuffer
+        private byte[] WorkingBuffer
         {
-            get
-            {
-                if (_workingBuffer == null)
-                    _workingBuffer = new byte[_bufferSize];
-                return _workingBuffer;
-            }
+            get { return _workingBuffer ?? (_workingBuffer = new byte[_bufferSize]); }
         }
 
 
@@ -127,7 +122,7 @@ namespace Ionic.Zlib
             bool done = false;
             do
             {
-                _z.OutputBuffer = workingBuffer;
+                _z.OutputBuffer = WorkingBuffer;
                 _z.NextOut = 0;
                 _z.AvailableBytesOut = _workingBuffer.Length;
                 int rc = (_wantCompress)
@@ -157,7 +152,7 @@ namespace Ionic.Zlib
                 bool done = false;
                 do
                 {
-                    _z.OutputBuffer = workingBuffer;
+                    _z.OutputBuffer = WorkingBuffer;
                     _z.NextOut = 0;
                     _z.AvailableBytesOut = _workingBuffer.Length;
                     int rc = (_wantCompress)
@@ -438,7 +433,7 @@ namespace Ionic.Zlib
             // This is necessary in case _workingBuffer has been resized. (new byte[])
             // (The first reference to _workingBuffer goes through the private accessor which
             // may initialize it.)
-            _z.InputBuffer = workingBuffer;
+            _z.InputBuffer = WorkingBuffer;
 
             do
             {

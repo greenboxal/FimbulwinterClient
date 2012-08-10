@@ -1,46 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.IO;
 
-public static class BinaryReaderExtensions
+namespace FimbulwinterClient.Extensions
 {
-    public static string ReadCString(this BinaryReader br)
+    public static class BinaryReaderExtensions
     {
-        StringBuilder str = new StringBuilder();
-
-        do
+        public static string ReadCString(this BinaryReader br)
         {
-            byte b = br.ReadByte();
+            StringBuilder str = new StringBuilder();
 
-            if (b == 0)
-                break;
+            do
+            {
+                byte b = br.ReadByte();
 
-            str.Append((char) b);
-        } while (true);
+                if (b == 0)
+                    break;
 
-        return str.ToString();
-    }
+                str.Append((char) b);
+            } while (true);
 
-    public static string ReadCString(this BinaryReader br, int size)
-    {
-        int i;
-        StringBuilder str = new StringBuilder(size);
-
-        for (i = 0; i < size; i++)
-        {
-            byte b = br.ReadByte();
-
-            if (b == 0)
-                break;
-
-            str.Append((char) b);
+            return str.ToString();
         }
 
-        if (i < size)
-            br.ReadBytes(size - i - 1);
+        public static string ReadCString(this BinaryReader br, int size)
+        {
+            int i;
+            StringBuilder str = new StringBuilder(size);
 
-        return str.ToString();
+            for (i = 0; i < size; i++)
+            {
+                byte b = br.ReadByte();
+
+                if (b == 0)
+                    break;
+
+                str.Append((char) b);
+            }
+
+            if (i < size)
+                br.ReadBytes(size - i - 1);
+
+            return str.ToString();
+        }
     }
 }

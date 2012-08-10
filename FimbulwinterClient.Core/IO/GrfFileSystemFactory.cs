@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using FimbulvetrEngine.IO;
-using GRFSharp;
 
 namespace FimbulwinterClient.Core.IO
 {

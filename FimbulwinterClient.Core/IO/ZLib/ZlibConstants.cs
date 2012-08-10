@@ -1,6 +1,4 @@
-using System;
-
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     /// <summary>
     ///   A bunch of constants used in the Zlib interface.

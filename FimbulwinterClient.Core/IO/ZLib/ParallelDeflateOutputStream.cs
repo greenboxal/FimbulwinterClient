@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Ionic.Zlib;
 using System.IO;
 
-
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     internal class WorkItem
     {
@@ -19,7 +17,7 @@ namespace Ionic.Zlib
         public ZlibCodec compressor;
 
         public WorkItem(int size,
-                        Ionic.Zlib.CompressionLevel compressLevel,
+                        CompressionLevel compressLevel,
                         CompressionStrategy strategy,
                         int ix)
         {
@@ -41,10 +39,10 @@ namespace Ionic.Zlib
     ///</summary>
     ///<remarks>
     ///  <para> This class performs DEFLATE compression through writing. For more information on the Deflate algorithm, see IETF RFC 1951, "DEFLATE Compressed Data Format Specification version 1.3." </para>
-    ///  <para> This class is similar to <see cref="Ionic.Zlib.DeflateStream" /> , except that this class is for compression only, and this implementation uses an approach that employs multiple worker threads to perform the DEFLATE. On a multi-cpu or multi-core computer, the performance of this class can be significantly higher than the single-threaded DeflateStream, particularly for larger streams. How large? Anything over 10mb is a good candidate for parallel compression. </para>
+    ///  <para> This class is similar to <see cref="DeflateStream" /> , except that this class is for compression only, and this implementation uses an approach that employs multiple worker threads to perform the DEFLATE. On a multi-cpu or multi-core computer, the performance of this class can be significantly higher than the single-threaded DeflateStream, particularly for larger streams. How large? Anything over 10mb is a good candidate for parallel compression. </para>
     ///  <para> The tradeoff is that this class uses more memory and more CPU than the vanilla DeflateStream, and also is less efficient as a compressor. For large files the size of the compressed data stream can be less than 1% larger than the size of a compressed data stream from the vanialla DeflateStream. For smaller files the difference can be larger. The difference will also be larger if you set the BufferSize to be lower than the default value. Your mileage may vary. Finally, for small files, the ParallelDeflateOutputStream can be much slower than the vanilla DeflateStream, because of the overhead associated to using the thread pool. </para>
     ///</remarks>
-    ///<seealso cref="Ionic.Zlib.DeflateStream" />
+    ///<seealso cref="DeflateStream" />
     public class ParallelDeflateOutputStream : System.IO.Stream
     {
         private static readonly int IO_BUFFER_SIZE_DEFAULT = 64*1024; // 128k
@@ -67,12 +65,12 @@ namespace Ionic.Zlib
         private int _lastWritten;
         private int _latestCompressed;
         private int _Crc32;
-        private Ionic.Crc.CRC32 _runningCrc;
+        private CRC32 _runningCrc;
         private object _latestLock = new object();
         private System.Collections.Generic.Queue<int> _toWrite;
         private System.Collections.Generic.Queue<int> _toFill;
         private Int64 _totalBytesProcessed;
-        private Ionic.Zlib.CompressionLevel _compressLevel;
+        private CompressionLevel _compressLevel;
         private volatile Exception _pendingException;
         private bool _handlingException;
         private object _eLock = new Object(); // protects _pendingException
@@ -101,7 +99,7 @@ namespace Ionic.Zlib
         ///<remarks>
         ///  <para> This stream compresses data written into it via the DEFLATE algorithm (see RFC 1951), and writes out the compressed byte stream. </para>
         ///  <para> The instance will use the default compression level, the default buffer sizes and the default number of threads and buffers per thread. </para>
-        ///  <para> This class is similar to <see cref="Ionic.Zlib.DeflateStream" /> , except that this implementation uses an approach that employs multiple worker threads to perform the DEFLATE. On a multi-cpu or multi-core computer, the performance of this class can be significantly higher than the single-threaded DeflateStream, particularly for larger streams. How large? Anything over 10mb is a good candidate for parallel compression. </para>
+        ///  <para> This class is similar to <see cref="DeflateStream" /> , except that this implementation uses an approach that employs multiple worker threads to perform the DEFLATE. On a multi-cpu or multi-core computer, the performance of this class can be significantly higher than the single-threaded DeflateStream, particularly for larger streams. How large? Anything over 10mb is a good candidate for parallel compression. </para>
         ///</remarks>
         ///<example>
         ///  This example shows how to use a ParallelDeflateOutputStream to compress
@@ -258,7 +256,7 @@ namespace Ionic.Zlib
         ///<remarks>
         ///  <para> The default buffer size is 128k. The application can set this value at any time, but it is effective only before the first Write(). </para>
         ///  <para> Larger buffer sizes implies larger memory consumption but allows more efficient compression. Using smaller buffer sizes consumes less memory but may result in less effective compression. For example, using the default buffer size of 128k, the compression delivered is within 1% of the compression delivered by the single-threaded <see
-        ///   cref="Ionic.Zlib.DeflateStream" /> . On the other hand, using a BufferSize of 8k can result in a compressed data stream that is 5% larger than that delivered by the single-threaded <c>DeflateStream</c> . Excessively small buffer sizes can also cause the speed of the ParallelDeflateOutputStream to drop, because of larger thread scheduling overhead dealing with many many small buffers. </para>
+        ///   cref="DeflateStream" /> . On the other hand, using a BufferSize of 8k can result in a compressed data stream that is 5% larger than that delivered by the single-threaded <c>DeflateStream</c> . Excessively small buffer sizes can also cause the speed of the ParallelDeflateOutputStream to drop, because of larger thread scheduling overhead dealing with many many small buffers. </para>
         ///  <para> The total amount of storage space allocated for buffering will be (N*S*2), where N is the number of buffer pairs, and S is the size of each buffer (this property). There are 2 buffers used by the compressor, one for input and one for output. By default, DotNetZip allocates 4 buffer pairs per CPU core, so if your machine has 4 cores, then the number of buffer pairs used will be 16. If you accept the default value of this property, 128k, then the ParallelDeflateOutputStream will use 16 * 2 * 128kb of buffer memory in total, or 4mb, in blocks of 128kb. If you set this property to 64kb, then the number will be 16 * 2 * 64kb of buffer memory, or 2mb. </para>
         ///</remarks>
         public int BufferSize
@@ -311,7 +309,7 @@ namespace Ionic.Zlib
             }
 
             _newlyCompressedBlob = new AutoResetEvent(false);
-            _runningCrc = new Ionic.Crc.CRC32();
+            _runningCrc = new CRC32();
             _currentlyFilling = -1;
             _lastFilled = -1;
             _lastWritten = -1;
@@ -324,7 +322,7 @@ namespace Ionic.Zlib
         ///</summary>
         ///<remarks>
         ///  <para> To use the ParallelDeflateOutputStream to compress data, create a ParallelDeflateOutputStream with CompressionMode.Compress, passing a writable output stream. Then call Write() on that ParallelDeflateOutputStream, providing uncompressed data as input. The data sent to the output stream will be the compressed form of the data written. </para>
-        ///  <para> To decompress data, use the <see cref="Ionic.Zlib.DeflateStream" /> class. </para>
+        ///  <para> To decompress data, use the <see cref="DeflateStream" /> class. </para>
         ///</remarks>
         ///<param name="buffer"> The buffer holding data to write to the stream. </param>
         ///<param name="offset"> the offset within that data array to find the first byte to write. </param>
@@ -649,7 +647,7 @@ namespace Ionic.Zlib
 
             _firstWriteDone = false;
             _totalBytesProcessed = 0L;
-            _runningCrc = new Ionic.Crc.CRC32();
+            _runningCrc = new CRC32();
             _isClosed = false;
             _currentlyFilling = -1;
             _lastFilled = -1;
@@ -941,7 +939,7 @@ namespace Ionic.Zlib
             try
             {
                 int myItem = workitem.index;
-                Ionic.Crc.CRC32 crc = new Ionic.Crc.CRC32();
+                CRC32 crc = new CRC32();
 
                 // calc CRC on the buffer
                 crc.SlurpBlock(workitem.buffer, 0, workitem.inputBytesAvailable);

@@ -1,6 +1,6 @@
 using System;
 
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     internal sealed class InflateBlocks
     {
@@ -193,7 +193,7 @@ namespace Ionic.Zlib
                                 writeAt = q;
                                 return Flush(r);
                             }
-                            ;
+
                             n--;
                             b |= (_codec.InputBuffer[p++] & 0xff) << k;
                             k += 8;

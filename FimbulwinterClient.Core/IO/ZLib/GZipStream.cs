@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     ///<summary>
     ///  A class for compressing and decompressing GZIP streams.
@@ -292,9 +292,6 @@ namespace Ionic.Zlib
         ///  <para> This constructor allows the application to request that the captive stream remain open after the deflation or inflation occurs. By default, after <c>Close()</c> is called on the stream, the captive stream is also closed. In some cases this is not desired, for example if the stream is a memory stream that will be re-read after compressed data has been written to it. Specify true for the <paramref
         ///   name="leaveOpen" /> parameter to leave the stream open. </para>
         ///  <para> The <see cref="CompressionMode" /> (Compress or Decompress) also establishes the "direction" of the stream. A <c>GZipStream</c> with <c>CompressionMode.Compress</c> works only through <c>Write()</c> . A <c>GZipStream</c> with <c>CompressionMode.Decompress</c> works only through <c>Read()</c> . </para>
-        ///  <para> The <c>GZipStream</c> will use the default compression level. If you want to specify the compression level, see <see
-        ///   cref="GZipStream(Stream,
-        ///   CompressionMode, CompressionLevel, bool)" /> . </para>
         ///  <para> See the other overloads of this constructor for example code. </para>
         ///</remarks>
         ///<param name="stream"> The stream which will be read or written. This is called the "captive" stream in other places in this documentation. </param>
@@ -517,9 +514,9 @@ namespace Ionic.Zlib
         {
             get
             {
-                if (this._baseStream._streamMode == Ionic.Zlib.ZlibBaseStream.StreamMode.Writer)
+                if (this._baseStream._streamMode == ZlibBaseStream.StreamMode.Writer)
                     return this._baseStream._z.TotalBytesOut + _headerByteCount;
-                if (this._baseStream._streamMode == Ionic.Zlib.ZlibBaseStream.StreamMode.Reader)
+                if (this._baseStream._streamMode == ZlibBaseStream.StreamMode.Reader)
                     return this._baseStream._z.TotalBytesIn + this._baseStream._gzipHeaderByteCount;
                 return 0;
             }
@@ -605,7 +602,7 @@ namespace Ionic.Zlib
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (_disposed) throw new ObjectDisposedException("GZipStream");
-            if (_baseStream._streamMode == Ionic.Zlib.ZlibBaseStream.StreamMode.Undefined)
+            if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Undefined)
             {
                 //Console.WriteLine("GZipStream: First write");
                 if (_baseStream._wantCompress)

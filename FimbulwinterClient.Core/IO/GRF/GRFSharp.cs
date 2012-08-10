@@ -1,14 +1,12 @@
 using System;
 using System.IO;
-using Ionic.Zlib;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
-using System.Threading;
+using FimbulwinterClient.Core.IO.ZLib;
+using FimbulwinterClient.Extensions;
 
-namespace GRFSharp
+namespace FimbulwinterClient.Core.IO.GRF
 {
 
     #region Event Delegates
@@ -19,7 +17,7 @@ namespace GRFSharp
 
     public delegate void FileAddCompleteEventHandler(object sender, GRFEventArg e);
 
-    public delegate void GRFMetaWriteCompleteEventHandler(object sender);
+    public delegate void GrfMetaWriteCompleteEventHandler(object sender);
 
     public delegate void FileBodyWriteCompleteEventHandler(object sender, GRFEventArg e);
 
@@ -29,27 +27,22 @@ namespace GRFSharp
 
     public delegate void FileCountReadCompleteEventHandler(object sender);
 
-    public delegate void GRFOpenCompleteEventHandler(object sender);
+    public delegate void GrfOpenCompleteEventHandler(object sender);
 
     #endregion
 
-    public class GRF
+    public class Grf
     {
         #region Local variables
 
-        private string _filePathToGRF;
-        private Hashtable _GRFFiles = CollectionsUtil.CreateCaseInsensitiveHashtable();
+        private string _filePathToGrf;
+        private readonly Hashtable _grfFiles = CollectionsUtil.CreateCaseInsensitiveHashtable();
 
         private int _compressedLength;
-        private int _uncompressedLength;
 
         private byte[] _bodyBytes;
 
         private int _fileCount;
-
-        private const int sizeOfUint = sizeof (uint);
-        private const int sizeOfInt = sizeof (int);
-        private const int sizeOfChar = sizeof (char);
 
         private string _signature;
         private byte[] _encryptionKey;
@@ -68,12 +61,12 @@ namespace GRFSharp
         public event ExtractCompleteEventHandler ExtractComplete;
         public event FileReadCompleteEventHandler FileReadComplete;
         public event FileAddCompleteEventHandler FileAddComplete;
-        public event GRFMetaWriteCompleteEventHandler GRFMetaWriteComplete;
+        public event GrfMetaWriteCompleteEventHandler GrfMetaWriteComplete;
         public event FileBodyWriteCompleteEventHandler FileBodyWriteComplete;
         public event FileTableWriteCompleteEventHandler FileTableWriteComplete;
-        public event SaveCompleteEventHandler GRFSaveComplete;
+        public event SaveCompleteEventHandler GrfSaveComplete;
         public event FileCountReadCompleteEventHandler FileCountReadComplete;
-        public event GRFOpenCompleteEventHandler GRFOpenComplete;
+        public event GrfOpenCompleteEventHandler GrfOpenComplete;
 
         #endregion
 
@@ -97,10 +90,10 @@ namespace GRFSharp
                 FileAddComplete(this, e);
         }
 
-        protected virtual void OnGRFMetaWriteComplete()
+        protected virtual void OnGrfMetaWriteComplete()
         {
-            if (GRFMetaWriteComplete != null)
-                GRFMetaWriteComplete(this);
+            if (GrfMetaWriteComplete != null)
+                GrfMetaWriteComplete(this);
         }
 
         protected virtual void OnFileBodyWriteComplete(GRFEventArg e)
@@ -115,11 +108,11 @@ namespace GRFSharp
                 FileTableWriteComplete(this, e);
         }
 
-        protected virtual void OnGRFSaveComplete()
+        protected virtual void OnGrfSaveComplete()
         {
-            if (GRFSaveComplete != null)
+            if (GrfSaveComplete != null)
             {
-                GRFSaveComplete(this);
+                GrfSaveComplete(this);
             }
         }
 
@@ -131,11 +124,11 @@ namespace GRFSharp
             }
         }
 
-        protected virtual void OnGRFOpenComplete()
+        protected virtual void OnGrfOpenComplete()
         {
-            if (GRFOpenComplete != null)
+            if (GrfOpenComplete != null)
             {
-                GRFOpenComplete(this);
+                GrfOpenComplete(this);
             }
         }
 
@@ -145,7 +138,7 @@ namespace GRFSharp
 
         public Hashtable Files
         {
-            get { return _GRFFiles; }
+            get { return _grfFiles; }
         }
 
         public int FileCount
@@ -160,55 +153,48 @@ namespace GRFSharp
 
         public int Version
         {
-            get { return this._version; }
+            get { return _version; }
         }
 
         public int FileTableOffset
         {
-            get { return this._fileTableOffset; }
+            get { return _fileTableOffset; }
         }
 
         public string Signature
         {
-            get { return this._signature; }
+            get { return _signature; }
         }
 
 
         public byte[] EncryptionKey
         {
-            get { return this._encryptionKey; }
+            get { return _encryptionKey; }
         }
 
         public int M2
         {
-            get { return this._m2; }
+            get { return _m2; }
         }
 
         public int M1
         {
-            get { return this._m1; }
+            get { return _m1; }
         }
 
         #endregion
 
         #region Constructor
 
-        /// <summary>
-        ///   Initializes a new instance of the <see cref="SAIB.SharpGRF.SharpGRF" /> class.
-        /// </summary>
-        public GRF() // Constructor
+        public Grf() // Constructor
         {
             _signature = "Master of Magic";
             _encryptionKey = new byte[14];
         }
 
-        /// <summary>
-        ///   Initializes a new instance of the <see cref="SAIB.SharpGRF.SharpGRF" /> class.
-        /// </summary>
-        /// <param name='filePathToGRF'> File path to the GRF file. </param>
-        public GRF(string filePathToGRF) // Constructor
+        public Grf(string filePathToGrf) // Constructor
         {
-            _filePathToGRF = filePathToGRF;
+            _filePathToGrf = filePathToGrf;
 
             _signature = "Master of Magic";
             _encryptionKey = new byte[14];
@@ -219,11 +205,11 @@ namespace GRFSharp
         #region Public Functions
 
         /// <summary>
-        ///   Save the GRF file.
+        ///   Save the Grf file.
         /// </summary>
         public void Save()
         {
-            SaveAs(_filePathToGRF);
+            SaveAs(_filePathToGrf);
         }
 
         /// <summary>
@@ -245,13 +231,13 @@ namespace GRFSharp
 
             bw.Write(0); // will be updated later
             bw.Write(_m1);
-            bw.Write(_GRFFiles.Count + _m1 + 7);
+            bw.Write(_grfFiles.Count + _m1 + 7);
             bw.Write(0x200); // We always save as 2.0
-            OnGRFMetaWriteComplete();
-            foreach (DictionaryEntry entry in _GRFFiles)
+            OnGrfMetaWriteComplete();
+            foreach (DictionaryEntry entry in _grfFiles)
             {
-                ((GRFFile) entry.Value).SaveBody(bw);
-                OnFileBodyWriteComplete(new GRFEventArg((GRFFile) entry.Value));
+                ((GrfFile) entry.Value).SaveBody(bw);
+                OnFileBodyWriteComplete(new GRFEventArg((GrfFile) entry.Value));
             }
 
             bw.Flush();
@@ -261,10 +247,10 @@ namespace GRFSharp
             MemoryStream bodyStream = new MemoryStream();
             BinaryWriter bw2 = new BinaryWriter(bodyStream);
 
-            foreach (DictionaryEntry entry in _GRFFiles)
+            foreach (DictionaryEntry entry in _grfFiles)
             {
-                ((GRFFile) entry.Value).Save(bw2);
-                OnFileTableWriteComplete(new GRFEventArg((GRFFile) entry.Value));
+                ((GrfFile) entry.Value).Save(bw2);
+                OnFileTableWriteComplete(new GRFEventArg((GrfFile) entry.Value));
             }
 
             bw2.Flush();
@@ -288,50 +274,48 @@ namespace GRFSharp
                 _grfStream.Close();
 
             File.Copy(tempfile, filepath, true);
-            OnGRFSaveComplete();
+            OnGrfSaveComplete();
 
-            _filePathToGRF = filepath;
+            _filePathToGrf = filepath;
             Close();
             Open();
         }
 
         /// <summary>
-        ///   Open the GRF File to start reading.
+        ///   Open the Grf File to start reading.
         /// </summary>
         public void Open()
         {
-            string signature;
-            int tableOffset, version, m1, m2;
-            _GRFFiles.Clear();
-            _grfStream = new FileStream(_filePathToGRF, FileMode.Open);
+            _grfFiles.Clear();
+            _grfStream = new FileStream(_filePathToGrf, FileMode.Open);
             BinaryReader br = new BinaryReader(_grfStream);
 
-            //Read GRF File Header -> Signature
+            //Read Grf File Header -> Signature
             byte[] signatureByte = new byte[15];
             _grfStream.Read(signatureByte, 0, 15);
-            signature = System.Text.Encoding.ASCII.GetString(signatureByte);
+            string signature = Encoding.ASCII.GetString(signatureByte);
             br.ReadByte();
 
-            // Read GRF File Header -> Encryption Key
+            // Read Grf File Header -> Encryption Key
             byte[] encryptionKey = new byte[14];
             _grfStream.Read(encryptionKey, 0, 14);
 
-            tableOffset = br.ReadInt32();
-            m1 = br.ReadInt32();
-            m2 = br.ReadInt32();
-            version = br.ReadInt32();
+            int tableOffset = br.ReadInt32();
+            int m1 = br.ReadInt32();
+            int m2 = br.ReadInt32();
+            int version = br.ReadInt32();
 
-            this._signature = signature;
-            this._encryptionKey = encryptionKey;
-            this._fileTableOffset = tableOffset;
-            this._m1 = m1;
-            this._m2 = m2;
-            this._version = version;
+            _signature = signature;
+            _encryptionKey = encryptionKey;
+            _fileTableOffset = tableOffset;
+            _m1 = m1;
+            _m2 = m2;
+            _version = version;
 
             _grfStream.Seek(_fileTableOffset, SeekOrigin.Current);
 
             _compressedLength = br.ReadInt32();
-            _uncompressedLength = br.ReadInt32();
+            br.ReadInt32();
 
             byte[] compressedBodyBytes = new byte[_compressedLength];
             _grfStream.Read(compressedBodyBytes, 0, _compressedLength);
@@ -347,42 +331,44 @@ namespace GRFSharp
             {
                 string fileName = bodyReader.ReadCString();
 
-                int fileCompressedLength = 0,
-                    fileCompressedLengthAligned = 0,
-                    fileUncompressedLength = 0,
-                    fileOffset = 0,
-                    fileCycle = 0;
+                int fileCycle = 0;
 
-                byte fileFlags = 0;
-
-                fileCompressedLength = bodyReader.ReadInt32();
-                fileCompressedLengthAligned = bodyReader.ReadInt32();
-                fileUncompressedLength = bodyReader.ReadInt32();
-                fileFlags = bodyReader.ReadByte();
-                fileOffset = bodyReader.ReadInt32();
+                int fileCompressedLength = bodyReader.ReadInt32();
+                int fileCompressedLengthAligned = bodyReader.ReadInt32();
+                int fileUncompressedLength = bodyReader.ReadInt32();
+                byte fileFlags = bodyReader.ReadByte();
+                int fileOffset = bodyReader.ReadInt32();
 
                 if (fileFlags == 1 || fileFlags == 5 || fileFlags == 3)
                 {
-                    int lop, srccount, srclen = fileCompressedLength;
+                    int srclen = fileCompressedLength;
 
-                    if (fileFlags == 3)
+                    switch (fileFlags)
                     {
-                        for (lop = 10, srccount = 1; srclen >= lop; lop *= 10, srccount++)
-                            fileCycle = srccount;
+                        case 3:
+                        {
+                            int lop;
+                            int srccount;
+                            for (lop = 10, srccount = 1; srclen >= lop; lop *= 10, srccount++)
+                                fileCycle = srccount;
+                        }
+                            break;
+                        case 5:
+                            fileCycle = 0;
+                            break;
+                        default:
+                            fileCycle = -1;
+                            break;
                     }
-                    else if (fileFlags == 5)
-                        fileCycle = 0;
-                    else
-                        fileCycle = -1;
                 }
 
                 if (fileFlags == 2) // Do not add folders 
                 {
-                    OnFileReadComplete(new GRFEventArg(new GRFFile(fileName, 0, 0, 0, 0, 0, 0, this)));
+                    OnFileReadComplete(new GRFEventArg(new GrfFile(fileName, 0, 0, 0, 0, 0, 0, this)));
                     continue;
                 }
 
-                GRFFile newGRFFile = new GRFFile(
+                GrfFile newGrfFile = new GrfFile(
                     fileName,
                     fileCompressedLength,
                     fileCompressedLengthAligned,
@@ -392,20 +378,20 @@ namespace GRFSharp
                     fileCycle,
                     this);
 
-                _GRFFiles.Add(newGRFFile.Name, newGRFFile);
-                OnFileReadComplete(new GRFEventArg(newGRFFile));
+                _grfFiles.Add(newGrfFile.Name, newGrfFile);
+                OnFileReadComplete(new GRFEventArg(newGrfFile));
             }
             _isOpen = true;
-            OnGRFOpenComplete();
+            OnGrfOpenComplete();
         }
 
         /// <summary>
-        ///   Open the GRF File to start reading. (Overload)
+        ///   Open the Grf File to start reading. (Overload)
         /// </summary>
         /// <param name='filePath'> Path the the grf file to be opened </param>
         public void Open(string filePath)
         {
-            _filePathToGRF = filePath;
+            _filePathToGrf = filePath;
             Open();
         }
 
@@ -424,7 +410,7 @@ namespace GRFSharp
         /// </summary>
         /// <returns> byte[] the data in bytes </returns>
         /// <param name='file'> (GRFFile) The file to get </param>
-        public byte[] GetDataFromFile(GRFFile file)
+        public byte[] GetDataFromFile(GrfFile file)
         {
             byte[] compressedBody = new byte[file.CompressedLengthAligned];
 
@@ -441,7 +427,7 @@ namespace GRFSharp
         /// </summary>
         /// <param name="file"> </param>
         /// <returns> </returns>
-        public byte[] GetCompressedDataFromFile(GRFFile file)
+        public byte[] GetCompressedDataFromFile(GrfFile file)
         {
             byte[] compressedBody = new byte[file.CompressedLength];
             _grfStream.Seek(46 + file.Offset, SeekOrigin.Begin);
@@ -453,23 +439,20 @@ namespace GRFSharp
         /// <summary>
         ///   Add a file inside the grf.
         /// </summary>
-        /// <param name="filename"> The name of the file to be added. </param>
-        /// <param name="data"> The data of the file to be added. </param>
         public void AddFile(string inputFilePath, string outputFilePath)
         {
             byte[] data = File.ReadAllBytes(inputFilePath);
-            GRFFile f;
 
-            f = (GRFFile) _GRFFiles[outputFilePath];
+            GrfFile f = (GrfFile) _grfFiles[outputFilePath];
             if (f != null)
             {
                 f.UncompressedBody = data;
                 return;
             }
 
-            f = new GRFFile(outputFilePath, 0, 0, 0, 1, 0, 0, this);
+            f = new GrfFile(outputFilePath, 0, 0, 0, 1, 0, 0, this);
             f.UncompressedBody = data;
-            _GRFFiles.Add(f.Name, f);
+            _grfFiles.Add(f.Name, f);
             _fileCount++;
             OnFileAddComplete(new GRFEventArg(f));
         }
@@ -480,9 +463,9 @@ namespace GRFSharp
         /// <param name="filename"> The file name to delete. </param>
         public void DeleteFile(string filename)
         {
-            if (_GRFFiles.ContainsKey(filename))
+            if (_grfFiles.ContainsKey(filename))
             {
-                _GRFFiles.Remove(filename);
+                _grfFiles.Remove(filename);
                 _fileCount--;
             }
         }
@@ -493,7 +476,7 @@ namespace GRFSharp
         /// </summary>
         /// <param name="file"> The file inside the grf </param>
         /// <param name="path"> The path where to extract the file </param>
-        public void ExtractFileToPath(GRFFile file, string path)
+        public void ExtractFileToPath(GrfFile file, string path)
         {
             if (file.Flags == 1)
             {
@@ -504,9 +487,9 @@ namespace GRFSharp
 
         #endregion
 
-        public GRFFile GetFile(string asset)
+        public GrfFile GetFile(string asset)
         {
-            return (GRFFile) _GRFFiles[asset];
+            return (GrfFile) _grfFiles[asset];
         }
     }
 }

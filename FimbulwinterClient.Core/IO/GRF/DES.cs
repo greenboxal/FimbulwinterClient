@@ -1,14 +1,12 @@
 using System;
-using System.Security.Cryptography;
-using System.IO;
 
-namespace GRFSharp
+namespace FimbulwinterClient.Core.IO.GRF
 {
     public static class DES
     {
         #region local variables
 
-        private static byte[] ip_table = new byte[64]
+        private static readonly byte[] IpTable = new byte[]
                                              {
                                                  58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4,
                                                  62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8,
@@ -16,7 +14,7 @@ namespace GRFSharp
                                                  61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7
                                              };
 
-        private static byte[] fp_table = new byte[64]
+        private static readonly byte[] FpTable = new byte[]
                                              {
                                                  40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31,
                                                  38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29,
@@ -24,27 +22,14 @@ namespace GRFSharp
                                                  34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25
                                              };
 
-        private static byte[] tp_table = new byte[32]
+        private static readonly byte[] TpTable = new byte[]
                                              {
                                                  16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10,
                                                  2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25
                                              };
 
-        private static byte[] expand_table = new byte[48]
-                                                 {
-                                                     32, 1, 2, 3, 4, 5,
-                                                     4, 5, 6, 7, 8, 9,
-                                                     8, 9, 10, 11, 12, 13,
-                                                     12, 13, 14, 15, 16, 17,
-                                                     16, 17, 18, 19, 20, 21,
-                                                     20, 21, 22, 23, 24, 25,
-                                                     24, 25, 26, 27, 28, 29,
-                                                     28, 29, 30, 31, 32, 1,
-                                                 };
-
-        private static byte[][] s_table = new byte[4][]
-                                              {
-                                                  new byte[64]
+        private static readonly byte[][] STable = new[] {
+                                                  new byte[]
                                                       {
                                                           0xef, 0x03, 0x41, 0xfd, 0xd8, 0x74, 0x1e, 0x47, 0x26, 0xef,
                                                           0xfb, 0x22, 0xb3, 0xd8, 0x84, 0x1e,
@@ -53,8 +38,8 @@ namespace GRFSharp
                                                           0x40, 0xfd, 0x1e, 0xc8, 0xe7, 0x8a, 0x8b, 0x21, 0xda, 0x43,
                                                           0x64, 0x9f, 0x2d, 0x14, 0xb1, 0x72,
                                                           0xf5, 0x5b, 0xc8, 0xb6, 0x9c, 0x37, 0x76, 0xec, 0x39, 0xa0,
-                                                          0xa3, 0x05, 0x52, 0x6e, 0x0f, 0xd9,
-                                                      }, new byte[64]
+                                                          0xa3, 0x05, 0x52, 0x6e, 0x0f, 0xd9
+                                                      }, new byte[]
                                                              {
                                                                  0xa7, 0xdd, 0x0d, 0x78, 0x9e, 0x0b, 0xe3, 0x95, 0x60,
                                                                  0x36, 0x36, 0x4f, 0xf9, 0x60, 0x5a, 0xa3,
@@ -63,8 +48,8 @@ namespace GRFSharp
                                                                  0xda, 0x13, 0x66, 0xaf, 0x49, 0xd0, 0x90, 0x06, 0x8c,
                                                                  0x6a, 0xfb, 0x91, 0x37, 0x8d, 0x0d, 0x78,
                                                                  0xbf, 0x49, 0x11, 0xf4, 0x23, 0xe5, 0xce, 0x3b, 0x55,
-                                                                 0xbc, 0xa2, 0x57, 0xe8, 0x22, 0x74, 0xce,
-                                                             }, new byte[64]
+                                                                 0xbc, 0xa2, 0x57, 0xe8, 0x22, 0x74, 0xce
+                                                             }, new byte[]
                                                                     {
                                                                         0x2c, 0xea, 0xc1, 0xbf, 0x4a, 0x24, 0x1f, 0xc2,
                                                                         0x79, 0x47, 0xa2, 0x7c, 0xb6, 0xd9, 0x68, 0x15,
@@ -73,8 +58,8 @@ namespace GRFSharp
                                                                         0x49, 0xb4, 0x2e, 0x83, 0x1f, 0xc2, 0xb5, 0x7c,
                                                                         0xa2, 0x19, 0xd8, 0xe5, 0x7c, 0x2f, 0x83, 0xda,
                                                                         0xf7, 0x6b, 0x90, 0xfe, 0xc4, 0x01, 0x5a, 0x97,
-                                                                        0x61, 0xa6, 0x3d, 0x40, 0x0b, 0x58, 0xe6, 0x3d,
-                                                                    }, new byte[64]
+                                                                        0x61, 0xa6, 0x3d, 0x40, 0x0b, 0x58, 0xe6, 0x3d
+                                                                    }, new byte[]
                                                                            {
                                                                                0x4d, 0xd1, 0xb2, 0x0f, 0x28, 0xbd, 0xe4,
                                                                                0x78, 0xf6, 0x4a, 0x0f, 0x93, 0x8b, 0x17,
@@ -87,11 +72,11 @@ namespace GRFSharp
                                                                                0xe2, 0x7d,
                                                                                0xa0, 0x9f, 0xf6, 0x5c, 0x6a, 0x09, 0x8d,
                                                                                0xf0, 0x0f, 0xe3, 0x53, 0x25, 0x95, 0x36,
-                                                                               0x28, 0xcb,
+                                                                               0x28, 0xcb
                                                                            }
                                               };
 
-        private static byte[] mask = new byte[8]
+        private static readonly byte[] Mask = new byte[]
                                          {
                                              0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01
                                          };
@@ -174,41 +159,39 @@ namespace GRFSharp
 
         private static void DecodeHeader(byte[] src)
         {
-            int nblocks = src.Length/8;
+            int nblocks = src.Length / 8;
 
             for (int i = 0; i < 20 && i < nblocks; i++)
             {
-                DesDecodeBlock(src, i*8);
+                DesDecodeBlock(src, i * 8);
             }
         }
 
         private static void DecodeFull(byte[] src, int cycle)
         {
-            int nblocks = src.Length/8;
-            int dcycle, scycle;
-            int i, j;
+            int nblocks = src.Length / 8;
+            int i;
 
             for (i = 0; i < 20 && i < nblocks; i++)
-                DesDecodeBlock(src, i*8);
+                DesDecodeBlock(src, i * 8);
 
-            dcycle = cycle;
-            scycle = 7;
+            int dcycle = cycle;
+            const int scycle = 7;
 
-            j = -1;
+            int j = -1;
             for (i = 20; i < nblocks; i++)
             {
-                if ((i%dcycle) == 0)
+                if ((i % dcycle) == 0)
                 {
-                    DesDecodeBlock(src, i*8);
+                    DesDecodeBlock(src, i * 8);
                     continue;
                 }
 
                 j++;
 
-                if ((j%scycle) == 0 && j != 0)
+                if ((j % scycle) == 0 && j != 0)
                 {
-                    DesShuffle(src, i*8);
-                    continue;
+                    DesShuffle(src, i * 8);
                 }
             }
         }
@@ -219,7 +202,7 @@ namespace GRFSharp
             Array.Copy(src, 0, block, 0, 8);
 
             E(block);
-            SBOX(block);
+            Sbox(block);
             TP(block);
 
             src[0] ^= block[4];
@@ -244,12 +227,12 @@ namespace GRFSharp
         {
             byte[] block = new byte[8];
 
-            for (int i = 0; i < fp_table.Length; i++)
+            for (int i = 0; i < FpTable.Length; i++)
             {
-                byte j = (byte) (fp_table[i] - 1);
+                byte j = (byte)(FpTable[i] - 1);
 
-                if ((src[(j >> 3) & 7] & mask[j & 7]) != 0)
-                    block[(i >> 3) & 7] |= mask[i & 7];
+                if ((src[(j >> 3) & 7] & Mask[j & 7]) != 0)
+                    block[(i >> 3) & 7] |= Mask[i & 7];
             }
 
             Array.Copy(block, 0, src, 0, 8);
@@ -259,12 +242,12 @@ namespace GRFSharp
         {
             byte[] block = new byte[8];
 
-            for (int i = 0; i < ip_table.Length; i++)
+            for (int i = 0; i < IpTable.Length; i++)
             {
-                byte j = (byte) (ip_table[i] - 1);
+                byte j = (byte)(IpTable[i] - 1);
 
-                if ((src[(j >> 3) & 7] & mask[j & 7]) != 0)
-                    block[(i >> 3) & 7] |= mask[i & 7];
+                if ((src[(j >> 3) & 7] & Mask[j & 7]) != 0)
+                    block[(i >> 3) & 7] |= Mask[i & 7];
             }
 
             Array.Copy(block, 0, src, 0, 8);
@@ -274,26 +257,26 @@ namespace GRFSharp
         {
             byte[] block = new byte[8];
 
-            block[0] = (byte) (((src[7] << 5) | (src[4] >> 3)) & 0x3f); // ..0 vutsr
-            block[1] = (byte) (((src[4] << 1) | (src[5] >> 7)) & 0x3f); // ..srqpo n
-            block[2] = (byte) (((src[4] << 5) | (src[5] >> 3)) & 0x3f); // ..o nmlkj
-            block[3] = (byte) (((src[5] << 1) | (src[6] >> 7)) & 0x3f); // ..kjihg f
-            block[4] = (byte) (((src[5] << 5) | (src[6] >> 3)) & 0x3f); // ..g fedcb
-            block[5] = (byte) (((src[6] << 1) | (src[7] >> 7)) & 0x3f); // ..cba98 7
-            block[6] = (byte) (((src[6] << 5) | (src[7] >> 3)) & 0x3f); // ..8 76543
-            block[7] = (byte) (((src[7] << 1) | (src[4] >> 7)) & 0x3f); // ..43210 v
+            block[0] = (byte)(((src[7] << 5) | (src[4] >> 3)) & 0x3f); // ..0 vutsr
+            block[1] = (byte)(((src[4] << 1) | (src[5] >> 7)) & 0x3f); // ..srqpo n
+            block[2] = (byte)(((src[4] << 5) | (src[5] >> 3)) & 0x3f); // ..o nmlkj
+            block[3] = (byte)(((src[5] << 1) | (src[6] >> 7)) & 0x3f); // ..kjihg f
+            block[4] = (byte)(((src[5] << 5) | (src[6] >> 3)) & 0x3f); // ..g fedcb
+            block[5] = (byte)(((src[6] << 1) | (src[7] >> 7)) & 0x3f); // ..cba98 7
+            block[6] = (byte)(((src[6] << 5) | (src[7] >> 3)) & 0x3f); // ..8 76543
+            block[7] = (byte)(((src[7] << 1) | (src[4] >> 7)) & 0x3f); // ..43210 v
 
             Array.Copy(block, 0, src, 0, 8);
         }
 
-        private static void SBOX(byte[] src)
+        private static void Sbox(byte[] src)
         {
             byte[] block = new byte[8];
 
-            for (int i = 0; i < s_table.Length; i++)
+            for (int i = 0; i < STable.Length; i++)
             {
-                block[i] = (byte) ((s_table[i][src[i*2 + 0]] & 0xf0)
-                                   | (s_table[i][src[i*2 + 1]] & 0x0f));
+                block[i] = (byte)((STable[i][src[i * 2 + 0]] & 0xf0)
+                                   | (STable[i][src[i * 2 + 1]] & 0x0f));
             }
 
             Array.Copy(block, 0, src, 0, 8);
@@ -303,12 +286,12 @@ namespace GRFSharp
         {
             byte[] block = new byte[8];
 
-            for (int i = 0; i < tp_table.Length; i++)
+            for (int i = 0; i < TpTable.Length; i++)
             {
-                byte j = (byte) (tp_table[i] - 1);
+                byte j = (byte)(TpTable[i] - 1);
 
-                if ((src[(j >> 3) + 0] & mask[j & 7]) != 0)
-                    block[(i >> 3) + 4] |= mask[i & 7];
+                if ((src[(j >> 3) + 0] & Mask[j & 7]) != 0)
+                    block[(i >> 3) + 4] |= Mask[i & 7];
             }
 
             Array.Copy(block, 0, src, 0, 8);
@@ -320,20 +303,17 @@ namespace GRFSharp
         {
             if ((type & 2) != 0)
             {
-                int digits;
-                int cycle;
-
-                digits = 1;
+                int digits = 1;
                 for (int i = 10; i <= len; i *= 10)
                     ++digits;
 
-                cycle = (digits < 3)
-                            ? 1
-                            : (digits < 5)
-                                  ? digits + 1
-                                  : (digits < 7)
-                                        ? digits + 9
-                                        : digits + 15;
+                int cycle = (digits < 3)
+                                ? 1
+                                : (digits < 5)
+                                      ? digits + 1
+                                      : (digits < 7)
+                                            ? digits + 9
+                                            : digits + 15;
 
                 DecodeFull(src, cycle);
             }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Ionic.Zlib
+namespace FimbulwinterClient.Core.IO.ZLib
 {
     internal sealed class InfTree
     {

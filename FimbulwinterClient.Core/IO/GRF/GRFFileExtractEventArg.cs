@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace GRFSharp
+﻿namespace FimbulwinterClient.Core.IO.GRF
 {
     public class GRFFileExtractEventArg : GRFEventArg
     {
-        public GRFFileExtractEventArg(GRFFile file)
+        public GRFFileExtractEventArg(GrfFile file)
             : base(file)
         {
         }
