@@ -71,6 +71,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +79,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\Loaders\MapLoader.cs" />
+    <Compile Include="Content\Map.cs" />
+    <Compile Include="Content\MapInternals\Altitude.cs" />
+    <Compile Include="Content\MapInternals\Ground.cs" />
+    <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="IO\GrfFileSystem.cs" />
     <Compile Include="IO\GrfFileSystemFactory.cs" />
     <Compile Include="IO\GRF\DES.cs" />
@@ -116,6 +122,7 @@
       <Name>FimbulwinterClient.Extensions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Vetr.PostSettings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

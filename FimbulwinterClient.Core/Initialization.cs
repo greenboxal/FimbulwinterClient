@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine.Content;
 using FimbulvetrEngine.IO;
+using FimbulwinterClient.Core.Content;
+using FimbulwinterClient.Core.Content.Loaders;
 using FimbulwinterClient.Core.IO;
 
 namespace FimbulwinterClient.Core
@@ -12,6 +15,8 @@ namespace FimbulwinterClient.Core
         public static void DoInit()
         {
             FileSystemManager.Instance.RegisterFileSystemFactory(new GrfFileSystemFactory());
+
+            ContentManager.Instance.RegisterLoader<Map>(new MapLoader());
         }
     }
 }

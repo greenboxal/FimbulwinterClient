@@ -11,6 +11,7 @@ using FimbulvetrEngine.Graphics;
 using FimbulvetrEngine.IO;
 using FimbulvetrEngine.Plugin;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace FimbulvetrEngine.Framework
 {
