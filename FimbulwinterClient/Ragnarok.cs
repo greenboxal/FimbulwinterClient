@@ -27,7 +27,7 @@ namespace FimbulwinterClient
         public new static Ragnarok Instance { get; private set; }
 
         public Stopwatch Stopwatch { get; private set; }
-        public float LastTime { get; private set; }
+        public long LastTime { get; private set; }
         public Gwen.Input.OpenTK Input { get; private set; }
         public Gwen.Renderer.OpenTK Renderer { get; private set; }
         public Gwen.Skin.Base Skin { get; private set; }

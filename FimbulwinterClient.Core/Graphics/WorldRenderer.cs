@@ -29,21 +29,21 @@ namespace FimbulwinterClient.Core.Graphics
         public void Update(double elapsedTime)
         {
             _waterElapsed += elapsedTime;
-            while (_waterElapsed >= .5F)
+            while (_waterElapsed >= 0.05F)
             {
                 WaterCurrentTexture++;
 
                 if (WaterCurrentTexture >= WaterTextures.Length)
                     WaterCurrentTexture = 0;
 
-                _waterElapsed -= 50.0F;
+                _waterElapsed -= 0.05F;
             }
         }
 
         public void Render(double elapsedTime)
         {
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
 
             // We don't need to see what is on our back
             GL.CullFace(CullFaceMode.Back);
