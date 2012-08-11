@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
-
+using FimbulvetrEngine;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
 using OpenTK.Audio;
@@ -19,7 +19,7 @@ namespace QuickFont
 
 
 
-    public class JTexture
+    public class JTexture : ThreadBoundDisposable
     {
 
         private bool isSubTexture;
@@ -230,7 +230,10 @@ namespace QuickFont
 
         #endregion
 
-
+        protected override void GCUnmanagedFinalize()
+        {
+            Free();
+        }
 
         public void Free()
         {

@@ -33,7 +33,7 @@ namespace FimbulvetrEngine.Graphics
             Lenght = len;
         }
 
-        protected override void GCFinalize()
+        protected override void GCUnmanagedFinalize()
         {
             if (Id != 0)
                 GL.DeleteShader(Id);

@@ -30,7 +30,7 @@ namespace FimbulvetrEngine.Graphics
             Shaders = new List<Shader>();
         }
 
-        protected override void GCFinalize()
+        protected override void GCUnmanagedFinalize()
         {
             if (Id != 0)
                 GL.DeleteProgram(Id);
@@ -39,6 +39,8 @@ namespace FimbulvetrEngine.Graphics
         public void AttachShader(Shader shader)
         {
             GL.AttachShader(Id, shader.Id);
+
+            // We should maitain a reference to it or the GC may reclaim the Shader object
             Shaders.Add(shader);
         }
 

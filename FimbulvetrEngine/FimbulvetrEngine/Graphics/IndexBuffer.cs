@@ -22,7 +22,7 @@ namespace FimbulvetrEngine.Graphics
             Id = id;
         }
 
-        protected override void GCFinalize()
+        protected override void GCUnmanagedFinalize()
         {
             if (Id != 0)
             {

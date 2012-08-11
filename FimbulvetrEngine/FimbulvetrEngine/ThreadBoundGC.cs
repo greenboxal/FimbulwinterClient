@@ -23,6 +23,7 @@ namespace FimbulvetrEngine
 
         public static void RegisterForDestruction(IDisposable threadBoundDisposable, Func<bool> canDispose)
         {
+            // Check if we can dispose the object now as we should do it ASAP
             if (canDispose())
             {
                 threadBoundDisposable.Dispose();

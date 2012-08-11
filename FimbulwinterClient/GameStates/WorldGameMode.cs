@@ -115,7 +115,8 @@ namespace FimbulwinterClient.GameStates
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref view);
 
-            //World.Draw(e.Time);
+            if (World != null)
+                World.Draw(e.Time);
         }
 
         public override void Shutdown()

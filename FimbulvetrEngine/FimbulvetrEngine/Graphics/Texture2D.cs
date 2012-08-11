@@ -29,7 +29,7 @@ namespace FimbulvetrEngine.Graphics
             Height = height;
         }
 
-        protected override void GCFinalize()
+        protected override void GCUnmanagedFinalize()
         {
             if (Texture != 0)
                 GL.DeleteTexture(Texture);

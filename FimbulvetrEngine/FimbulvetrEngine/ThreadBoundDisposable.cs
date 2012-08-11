@@ -7,7 +7,7 @@ using OpenTK.Graphics;
 
 namespace FimbulvetrEngine
 {
-    public abstract class ThreadBoundDisposable : IDisposable
+    public class ThreadBoundDisposable : IDisposable
     {
         public bool Disposed { get; protected set; }
         public IGraphicsContext Context { get; private set; }
@@ -19,7 +19,14 @@ namespace FimbulvetrEngine
 
         ~ThreadBoundDisposable()
         {
-            Dispose(false);
+            if (!Disposed)
+            {
+                Dispose(false);
+            }
+            else
+            {
+                GCManagedFinalize();
+            }
         }
 
         public void Dispose()
@@ -39,11 +46,21 @@ namespace FimbulvetrEngine
                 }
                 else
                 {
-                    GCFinalize();
+                    GCUnmanagedFinalize();
+                    Disposed = true;
+                    GC.ReRegisterForFinalize(this);
                 }
             }
         }
 
-        protected abstract void GCFinalize();
+        protected virtual void GCUnmanagedFinalize()
+        {
+            
+        }
+        
+        protected virtual void GCManagedFinalize()
+        {
+            
+        }
     }
 }
