@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class IndexBuffer
+    public class IndexBuffer : ThreadBoundDisposable
     {
         public int Id { get; private set; }
         public DrawElementsType Type { get; set; }
@@ -21,10 +22,13 @@ namespace FimbulvetrEngine.Graphics
             Id = id;
         }
 
-        ~IndexBuffer()
+        protected override void GCFinalize()
         {
-            int id = Id;
-            GL.DeleteBuffers(1, ref id);
+            if (Id != 0)
+            {
+                int id = Id;
+                GL.DeleteBuffers(1, ref id);
+            }
         }
 
         public void Bind()

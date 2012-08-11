@@ -10,7 +10,14 @@ namespace FimbulvetrEngine.Content.Loaders
     {
         public object LoadContent(ContentManager contentManager, string contentName, System.IO.Stream stream)
         {
-            return TextureManager.Instance.LoadFromStream(stream);
+            Texture2D texture = TextureManager.Instance.LoadFromStream(stream);
+
+            if (texture == null)
+                return null;
+
+            contentManager.CacheContent(contentName, texture);
+
+            return texture;
         }
     }
 }

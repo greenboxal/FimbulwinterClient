@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class Texture2D
+    public class Texture2D : ThreadBoundDisposable
     {
         public int Texture { get; private set; }
         public int Width { get; private set; }
@@ -27,6 +27,12 @@ namespace FimbulvetrEngine.Graphics
             Texture = texture;
             Width = width;
             Height = height;
+        }
+
+        protected override void GCFinalize()
+        {
+            if (Texture != 0)
+                GL.DeleteTexture(Texture);
         }
 
         public void SetData(PixelFormat format, PixelInternalFormat iFormat, PixelType type, IntPtr data)

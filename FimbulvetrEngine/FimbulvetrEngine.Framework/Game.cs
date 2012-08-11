@@ -45,6 +45,9 @@ namespace FimbulvetrEngine.Framework
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            // Ensures that we collect all objects
+            ThreadBoundGC.Collect();
+
             Shutdown(e);
         }
 

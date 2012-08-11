@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class ShaderProgram
+    public class ShaderProgram : ThreadBoundDisposable
     {
         public int Id { get; private set; }
         public List<Shader> Shaders { get; private set; }
@@ -30,9 +30,10 @@ namespace FimbulvetrEngine.Graphics
             Shaders = new List<Shader>();
         }
 
-        ~ShaderProgram()
+        protected override void GCFinalize()
         {
-            GL.DeleteProgram(Id);
+            if (Id != 0)
+                GL.DeleteProgram(Id);
         }
 
         public void AttachShader(Shader shader)

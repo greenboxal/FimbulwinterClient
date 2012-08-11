@@ -8,9 +8,9 @@ namespace FimbulvetrEngine.Graphics
 {
     public class VertexDeclaration
     {
-        public VertexEntry[] Declaration { get; private set; }
+        public VertexElement[] Declaration { get; private set; }
 
-        public VertexDeclaration(params VertexEntry[] entries)
+        public VertexDeclaration(params VertexElement[] entries)
         {
             Declaration = entries;
         }

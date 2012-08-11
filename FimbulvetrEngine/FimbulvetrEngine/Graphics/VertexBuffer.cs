@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class VertexBuffer
+    public class VertexBuffer : ThreadBoundDisposable
     {
         public int Id { get; private set; }
         public VertexDeclaration Declaration { get; private set; }
@@ -22,10 +22,13 @@ namespace FimbulvetrEngine.Graphics
             Id = id;
         }
 
-        ~VertexBuffer()
+        protected override void GCFinalize()
         {
-            int id = Id;
-            GL.DeleteBuffers(1, ref id);
+            if (Id != 0)
+            {
+                int id = Id;
+                GL.DeleteBuffers(1, ref id);
+            }
         }
 
         public void Bind()
@@ -48,7 +51,6 @@ namespace FimbulvetrEngine.Graphics
 
         public void Render(BeginMode mode, IndexBuffer indexBuffer, int count)
         {
-            Bind();
             indexBuffer.Bind();
 
             Declaration.Activate();

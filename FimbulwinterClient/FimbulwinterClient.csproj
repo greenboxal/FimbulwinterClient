@@ -12,7 +12,8 @@
     <RootNamespace>FimbulwinterClient</RootNamespace>
     <AssemblyName>FimbulwinterClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -52,12 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="data\fb\Shaders\Ground_PS.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="data\fb\Shaders\Ground_VS.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="Camera.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\WorldGameMode.cs" />
     <Compile Include="Program.cs" />

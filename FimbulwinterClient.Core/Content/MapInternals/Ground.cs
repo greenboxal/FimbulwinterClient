@@ -10,6 +10,7 @@ using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace FimbulwinterClient.Core.Content.MapInternals
 {
@@ -162,6 +163,9 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         {
             get { return _surfaces; }
         }
+
+        public VertexBuffer VertexBuffer { get; private set; }
+        public IndexBuffer[] IndexBuffers { get; private set; }
 
         public int ObjectCount { get; set; }
 
@@ -439,7 +443,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 }
             }
 
-            /*VertexPositionTextureNormalLightmap[] vertexdata = new VertexPositionTextureNormalLightmap[_objectCount * 4];
+            VertexPositionTextureNormalLightmap[] vertexdata = new VertexPositionTextureNormalLightmap[ObjectCount * 4];
             List<int>[] indexdata = new List<int>[Textures.Length];
 
             for (int i = 0; i < indexdata.Length; i++)
@@ -447,7 +451,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 indexdata[i] = new List<int>();
             }
 
-            int cur_surface = 0;
+            int curSurface = 0;
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
@@ -458,47 +462,47 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     {
                         int tid = _surfaces[Cells[idx].TileUp].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileUp, cur_surface, x, y, 0);
+                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileUp, curSurface, x, y, 0);
 
-                        cur_surface++;
+                        curSurface++;
                     }
 
                     if (Cells[idx].TileSide != -1)
                     {
                         int tid = _surfaces[Cells[idx].TileSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileSide, cur_surface, x, y, 1);
+                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileSide, curSurface, x, y, 1);
 
-                        cur_surface++;
+                        curSurface++;
                     }
 
                     if (Cells[idx].TileOtherSide != -1)
                     {
                         int tid = _surfaces[Cells[idx].TileOtherSide].Texture;
 
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileOtherSide, cur_surface, x, y, 2);
+                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileOtherSide, curSurface, x, y, 2);
 
-                        cur_surface++;
+                        curSurface++;
                     }
                 }
             }
 
-            _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionTextureNormalLightmap), vertexdata.Length, BufferUsage.WriteOnly);
-            _vertices.SetData(vertexdata);
+            VertexBuffer = new VertexBuffer(VertexPositionTextureNormalLightmap.VertexDeclaration);
+            VertexBuffer.SetData(vertexdata.ToArray(), BufferUsageHint.StaticDraw);
 
-            _indexes = new IndexBuffer[Textures.Length];
-            for (int i = 0; i < _indexes.Length; i++)
+            IndexBuffers = new IndexBuffer[Textures.Length];
+            for (int i = 0; i < IndexBuffers.Length; i++)
             {
-                _indexes[i] = new IndexBuffer(_graphicsDevice, typeof(int), indexdata[i].Count, BufferUsage.WriteOnly);
-                _indexes[i].SetData(indexdata[i].ToArray());
-            }*/
+                IndexBuffers[i] = new IndexBuffer(DrawElementsType.UnsignedInt);
+                IndexBuffers[i].SetData(indexdata[i].ToArray(), BufferUsageHint.StaticDraw);
+            }
         }
-        /*
+
         private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
         {
             int idx = current_surface * 4;
-            int cell_idx = y * Width + x;
-            Cell cell = Cells[cell_idx];
+            int cellIdx = y * Width + x;
+            Cell cell = Cells[cellIdx];
 
             Surface surface = _surfaces[surface_id];
 
@@ -568,17 +572,17 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     break;
             }
 
-            int lm_w = (int)Math.Floor(Math.Sqrt(Lightmaps.Length));
-            int lm_h = (int)Math.Ceiling((float)Lightmaps.Length / lm_w);
-            int lm_x = (int)Math.Floor((float)surface.Lightmap / lm_h);
-            int lm_y = surface.Lightmap % lm_h;
+            int lmW = (int)Math.Floor(Math.Sqrt(Lightmaps.Length));
+            int lmH = (int)Math.Ceiling((float)Lightmaps.Length / lmW);
+            int lmX = (int)Math.Floor((float)surface.Lightmap / lmH);
+            int lmY = surface.Lightmap % lmH;
 
             float[] lightmapU = new float[2];
             float[] lightmapV = new float[2];
-            lightmapU[0] = (float)(0.1f + lm_x) / lm_w;
-            lightmapU[1] = (float)(0.9f + lm_x) / lm_w;
-            lightmapV[0] = (float)(0.1f + lm_y) / lm_h;
-            lightmapV[1] = (float)(0.9f + lm_y) / lm_h;
+            lightmapU[0] = (float)(0.1f + lmX) / lmW;
+            lightmapU[1] = (float)(0.9f + lmX) / lmW;
+            lightmapV[0] = (float)(0.1f + lmY) / lmH;
+            lightmapV[1] = (float)(0.9f + lmY) / lmH;
 
             vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
             vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
@@ -593,22 +597,17 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             indexdata.Add(idx + 3);
         }
 
-        public void Draw(Effect effect)
+        public void Draw()
         {
-            _graphicsDevice.SetVertexBuffer(_vertices);
+            VertexBuffer.Bind();
 
             for (int i = 0; i < Textures.Length; i++)
             {
-                _graphicsDevice.Indices = _indexes[i];
-                effect.Parameters["Texture"].SetValue(Textures[i]);
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                }
-
-                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertices.VertexCount, 0, _indexes[i].IndexCount / 3);
+                ShaderProgram.Begin();
+                ShaderProgram.SetTexture(Textures[i]);
+                VertexBuffer.Render(BeginMode.Triangles, IndexBuffers[i], IndexBuffers[i].Count);
+                ShaderProgram.End();
             }
-        }*/
+        }
     }
 }

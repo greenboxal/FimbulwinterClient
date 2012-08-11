@@ -6,23 +6,21 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public struct VertexEntry
+    public struct VertexElement
     {
-        public int Position { get; private set; }
-        public VertexEntryType Type { get; private set; }
-        public VertexEntryKind Kind { get; private set; }
+        public VertexElementFormat Type { get; private set; }
+        public VertexElementUsage Kind { get; private set; }
         public TextureUnit Unit { get; private set; }
 
-        public VertexEntry(int position, VertexEntryType type, VertexEntryKind kind)
-            : this(position, type, kind, TextureUnit.Texture0)
+        public VertexElement(VertexElementFormat type, VertexElementUsage kind)
+            : this(type, kind, TextureUnit.Texture0)
         {
 
         }
 
-        public VertexEntry(int position, VertexEntryType type, VertexEntryKind kind, TextureUnit unit) 
+        public VertexElement(VertexElementFormat type, VertexElementUsage kind, TextureUnit unit) 
             : this()
         {
-            Position = position;
             Type = type;
             Kind = kind;
             Unit = unit;
@@ -32,13 +30,13 @@ namespace FimbulvetrEngine.Graphics
         {
             switch (Kind)
             {
-                case VertexEntryKind.Position:
+                case VertexElementUsage.Position:
                     GL.VertexPointer(GetValueCount(), VertexPointerType.Float, stride, offset);
                     break;
-                case VertexEntryKind.Normal:
+                case VertexElementUsage.Normal:
                     GL.NormalPointer(NormalPointerType.Float, stride, offset);
                     break;
-                case VertexEntryKind.Texture:
+                case VertexElementUsage.TextureCoordinate:
                     GL.ActiveTexture(Unit);
                     GL.TexCoordPointer(GetValueCount(), TexCoordPointerType.Float, stride, offset);
                     break;
@@ -49,11 +47,11 @@ namespace FimbulvetrEngine.Graphics
         {
             switch (Type)
             {
-                case VertexEntryType.Vector2:
+                case VertexElementFormat.Vector2:
                     return 8;
-                case VertexEntryType.Vector3:
+                case VertexElementFormat.Vector3:
                     return 12;
-                case VertexEntryType.Vector4:
+                case VertexElementFormat.Vector4:
                     return 16;
             }
 
@@ -64,11 +62,11 @@ namespace FimbulvetrEngine.Graphics
         {
             switch (Type)
             {
-                case VertexEntryType.Vector2:
+                case VertexElementFormat.Vector2:
                     return 2;
-                case VertexEntryType.Vector3:
+                case VertexElementFormat.Vector3:
                     return 3;
-                case VertexEntryType.Vector4:
+                case VertexElementFormat.Vector4:
                     return 4;
             }
 
@@ -76,17 +74,17 @@ namespace FimbulvetrEngine.Graphics
         }
     }
 
-    public enum VertexEntryType
+    public enum VertexElementFormat
     {
         Vector2,
         Vector3,
         Vector4
     }
 
-    public enum VertexEntryKind
+    public enum VertexElementUsage
     {
         Position,
         Normal,
-        Texture
+        TextureCoordinate
     }
 }

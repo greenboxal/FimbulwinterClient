@@ -83,6 +83,7 @@
     <Compile Include="Content\Map.cs" />
     <Compile Include="Content\MapInternals\Altitude.cs" />
     <Compile Include="Content\MapInternals\Ground.cs" />
+    <Compile Include="Content\MapInternals\VertexPositionTextureNormalLightmap.cs" />
     <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="Graphics\GroundShaderProgram.cs" />
     <Compile Include="IO\GrfFileSystem.cs" />

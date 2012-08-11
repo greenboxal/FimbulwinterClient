@@ -34,6 +34,8 @@ namespace FimbulwinterClient.Core.Content
             if (!World.Load(rsw))
                 return false;
 
+            Ground.SetupVertices();
+
             return true;
         }
 
@@ -80,8 +82,10 @@ namespace FimbulwinterClient.Core.Content
             //_world.UpdateModels(elapsed);
         }
 
-        public void Draw(double elapsed, Matrix4 view, Matrix4 projection, Matrix4 world)
+        public void Draw(double elapsed)
         {
+            Ground.Draw();
+
             /*_effect.Parameters["View"].SetValue(view);
             _effect.Parameters["Projection"].SetValue(projection);
             _effect.Parameters["World"].SetValue(world);

@@ -11,6 +11,7 @@ using FimbulvetrEngine.Plugin;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.GameStates;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
 namespace FimbulwinterClient
@@ -42,13 +43,28 @@ namespace FimbulwinterClient
 
         protected override void Initialize()
         {
+            OnResize(null);
+
             ChangeWorld("prontera");
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            GL.Viewport(0, 0, Width, Height);
+
+            float aspectRatio = Width / (float)Height;
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1.0F, 5000.0F);
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref projection);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             if (GameState != null)
                 GameState.Update(e);
+
+            ThreadBoundGC.Collect();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
