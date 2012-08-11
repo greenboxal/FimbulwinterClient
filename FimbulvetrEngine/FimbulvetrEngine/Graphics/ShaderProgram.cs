@@ -15,7 +15,7 @@ namespace FimbulvetrEngine.Graphics
         public static ShaderProgram LoadVSPSShader(string vs, string ps)
         {
             Shader vss = new Shader(ShaderType.VertexShader, ContentManager.Instance.Load<String>(vs));
-            Shader pss = new Shader(ShaderType.VertexShader, ContentManager.Instance.Load<String>(ps));
+            Shader pss = new Shader(ShaderType.FragmentShader, ContentManager.Instance.Load<String>(ps));
 
             ShaderProgram program = new ShaderProgram();
             program.AttachShader(vss);
@@ -44,6 +44,20 @@ namespace FimbulvetrEngine.Graphics
         public void Link()
         {
             GL.LinkProgram(Id);
+
+            int success;
+            GL.GetProgram(Id, ProgramParameter.LinkStatus, out success);
+
+            if (success != 0)
+                return;
+
+            int logLen;
+            GL.GetShader(Id, ShaderParameter.CompileStatus, out logLen);
+
+            if (success == 0)
+            {
+                throw new Exception("Error linking ShaderProgram:\n" + GL.GetProgramInfoLog(Id));
+            }
         }
 
         public void Begin()

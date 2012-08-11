@@ -27,13 +27,7 @@ namespace FimbulvetrEngine.Graphics
 
             if (success == 0)
             {
-                int logLen;
-                GL.GetShader(Id, ShaderParameter.CompileStatus, out logLen);
-
-                if (logLen > 0)
-                {
-                    throw new Exception("Error loading shader:\n" + GL.GetShaderInfoLog(Id));
-                }
+                throw new Exception("Error copiling Shader:\n" + GL.GetShaderInfoLog(Id));
             }
 
             Lenght = len;
