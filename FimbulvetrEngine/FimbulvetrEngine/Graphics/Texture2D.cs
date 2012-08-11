@@ -15,7 +15,11 @@ namespace FimbulvetrEngine.Graphics
         public Texture2D(int width, int height)
             : this(GL.GenTexture(), width, height)
         {
-
+            Bind();
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
         }
 
         public Texture2D(int texture, int width, int height)

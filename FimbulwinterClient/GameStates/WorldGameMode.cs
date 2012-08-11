@@ -39,7 +39,7 @@ namespace FimbulwinterClient.GameStates
             GL.ClearColor(Color.CornflowerBlue);
 
             SpriteBatch.Begin();
-            SpriteBatch.Draw(Texture, new Vector2(100, 100), new Vector2(100, 100), Color.Wheat);
+            SpriteBatch.Draw(Texture, new Vector2(100, 100), Color.Wheat);
             SpriteBatch.End();
         }
 

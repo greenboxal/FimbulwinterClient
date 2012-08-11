@@ -34,15 +34,16 @@ namespace FimbulvetrEngine.Graphics
 
             public override void Render()
             {
-                if (_texture != null)
+                if (_texture == null)
                 {
-                    GL.BlendColor(_color);
-                    GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-                    _texture.Bind();
+                    GL.Color4(_color);
                 }
                 else
                 {
-                    GL.Color4(_color);
+                    _texture.Bind();
+
+                    GL.BlendColor(_color);
+                    GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
                 }
 
                 GL.Begin(BeginMode.Quads);
@@ -69,9 +70,6 @@ namespace FimbulvetrEngine.Graphics
 
             // Enables
             GL.Enable(EnableCap.Texture2D);
-            GL.EnableClientState(ArrayCap.VertexArray);
-            GL.EnableClientState(ArrayCap.ColorArray);
-            GL.EnableClientState(ArrayCap.TextureCoordArray);
 
             // Texture Env
             GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
