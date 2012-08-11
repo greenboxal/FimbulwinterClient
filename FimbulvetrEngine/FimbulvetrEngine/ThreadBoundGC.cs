@@ -24,11 +24,14 @@ namespace FimbulvetrEngine
         public static void RegisterForDestruction(IDisposable threadBoundDisposable, Func<bool> canDispose)
         {
             // Check if we can dispose the object now as we should do it ASAP
+            // FIXME: This is crashing some times when Disposing the main context
+#if FALSE
             if (canDispose())
             {
                 threadBoundDisposable.Dispose();
             }
             else
+#endif
             {
                 GCEntry entry = new GCEntry();
 

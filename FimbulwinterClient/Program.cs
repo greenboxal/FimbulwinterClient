@@ -9,7 +9,10 @@ namespace FimbulwinterClient
     {
         private static void Main()
         {
-            new Ragnarok().Run();
+            using (Ragnarok ro = new Ragnarok())
+            {
+                ro.Run();
+            }
         }
     }
 }

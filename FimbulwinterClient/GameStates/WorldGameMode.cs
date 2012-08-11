@@ -20,11 +20,6 @@ namespace FimbulwinterClient.GameStates
         public Map World { get; private set; }
         public Camera Camera { get; private set; }
 
-        public static Vector2 GetViewportCenter()
-        {
-            return new Vector2(Ragnarok.Instance.X + Ragnarok.Instance.Width / 2, Ragnarok.Instance.Y + Ragnarok.Instance.Height / 2);
-        }
-
         public WorldGameState(string worldName)
         {
             WorldName = worldName;
@@ -39,15 +34,11 @@ namespace FimbulwinterClient.GameStates
             Ragnarok.Instance.Mouse.ButtonUp += Mouse_ButtonUp;
         }
 
-        Vector2 _tempMousePosition;
         private bool _pressed;
         void Mouse_ButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.Button == MouseButton.Right)
             {
-                Vector2 center = GetViewportCenter();
-                _tempMousePosition = new Vector2(e.X, e.Y);
-                Mouse.SetPosition((int)center.X, (int)center.Y);
                 _pressed = true;
             }
         }
@@ -56,18 +47,17 @@ namespace FimbulwinterClient.GameStates
         {
             if (e.Button == MouseButton.Right)
             {
-                Mouse.SetPosition((int)_tempMousePosition.X, (int)_tempMousePosition.Y);
                 _pressed = false;
             }
         }
 
         public override void Update(FrameEventArgs e)
         {
-            float timeDifference = (float)e.Time;
+            float timeDifference = (float)e.Time * 100;
 
             KeyboardDevice keyboardState = Ragnarok.Instance.Keyboard;
 
-            Vector2 mousePos = new Vector2(Ragnarok.Instance.Mouse.X, Ragnarok.Instance.Mouse.Y);
+            Vector2 mousePos = new Vector2(Ragnarok.Instance.X + Ragnarok.Instance.Mouse.X, Ragnarok.Instance.Y + Ragnarok.Instance.Mouse.Y);
 
             if (keyboardState[Key.W])
                 Camera.MoveForward(1.0f * timeDifference);
@@ -92,12 +82,11 @@ namespace FimbulwinterClient.GameStates
 
             if (_pressed)
             {
-                Vector2 center = GetViewportCenter();
-
-                Camera.AddYaw((center.X - mousePos.X) / 100.0F * timeDifference);
-                Camera.AddPitch((center.Y - mousePos.Y) / 100.0F * timeDifference);
-
-                Mouse.SetPosition((int)center.X, (int)center.Y);
+                // I don't care
+#pragma warning disable 612,618
+                Camera.AddYaw(-Ragnarok.Instance.Mouse.XDelta / 100.0F * timeDifference);
+                Camera.AddPitch(-Ragnarok.Instance.Mouse.YDelta / 100.0F * timeDifference);
+#pragma warning restore 612,618
             }
 
             Camera.Update();
@@ -107,13 +96,8 @@ namespace FimbulwinterClient.GameStates
 
         public override void Render(FrameEventArgs e)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(Color.CornflowerBlue);
-
-            Matrix4 view = Matrix4.LookAt(new Vector3(0, 0, 0), new Vector3(0, 0, -1), Vector3.UnitY);
-            
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref view);
+            Camera.Update();
+            GL.Rotate(180, Vector3.UnitX);
 
             if (World != null)
                 World.Draw(e.Time);

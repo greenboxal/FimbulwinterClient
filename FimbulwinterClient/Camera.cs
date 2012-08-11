@@ -86,7 +86,7 @@ namespace FimbulwinterClient
             Vector3 dir = Target - Position;
             dir.Normalize();
             Vector3 m = dir; m.Y = Position.Y;
-
+            
             Yaw = (float)Math.Atan2(dir.X, dir.Z);
 
             float len = (new Vector2(m.X, m.Z)).Length;
@@ -114,6 +114,7 @@ namespace FimbulwinterClient
             Matrix4 view = Matrix4.LookAt(Position, Target, Up);
 
             GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
             GL.LoadMatrix(ref view);
         }
 
@@ -121,16 +122,12 @@ namespace FimbulwinterClient
         {
             Position += amount * Direction;
             Target += amount * Direction;
-
-            Update();
         }
 
         public void Strafe(float amount)
         {
             Position += amount * Right;
             Target += amount * Right;
-
-            Update();
         }
 
         public void AddYaw(float angle)
@@ -141,8 +138,6 @@ namespace FimbulwinterClient
 
             Target = Position + (Target - Position).Length * dir;
             CalculateYawPitch();
-
-            Update();
         }
 
         public void AddPitch(float angle)
@@ -154,16 +149,12 @@ namespace FimbulwinterClient
 
             Target = Position + (Target - Position).Length * dir;
             CalculateYawPitch();
-
-            Update();
         }
 
         public void Levitate(float amount)
         {
             _position.Y += amount;
             _target.Y += amount;
-
-            Update();
         }
     }
 }

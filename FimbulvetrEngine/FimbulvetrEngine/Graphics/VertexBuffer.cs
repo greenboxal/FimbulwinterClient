@@ -34,6 +34,8 @@ namespace FimbulvetrEngine.Graphics
         public void Bind()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, Id);
+
+            Declaration.Activate();
         }
 
         public void SetData<T>(T[] data, BufferUsageHint hint) where T : struct
@@ -52,8 +54,6 @@ namespace FimbulvetrEngine.Graphics
         public void Render(BeginMode mode, IndexBuffer indexBuffer, int count)
         {
             indexBuffer.Bind();
-
-            Declaration.Activate();
 
             GL.DrawElements(mode, indexBuffer.Count, indexBuffer.Type, IntPtr.Zero);
         }

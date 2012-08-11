@@ -579,10 +579,10 @@ namespace FimbulwinterClient.Core.Content.MapInternals
 
             float[] lightmapU = new float[2];
             float[] lightmapV = new float[2];
-            lightmapU[0] = (float)(0.1f + lmX) / lmW;
-            lightmapU[1] = (float)(0.9f + lmX) / lmW;
-            lightmapV[0] = (float)(0.1f + lmY) / lmH;
-            lightmapV[1] = (float)(0.9f + lmY) / lmH;
+            lightmapU[0] = (0.1f + lmX) / lmW;
+            lightmapU[1] = (0.9f + lmX) / lmW;
+            lightmapV[0] = (0.1f + lmY) / lmH;
+            lightmapV[1] = (0.9f + lmY) / lmH;
 
             vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
             vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
@@ -600,6 +600,10 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         public void Draw()
         {
             VertexBuffer.Bind();
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.EnableClientState(ArrayCap.TextureCoordArray);
+            GL.EnableClientState(ArrayCap.VertexArray);
 
             for (int i = 0; i < Textures.Length; i++)
             {
