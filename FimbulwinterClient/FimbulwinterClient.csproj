@@ -52,6 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\fb\Shaders\Ground_PS.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\fb\Shaders\Ground_VS.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\WorldGameMode.cs" />
     <Compile Include="Program.cs" />

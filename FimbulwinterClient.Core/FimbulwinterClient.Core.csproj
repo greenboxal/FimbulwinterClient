@@ -84,6 +84,7 @@
     <Compile Include="Content\MapInternals\Altitude.cs" />
     <Compile Include="Content\MapInternals\Ground.cs" />
     <Compile Include="Content\MapInternals\World.cs" />
+    <Compile Include="Graphics\GroundShaderProgram.cs" />
     <Compile Include="IO\GrfFileSystem.cs" />
     <Compile Include="IO\GrfFileSystemFactory.cs" />
     <Compile Include="IO\GRF\DES.cs" />

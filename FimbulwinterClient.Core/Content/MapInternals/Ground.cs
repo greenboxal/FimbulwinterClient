@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
+using FimbulwinterClient.Core.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
 
@@ -166,6 +167,13 @@ namespace FimbulwinterClient.Core.Content.MapInternals
 
         protected byte MinorVersion;
         protected byte MajorVersion;
+
+        public GroundShaderProgram ShaderProgram { get; private set; }
+
+        public Ground()
+        {
+            ShaderProgram = new GroundShaderProgram();
+        }
 
         public bool Load(Stream gnd)
         {
