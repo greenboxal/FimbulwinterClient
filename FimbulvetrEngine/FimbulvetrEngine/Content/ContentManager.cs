@@ -15,7 +15,7 @@ namespace FimbulvetrEngine.Content
         public static ContentManager Instance { get; private set; }
 
         public Dictionary<Type, IContentLoader> ContentLoaders { get; private set; }
-        public Hashtable Cache { get; private set; }
+        public Dictionary<string, object> Cache { get; private set; }
 
         public ContentManager()
         {
@@ -23,7 +23,7 @@ namespace FimbulvetrEngine.Content
                 throw new Exception("Only one instance of ContentManager is allowed, use the Instance property.");
 
             ContentLoaders = new Dictionary<Type, IContentLoader>();
-            Cache = CollectionsUtil.CreateCaseInsensitiveHashtable();
+            Cache = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             RegisterDefaultLoaders();
 
@@ -46,14 +46,11 @@ namespace FimbulvetrEngine.Content
 
         public T Load<T>(string contentName)
         {
-            if (Cache.ContainsKey(contentName))
+            object cached;
+
+            if (Cache.TryGetValue(contentName, out cached))
             {
-                object value = Cache[contentName];
-
-                if (value is T)
-                    return (T)value;
-
-                return default(T);
+                return (T)cached;
             }
 
             return LoadNewContent<T>(contentName);
