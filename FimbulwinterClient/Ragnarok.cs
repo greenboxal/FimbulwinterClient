@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using FimbulvetrEngine;
 using FimbulvetrEngine.Framework;
+using FimbulvetrEngine.IO;
 using FimbulvetrEngine.Plugin;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.GameStates;
@@ -34,6 +35,7 @@ namespace FimbulwinterClient
         {
             Vetr.Instance.ReadConfiguration("ragnarok.xml", "Ragnarok");
             PluginManager.Instance.LoadPlugins();
+            FileSystemManager.Instance.LoadAll();
 
             ReadGameConfig();
         }
@@ -53,6 +55,8 @@ namespace FimbulwinterClient
         {
             if (GameState != null)
                 GameState.Render(e);
+
+            SwapBuffers();
         }
 
         public void ChangeWorld(string name)

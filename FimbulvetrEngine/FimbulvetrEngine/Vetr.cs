@@ -6,6 +6,7 @@ using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulvetrEngine.IO;
 using FimbulvetrEngine.Plugin;
+using OpenTK;
 
 namespace FimbulvetrEngine
 {
@@ -13,6 +14,7 @@ namespace FimbulvetrEngine
     {
         public static Vetr Instance { get; private set; }
 
+        public GameWindow Window { get; set; }
         public XDocument Configuration { get; private set; }
         public XElement ConfiguartionRoot { get; private set; }
 

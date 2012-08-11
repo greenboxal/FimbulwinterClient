@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
+using FimbulvetrEngine.IO;
 using FimbulvetrEngine.Plugin;
 using OpenTK;
 
@@ -26,6 +27,7 @@ namespace FimbulvetrEngine.Framework
                 new Vetr();
 
             Instance = this;
+            Vetr.Instance.Window = this;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -49,6 +51,7 @@ namespace FimbulvetrEngine.Framework
         {
             Vetr.Instance.ReadConfiguration();
             PluginManager.Instance.LoadPlugins();
+            FileSystemManager.Instance.LoadAll();
 
             ReadGameConfig();
         }

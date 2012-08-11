@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +54,7 @@
     <Compile Include="Content\Loaders\Texture2DLoader.cs" />
     <Compile Include="Graphics\ImageFormat.cs" />
     <Compile Include="Graphics\ITextureLoader.cs" />
+    <Compile Include="Graphics\SpriteBatch.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\TextureManager.cs" />
     <Compile Include="IO\DefaultFileSystem.cs" />

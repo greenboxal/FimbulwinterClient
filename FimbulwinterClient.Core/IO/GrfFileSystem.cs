@@ -38,7 +38,9 @@ namespace FimbulwinterClient.Core.IO
 
         public Stream OpenStream(string name)
         {
-            return (from GrfFile file in Grf.Files where string.Compare(file.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0 select new MemoryStream(Grf.GetDataFromFile(file))).FirstOrDefault();
+            GrfFile file = (GrfFile)Grf.Files[name];
+
+            return file != null ? new MemoryStream(Grf.GetDataFromFile(file)) : null;
         }
 
         public void Close()
