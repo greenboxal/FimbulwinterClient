@@ -7,7 +7,7 @@ using OpenTK.Graphics;
 
 namespace FimbulvetrEngine
 {
-    public abstract class ThreadBoundDisposable
+    public abstract class ThreadBoundDisposable : IDisposable
     {
         public bool Disposed { get; protected set; }
         public IGraphicsContext Context { get; private set; }

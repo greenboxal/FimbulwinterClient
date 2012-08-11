@@ -69,7 +69,6 @@
     <Compile Include="IO\FileSystemManager.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IO\IFileSystemFactory.cs" />
-    <Compile Include="IThreadBoundDisposable.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

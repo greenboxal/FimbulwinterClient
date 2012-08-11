@@ -50,7 +50,7 @@ namespace FimbulwinterClient
 
         protected override void OnResize(EventArgs e)
         {
-            GL.Viewport(0, 0, Width, Height);
+            //GL.Viewport(0, 0, Width, Height);
 
             float aspectRatio = Width / (float)Height;
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1.0F, 5000.0F);
