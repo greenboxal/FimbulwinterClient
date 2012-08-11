@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class IndexBuffer : ThreadBoundDisposable
+    public class IndexBuffer : GraphicResource
     {
         public int Id { get; private set; }
         public DrawElementsType Type { get; set; }

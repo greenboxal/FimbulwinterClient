@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using OpenTK.Graphics;
 
 namespace FimbulvetrEngine
 {
     public class ThreadBoundDisposable : IDisposable
     {
         public bool Disposed { get; protected set; }
-        public IGraphicsContext Context { get; private set; }
-
-        protected ThreadBoundDisposable()
-        {
-            Context = GraphicsContext.CurrentContext;
-        }
 
         ~ThreadBoundDisposable()
         {
@@ -39,10 +32,10 @@ namespace FimbulvetrEngine
         {
             if (!Disposed)
             {
-                if (!Context.IsCurrent || !disposing)
+                if (!CanDispose() || !disposing)
                 {
                     GC.KeepAlive(this);
-                    ThreadBoundGC.RegisterForDestruction(this, () => Context.IsCurrent);
+                    ThreadBoundGC.RegisterForDestruction(this, CanDispose);
                 }
                 else
                 {
@@ -51,6 +44,11 @@ namespace FimbulvetrEngine
                     GC.ReRegisterForFinalize(this);
                 }
             }
+        }
+
+        protected virtual bool CanDispose()
+        {
+            return true;
         }
 
         protected virtual void GCUnmanagedFinalize()

@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class VertexBuffer : ThreadBoundDisposable
+    public class VertexBuffer : GraphicResource
     {
         public int Id { get; private set; }
         public VertexDeclaration Declaration { get; private set; }

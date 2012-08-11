@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class ShaderProgram : ThreadBoundDisposable
+    public class ShaderProgram : GraphicResource
     {
         public int Id { get; private set; }
         public List<Shader> Shaders { get; private set; }

@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulvetrEngine.Graphics
 {
-    public class Texture2D : ThreadBoundDisposable
+    public class Texture2D : GraphicResource
     {
         public int Texture { get; private set; }
         public int Width { get; private set; }

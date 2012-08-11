@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 using FimbulvetrEngine;
+using FimbulvetrEngine.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
 using OpenTK.Audio;
@@ -19,7 +20,7 @@ namespace QuickFont
 
 
 
-    public class JTexture : ThreadBoundDisposable
+    public class JTexture : GraphicResource
     {
 
         private bool isSubTexture;
