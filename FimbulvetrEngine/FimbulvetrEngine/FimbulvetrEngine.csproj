@@ -65,6 +65,7 @@
     <Compile Include="Graphics\VertexBuffer.cs" />
     <Compile Include="Graphics\VertexDeclaration.cs" />
     <Compile Include="Graphics\VertexElement.cs" />
+    <Compile Include="Graphics\VertexPositionNormalTexture.cs" />
     <Compile Include="IO\DefaultFileSystem.cs" />
     <Compile Include="IO\DefaultFileSystemFactory.cs" />
     <Compile Include="IO\FileSystemManager.cs" />

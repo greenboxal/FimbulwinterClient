@@ -16,8 +16,8 @@ namespace FimbulvetrEngine.Graphics
             : this(GL.GenTexture(), width, height)
         {
             Bind();
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
         }
@@ -50,6 +50,12 @@ namespace FimbulvetrEngine.Graphics
         public void Bind()
         {
             GL.BindTexture(TextureTarget.Texture2D, Texture);
+        }
+
+        public void SetWrapMode(TextureWrapMode s, TextureWrapMode t)
+        {
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)s);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)t);
         }
     }
 }

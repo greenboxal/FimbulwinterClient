@@ -13,7 +13,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
 {
     public class World
     {
-        public struct Water
+        public class Water
         {
             public float Level { get; private set; }
             public int Type { get; private set; }
@@ -59,7 +59,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             }
         }
 
-        public struct Light
+        public class Light
         {
             public int Longitude { get; private set; }
             public int Latitude { get; private set; }
@@ -108,7 +108,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             }
         }
 
-        public struct Ground
+        public class Ground
         {
             public int[] Square { get; private set; }
 
@@ -153,7 +153,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             }
         }
 
-        public struct ModelObject
+        public class ModelObject
         {
             private Vector3 _position;
             private Vector3 _rotation;
@@ -246,17 +246,10 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         public Light LightInfo { get; private set; }
         public Ground GroundInfo { get; private set; }
         private List<ModelObject> Models { get; set; }
-        public int WaterIndex { get; private set; }
         public Map Owner { get; private set; }
 
         protected byte MinorVersion;
         protected byte MajorVersion;
-
-        private static Texture2D[][] _waterTextures;
-        public static Texture2D[][] WaterTextures
-        {
-            get { return _waterTextures; }
-        }
 
         public World(Map owner)
         {
@@ -283,13 +276,16 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             AltitudeFile = br.ReadCString(40);
             ScrFile = br.ReadCString(40);
 
+            WaterInfo = new Water();
             WaterInfo.Load(br, MajorVersion, MinorVersion);
+
+            LightInfo = new Light();
             LightInfo.Load(br, MajorVersion, MinorVersion);
+
+            GroundInfo = new Ground();
             GroundInfo.Load(br, MajorVersion, MinorVersion);
 
             Models = new List<ModelObject>();
-
-            //Logger.TabLevel++;
 
             int count = br.ReadInt32();
             for (int i = 0; i < count; i++)
@@ -330,130 +326,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     br.ReadBytes(skipSize);
             }
 
-            //Logger.TabLevel--;
-
-            //Logger.WriteLine("Loading water type {0} textures...", WaterInfo.Type);
-            SetupWater(WaterInfo.Type);
-
-            //Logger.WriteLine("Creating water vertex buffer...");
-            //UpdateWaterVertices(Owner);
-
-            //Logger.WriteLine("World v{0}.{1} status: {2} objects - {3} models", MajorVersion, MinorVersion, count, Models.Count);
-            //Logger.WriteLine("    Water height: {0}", WaterInfo.Level);
-            //Logger.WriteLine("    Water type: {0}", WaterInfo.Type);
-
             return true;
         }
-
-        #region Water
-
-        private void SetupWater(int i)
-        {
-            if (_waterTextures == null)
-            {
-                _waterTextures = new Texture2D[8][];
-            }
-
-            if (_waterTextures[i] == null)
-            {
-                _waterTextures[i] = new Texture2D[32];
-
-                for (int j = 0; j < 32; j++)
-                {
-                    string sj = j.ToString(CultureInfo.InvariantCulture);
-
-                    if (sj.Length == 1)
-                        sj = "0" + sj;
-
-                    _waterTextures[i][j] = ContentManager.Instance.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1}.jpg", i, sj));
-                }
-            }
-        }
-
-        /*private void UpdateWaterVertices(Map Owner)
-        {
-            VertexPositionNormalTexture[] vertexdata = new VertexPositionNormalTexture[4];
-            short[] indexdata = new short[4];
-
-            float xmax = Owner.Ground.Zoom * Owner.Ground.Width;
-            float ymax = Owner.Ground.Zoom * Owner.Ground.Height;
-
-            Vector3[] position = new Vector3[4];
-            Vector2[] tex = new Vector2[4];
-
-            float x0 = (-Owner.Ground.Width / 2) * Owner.Ground.Zoom;
-            float x1 = ((Owner.Ground.Width - 1) - Owner.Ground.Width / 2 + 1) * Owner.Ground.Zoom;
-
-            float z0 = (-Owner.Ground.Height / 2) * Owner.Ground.Zoom;
-            float z1 = ((Owner.Ground.Height - 1) - Owner.Ground.Height / 2 + 1) * Owner.Ground.Zoom;
-
-            position[0] = new Vector3(x0, WaterInfo.Level, z0);
-            position[1] = new Vector3(x1, WaterInfo.Level, z0);
-            position[2] = new Vector3(x0, WaterInfo.Level, z1);
-            position[3] = new Vector3(x1, WaterInfo.Level, z1);
-
-            tex[0] = new Vector2(0, 0);
-            tex[1] = new Vector2(Owner.Ground.Width / 8, 0);
-            tex[2] = new Vector2(0, Owner.Ground.Height / 8);
-            tex[3] = new Vector2(Owner.Ground.Width / 8, Owner.Ground.Height / 8);
-
-            vertexdata[0] = new VertexPositionNormalTexture(position[0], new Vector3(1.0F), tex[0]);
-            vertexdata[1] = new VertexPositionNormalTexture(position[1], new Vector3(1.0F), tex[1]);
-            vertexdata[2] = new VertexPositionNormalTexture(position[2], new Vector3(1.0F), tex[2]);
-            vertexdata[3] = new VertexPositionNormalTexture(position[3], new Vector3(1.0F), tex[3]);
-
-            indexdata[0] = 0;
-            indexdata[1] = 1;
-            indexdata[2] = 2;
-            indexdata[3] = 3;
-
-            _vertices = new VertexBuffer(_graphicsDevice, typeof(VertexPositionNormalTexture), 4, BufferUsage.WriteOnly);
-            _vertices.SetData(vertexdata);
-
-            _indexes = new IndexBuffer(_graphicsDevice, typeof(short), 4, BufferUsage.WriteOnly);
-            _indexes.SetData(indexdata);
-        }*/
-
-        private double _totalElapsed;
-        public void UpdateWater(double elapsed)
-        {
-            _totalElapsed += elapsed;
-
-            if (_totalElapsed >= 50.0F)
-            {
-                WaterIndex++;
-                WaterIndex %= _waterTextures[WaterInfo.Type].Length;
-                _totalElapsed -= 50.0F;
-            }
-        }
-
-        /*public void DrawWater(Effect effect)
-        {
-            effect.Parameters["Texture"].SetValue(_waterTextures[WaterInfo.Type][WaterIndex]);
-
-            _graphicsDevice.SetVertexBuffer(_vertices);
-            _graphicsDevice.Indices = _indexes;
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-            }
-
-            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleStrip, 0, 0, _vertices.VertexCount, 0, _indexes.IndexCount / 2);
-        }*/
-
-        #endregion
-
-        /*GameTime _gameTime;
-        public void UpdateModels(GameTime gametime)
-        {
-            _gameTime = gametime;
-        }
-
-        public void DrawModels(Effect effect)
-        {
-            for (int i = 0; i < Models.Count; i++)
-                Models[i].Draw(effect, _gameTime);
-        }*/
     }
 }

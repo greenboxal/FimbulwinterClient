@@ -155,7 +155,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         public int Width { get; private set; }
         public int Height { get; private set; }
         public float Zoom { get; private set; }
-        public Texture2D[] Textures { get; private set; }
+        public string[] Textures { get; private set; }
 
         public Lightmap[] Lightmaps { get; private set; }
         public Cell[] Cells { get; private set; }
@@ -218,11 +218,10 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 texChunkSize = 80;
             }
 
-            Textures = new Texture2D[textureCount];
-
+            Textures = new string[textureCount];
             for (int i = 0; i < Textures.Length; i++)
             {
-                Textures[i] = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + br.ReadCString(texChunkSize));
+                Textures[i] = br.ReadCString(texChunkSize);
             }
 
             if (MajorVersion == 0 && MinorVersion == 0)
@@ -334,13 +333,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 }
             }
 
-            //Logger.WriteLine("Calculating normals...");
             CalculateNormals();
-
-            //Logger.WriteLine("Creating ground vertex buffer...");
-            SetupVertices();
-
-            //Logger.WriteLine("Ground v{0}.{1} status: {2} textures - {3} lightmaps - {4} surfaces - {5} cells - {6} vertices", MajorVersion, MinorVersion, Textures.Length, Lightmaps.Length, _surfaces.Length, Cells.Length, _vertices.VertexCount);
 
             return true;
         }
@@ -421,235 +414,6 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     Cells[i].Normal[4].Normalize();
                 }
             }
-        }
-
-        public void SetupVertices()
-        {
-            ObjectCount = 0;
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    int idx = y * Width + x;
-
-                    if (Cells[idx].TileUp != -1)
-                        ObjectCount++;
-
-                    if (Cells[idx].TileSide != -1)
-                        ObjectCount++;
-
-                    if (Cells[idx].TileOtherSide != -1)
-                        ObjectCount++;
-                }
-            }
-
-            VertexPositionTextureNormalLightmap[] vertexdata = new VertexPositionTextureNormalLightmap[ObjectCount * 4];
-            List<int>[] indexdata = new List<int>[Textures.Length];
-
-            for (int i = 0; i < indexdata.Length; i++)
-            {
-                indexdata[i] = new List<int>();
-            }
-
-            int curSurface = 0;
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    int idx = y * Width + x;
-
-                    if (Cells[idx].TileUp != -1)
-                    {
-                        int tid = _surfaces[Cells[idx].TileUp].Texture;
-
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileUp, curSurface, x, y, 0);
-
-                        curSurface++;
-                    }
-
-                    if (Cells[idx].TileSide != -1)
-                    {
-                        int tid = _surfaces[Cells[idx].TileSide].Texture;
-
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileSide, curSurface, x, y, 1);
-
-                        curSurface++;
-                    }
-
-                    if (Cells[idx].TileOtherSide != -1)
-                    {
-                        int tid = _surfaces[Cells[idx].TileOtherSide].Texture;
-
-                        SetupSurface(vertexdata, indexdata[tid], Cells[idx].TileOtherSide, curSurface, x, y, 2);
-
-                        curSurface++;
-                    }
-                }
-            }
-
-            VertexBuffer = new VertexBuffer(VertexPositionTextureNormalLightmap.VertexDeclaration);
-            VertexBuffer.SetData(vertexdata.ToArray(), BufferUsageHint.StaticDraw);
-
-            IndexBuffers = new IndexBuffer[Textures.Length];
-            for (int i = 0; i < IndexBuffers.Length; i++)
-            {
-                IndexBuffers[i] = new IndexBuffer(DrawElementsType.UnsignedInt);
-                IndexBuffers[i].SetData(indexdata[i].ToArray(), BufferUsageHint.StaticDraw);
-            }
-        }
-
-        private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surfaceId, int currentSurface, int x, int y, int type)
-        {
-            int idx = currentSurface * 4;
-            int cellIdx = y * Width + x;
-            Cell cell = Cells[cellIdx];
-
-            Surface surface = _surfaces[surfaceId];
-
-            Vector3[] position = new Vector3[4];
-            Vector3[] normal = new Vector3[4];
-
-            switch (type)
-            {
-                case 0:
-                    {
-                        float x0 = (x - Width / 2) * Zoom;
-                        float x1 = (x - Width / 2 + 1) * Zoom;
-
-                        float z0 = (y - Height / 2) * Zoom;
-                        float z1 = (y - Height / 2 + 1) * Zoom;
-
-                        position[0] = new Vector3(x0, cell.Height[0], z0);
-                        position[1] = new Vector3(x1, cell.Height[1], z0);
-                        position[2] = new Vector3(x0, cell.Height[2], z1);
-                        position[3] = new Vector3(x1, cell.Height[3], z1);
-
-                        normal[0] = cell.Normal[1];
-                        normal[1] = cell.Normal[2];
-                        normal[2] = cell.Normal[3];
-                        normal[3] = cell.Normal[4];
-                    }
-                    break;
-                case 1:
-                    {
-                        Cell cell2 = Cells[(y + 1) * Width + x];
-
-                        float x0 = (x - Width / 2) * Zoom;
-                        float x1 = (x - Width / 2 + 1) * Zoom;
-
-                        float z0 = (y - Height / 2 + 1) * Zoom;
-
-                        position[0] = new Vector3(x0, cell.Height[2], z0);
-                        position[1] = new Vector3(x1, cell.Height[3], z0);
-                        position[2] = new Vector3(x0, cell2.Height[0], z0);
-                        position[3] = new Vector3(x1, cell2.Height[1], z0);
-
-                        normal[0] = new Vector3(0, 0, cell2.Height[0] > cell.Height[3] ? -1 : 1);
-                        normal[1] = normal[0];
-                        normal[2] = normal[0];
-                        normal[3] = normal[0];
-                    }
-                    break;
-                case 2:
-                    {
-                        Cell cell2 = Cells[y * Width + x + 1];
-
-                        float x0 = (x - Width / 2 + 1) * Zoom;
-
-                        float z0 = (y - Height / 2) * Zoom;
-                        float z1 = (y - Height / 2 + 1) * Zoom;
-
-                        position[0] = new Vector3(x0, cell.Height[3], z1);
-                        position[1] = new Vector3(x0, cell.Height[1], z0);
-                        position[2] = new Vector3(x0, cell2.Height[2], z1);
-                        position[3] = new Vector3(x0, cell2.Height[0], z0);
-
-                        normal[0] = new Vector3(cell.Height[3] > cell2.Height[2] ? -1 : 1, 0, 0);
-                        normal[1] = normal[0];
-                        normal[2] = normal[0];
-                        normal[3] = normal[0];
-                    }
-                    break;
-            }
-
-            int lmW = (int)Math.Floor(Math.Sqrt(Lightmaps.Length));
-            int lmH = (int)Math.Ceiling((float)Lightmaps.Length / lmW);
-            int lmX = (int)Math.Floor((float)surface.Lightmap / lmH);
-            int lmY = surface.Lightmap % lmH;
-
-            float[] lightmapU = new float[2];
-            float[] lightmapV = new float[2];
-            lightmapU[0] = (0.1f + lmX) / lmW;
-            lightmapU[1] = (0.9f + lmX) / lmW;
-            lightmapV[0] = (0.1f + lmY) / lmH;
-            lightmapV[1] = (0.9f + lmY) / lmH;
-
-            vertexdata[idx + 0] = new VertexPositionTextureNormalLightmap(position[0], normal[0], surface.TexCoord[0], new Vector2(lightmapU[0], lightmapV[0]), surface.Color);
-            vertexdata[idx + 1] = new VertexPositionTextureNormalLightmap(position[1], normal[1], surface.TexCoord[1], new Vector2(lightmapU[1], lightmapV[0]), surface.Color);
-            vertexdata[idx + 2] = new VertexPositionTextureNormalLightmap(position[2], normal[2], surface.TexCoord[2], new Vector2(lightmapU[0], lightmapV[1]), surface.Color);
-            vertexdata[idx + 3] = new VertexPositionTextureNormalLightmap(position[3], normal[3], surface.TexCoord[3], new Vector2(lightmapU[1], lightmapV[1]), surface.Color);
-
-            indexdata.Add(idx + 0);
-            indexdata.Add(idx + 1);
-            indexdata.Add(idx + 2);
-            indexdata.Add(idx + 2);
-            indexdata.Add(idx + 1);
-            indexdata.Add(idx + 3);
-        }
-
-        public void CreateLightmap()
-        {
-            if (Lightmaps.Length == 0)
-                return;
-
-            int w = (int)Math.Floor(Math.Sqrt(Lightmaps.Length));
-            int h = (int)Math.Ceiling((float)Lightmaps.Length / w);
-
-            Color4[] color = new Color4[8 * 8 * w * h];
-
-            int x = 0, y = 0;
-            foreach (Lightmap t in Lightmaps)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    int offset = y * w * 8 * 8 + j * w * 8 + x * 8;
-
-                    for (int n = 0; n < 8; n++)
-                    {
-                        color[offset + n] = Color.FromArgb(t.Brightness[j * 8 + n], t.Intensity[j * 8 + n]);
-                    }
-                }
-
-                if (++y >= h)
-                {
-                    y = 0;
-                    x++;
-                }
-            }
-
-            LightmapTexture = new Texture2D(w * 8, h * 8);
-            LightmapTexture.SetData(PixelFormat.Rgba, PixelInternalFormat.Rgba, PixelType.Float, color);
-        }
-
-        public void Draw()
-        {
-            VertexBuffer.Bind();
-            
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthMask(true);
-
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-
-            ShaderProgram.Begin();
-            ShaderProgram.SetLightmap(LightmapTexture);
-            for (int i = 0; i < Textures.Length; i++)
-            {
-                ShaderProgram.SetTexture(Textures[i]);
-                VertexBuffer.Render(BeginMode.Triangles, IndexBuffers[i], IndexBuffers[i].Count);
-            }
-            ShaderProgram.End();
         }
     }
 }

@@ -67,6 +67,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Camera.cs" />
+    <None Include="data\fb\Shaders\Water_VS.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\fb\Shaders\Water_PS.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\WorldGameMode.cs" />
     <Compile Include="Program.cs" />

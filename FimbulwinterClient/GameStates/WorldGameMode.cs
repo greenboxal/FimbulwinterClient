@@ -7,6 +7,7 @@ using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.Core.Content;
+using FimbulwinterClient.Core.Graphics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -18,6 +19,7 @@ namespace FimbulwinterClient.GameStates
     {
         public string WorldName { get; private set; }
         public Map World { get; private set; }
+        public WorldRenderer WorldRenderer { get; private set; }
         public Camera Camera { get; private set; }
 
         public WorldGameState(string worldName)
@@ -29,6 +31,9 @@ namespace FimbulwinterClient.GameStates
         {
             Camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, -1), 1.0F, 5000.0F);
             World = ContentManager.Instance.Load<Map>(@"data\" + WorldName + ".gat");
+            
+            WorldRenderer = new WorldRenderer(World);
+            WorldRenderer.LoadResources();
 
             Ragnarok.Instance.Mouse.ButtonDown += Mouse_ButtonDown;
             Ragnarok.Instance.Mouse.ButtonUp += Mouse_ButtonUp;
@@ -77,6 +82,7 @@ namespace FimbulwinterClient.GameStates
             if (keyboardState[Key.F])
             {
                 World = null;
+                WorldRenderer = null;
                 GC.Collect();
             }
 
@@ -89,16 +95,18 @@ namespace FimbulwinterClient.GameStates
 #pragma warning restore 612,618
             }
 
+            if (WorldRenderer != null)
+                WorldRenderer.Update(e.Time);
+
             Ragnarok.Instance.Title = string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", Camera.Position.X, Camera.Position.Y, Camera.Position.Y, Camera.Target.X, Camera.Target.Y, Camera.Target.Z);
         }
 
         public override void Render(FrameEventArgs e)
         {
             Camera.Update();
-            GL.Rotate(180, Vector3.UnitX);
 
-            if (World != null)
-                World.Draw(e.Time);
+            if (WorldRenderer != null)
+                WorldRenderer.Render(e.Time);
         }
 
         public override void Shutdown()
