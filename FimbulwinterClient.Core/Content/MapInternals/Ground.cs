@@ -104,16 +104,16 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 if (majorVersion == 0 && minorVersion == 0)
                 {
                     TexCoord[0].X = br.ReadSingle();
-                    TexCoord[0].Y = br.ReadSingle();
+                    TexCoord[0].Y = 1 - br.ReadSingle();
 
                     TexCoord[1].X = br.ReadSingle();
-                    TexCoord[1].Y = br.ReadSingle();
+                    TexCoord[1].Y = 1 - br.ReadSingle();
 
                     TexCoord[2].X = br.ReadSingle();
-                    TexCoord[2].Y = br.ReadSingle();
+                    TexCoord[2].Y = 1 - br.ReadSingle();
 
                     TexCoord[3].X = br.ReadSingle();
-                    TexCoord[3].Y = br.ReadSingle();
+                    TexCoord[3].Y = 1 - br.ReadSingle();
 
                     Texture = texture;
                     Lightmap = 0;
@@ -128,10 +128,10 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     TexCoord[2].X = br.ReadSingle();
                     TexCoord[3].X = br.ReadSingle();
 
-                    TexCoord[0].Y = br.ReadSingle();
-                    TexCoord[1].Y = br.ReadSingle();
-                    TexCoord[2].Y = br.ReadSingle();
-                    TexCoord[3].Y = br.ReadSingle();
+                    TexCoord[0].Y = 1 - br.ReadSingle();
+                    TexCoord[1].Y = 1 - br.ReadSingle();
+                    TexCoord[2].Y = 1 - br.ReadSingle();
+                    TexCoord[3].Y = 1 - br.ReadSingle();
 
                     Texture = br.ReadInt16();
                     Lightmap = br.ReadInt16();
@@ -602,6 +602,11 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             VertexBuffer.Bind();
 
             GL.Enable(EnableCap.Texture2D);
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(true);
+            GL.CullFace(CullFaceMode.Back);
+
             GL.EnableClientState(ArrayCap.TextureCoordArray);
             GL.EnableClientState(ArrayCap.VertexArray);
 

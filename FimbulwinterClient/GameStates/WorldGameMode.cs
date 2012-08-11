@@ -89,8 +89,6 @@ namespace FimbulwinterClient.GameStates
 #pragma warning restore 612,618
             }
 
-            Camera.Update();
-
             Ragnarok.Instance.Title = string.Format("X={0}, Y={1}, Z={2} -> X={3}, Y={4}, Z={5}", Camera.Position.X, Camera.Position.Y, Camera.Position.Y, Camera.Target.X, Camera.Target.Y, Camera.Target.Z);
         }
 
