@@ -36,7 +36,7 @@ namespace FimbulwinterClient.Core.Graphics
         {
             GL.ActiveTexture(TextureUnit.Texture1);
             lightmap.Bind();
-            GL.Uniform1(_texturePosition, 1);
+            GL.Uniform1(_lightmapPosition, 1);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace FimbulwinterClient.Core.Content
         public Ground Ground { get; private set; }
         public Altitude Altitude { get; private set; }
         public World World { get; private set; }
-        public Texture2D Lightmap { get; private set; }
 
         public Map()
         {
@@ -35,6 +34,7 @@ namespace FimbulwinterClient.Core.Content
                 return false;
 
             Ground.SetupVertices();
+            Ground.CreateLightmap();
 
             return true;
         }

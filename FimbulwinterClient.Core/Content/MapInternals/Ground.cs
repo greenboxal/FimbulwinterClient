@@ -10,6 +10,7 @@ using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace FimbulwinterClient.Core.Content.MapInternals
@@ -155,23 +156,23 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         public int Height { get; private set; }
         public float Zoom { get; private set; }
         public Texture2D[] Textures { get; private set; }
+
         public Lightmap[] Lightmaps { get; private set; }
         public Cell[] Cells { get; private set; }
-
         private Surface[] _surfaces;
         public Surface[] Surfaces
         {
             get { return _surfaces; }
         }
 
-        public VertexBuffer VertexBuffer { get; private set; }
-        public IndexBuffer[] IndexBuffers { get; private set; }
-
         public int ObjectCount { get; set; }
 
         protected byte MinorVersion;
         protected byte MajorVersion;
 
+        public VertexBuffer VertexBuffer { get; private set; }
+        public IndexBuffer[] IndexBuffers { get; private set; }
+        public Texture2D LightmapTexture { get; private set; }
         public GroundShaderProgram ShaderProgram { get; private set; }
 
         public Ground()
@@ -498,13 +499,13 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             }
         }
 
-        private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surface_id, int current_surface, int x, int y, int type)
+        private void SetupSurface(VertexPositionTextureNormalLightmap[] vertexdata, List<int> indexdata, int surfaceId, int currentSurface, int x, int y, int type)
         {
-            int idx = current_surface * 4;
+            int idx = currentSurface * 4;
             int cellIdx = y * Width + x;
             Cell cell = Cells[cellIdx];
 
-            Surface surface = _surfaces[surface_id];
+            Surface surface = _surfaces[surfaceId];
 
             Vector3[] position = new Vector3[4];
             Vector3[] normal = new Vector3[4];
@@ -597,26 +598,58 @@ namespace FimbulwinterClient.Core.Content.MapInternals
             indexdata.Add(idx + 3);
         }
 
+        public void CreateLightmap()
+        {
+            if (Lightmaps.Length == 0)
+                return;
+
+            int w = (int)Math.Floor(Math.Sqrt(Lightmaps.Length));
+            int h = (int)Math.Ceiling((float)Lightmaps.Length / w);
+
+            Color4[] color = new Color4[8 * 8 * w * h];
+
+            int x = 0, y = 0;
+            foreach (Lightmap t in Lightmaps)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    int offset = y * w * 8 * 8 + j * w * 8 + x * 8;
+
+                    for (int n = 0; n < 8; n++)
+                    {
+                        color[offset + n] = Color.FromArgb(t.Brightness[j * 8 + n], t.Intensity[j * 8 + n]);
+                    }
+                }
+
+                if (++y >= h)
+                {
+                    y = 0;
+                    x++;
+                }
+            }
+
+            LightmapTexture = new Texture2D(w * 8, h * 8);
+            LightmapTexture.SetData(PixelFormat.Rgba, PixelInternalFormat.Rgba, PixelType.Float, color);
+        }
+
         public void Draw()
         {
             VertexBuffer.Bind();
-
-            GL.Enable(EnableCap.Texture2D);
-
+            
             GL.Enable(EnableCap.DepthTest);
             GL.DepthMask(true);
+
+            GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
 
-            GL.EnableClientState(ArrayCap.TextureCoordArray);
-            GL.EnableClientState(ArrayCap.VertexArray);
-
+            ShaderProgram.Begin();
+            ShaderProgram.SetLightmap(LightmapTexture);
             for (int i = 0; i < Textures.Length; i++)
             {
-                ShaderProgram.Begin();
                 ShaderProgram.SetTexture(Textures[i]);
                 VertexBuffer.Render(BeginMode.Triangles, IndexBuffers[i], IndexBuffers[i].Count);
-                ShaderProgram.End();
             }
+            ShaderProgram.End();
         }
     }
 }

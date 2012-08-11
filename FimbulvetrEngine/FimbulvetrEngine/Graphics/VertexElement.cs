@@ -31,13 +31,20 @@ namespace FimbulvetrEngine.Graphics
             switch (Kind)
             {
                 case VertexElementUsage.Position:
+                    GL.EnableClientState(ArrayCap.VertexArray);
                     GL.VertexPointer(GetValueCount(), VertexPointerType.Float, stride, offset);
                     break;
                 case VertexElementUsage.Normal:
+                    GL.EnableClientState(ArrayCap.NormalArray);
                     GL.NormalPointer(NormalPointerType.Float, stride, offset);
                     break;
+                case VertexElementUsage.Color:
+                    GL.EnableClientState(ArrayCap.ColorArray);
+                    GL.ColorPointer(GetValueCount(), ColorPointerType.Float, stride, offset);
+                    break;
                 case VertexElementUsage.TextureCoordinate:
-                    GL.ActiveTexture(Unit);
+                    GL.ClientActiveTexture(Unit);
+                    GL.EnableClientState(ArrayCap.TextureCoordArray);
                     GL.TexCoordPointer(GetValueCount(), TexCoordPointerType.Float, stride, offset);
                     break;
             }
@@ -52,6 +59,8 @@ namespace FimbulvetrEngine.Graphics
                 case VertexElementFormat.Vector3:
                     return 12;
                 case VertexElementFormat.Vector4:
+                    return 16;
+                case VertexElementFormat.Color4:
                     return 16;
             }
 
@@ -68,6 +77,8 @@ namespace FimbulvetrEngine.Graphics
                     return 3;
                 case VertexElementFormat.Vector4:
                     return 4;
+                case VertexElementFormat.Color4:
+                    return 4;
             }
 
             return 0;
@@ -78,13 +89,15 @@ namespace FimbulvetrEngine.Graphics
     {
         Vector2,
         Vector3,
-        Vector4
+        Vector4,
+        Color4,
     }
 
     public enum VertexElementUsage
     {
         Position,
         Normal,
-        TextureCoordinate
+        Color,
+        TextureCoordinate,
     }
 }
