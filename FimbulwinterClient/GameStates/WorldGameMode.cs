@@ -8,6 +8,7 @@ using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using QuickFont;
 
 namespace FimbulwinterClient.GameStates
 {
@@ -16,6 +17,7 @@ namespace FimbulwinterClient.GameStates
         public string WorldName { get; private set; }
         public Texture2D Texture { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
+        public QFont Font { get; private set; }
 
         public WorldGameState(string worldName)
         {
@@ -26,6 +28,7 @@ namespace FimbulwinterClient.GameStates
         {
             SpriteBatch = new SpriteBatch();
             Texture = ContentManager.Instance.Load<Texture2D>(@"data\texture\rag_logo.bmp");
+            Font = ContentManager.Instance.Load<QFont>(@"data\fb\gulim.ttc");
         }
 
         public override void Update(FrameEventArgs e)
@@ -39,7 +42,8 @@ namespace FimbulwinterClient.GameStates
             GL.ClearColor(Color.CornflowerBlue);
 
             SpriteBatch.Begin();
-            SpriteBatch.Draw(Texture, new Vector2(100, 100), Color.Wheat);
+            SpriteBatch.Draw(Texture, new Vector2(100, 100), Color.White);
+            SpriteBatch.DrawText(Font, "Test text!", new Vector2(0, 0), Color.Black);
             SpriteBatch.End();
         }
 

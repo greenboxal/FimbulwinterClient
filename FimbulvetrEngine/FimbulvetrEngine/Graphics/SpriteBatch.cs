@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using QuickFont;
 
 namespace FimbulvetrEngine.Graphics
 {
@@ -48,12 +49,34 @@ namespace FimbulvetrEngine.Graphics
 
                 GL.Begin(BeginMode.Quads);
                 {
-                    GL.TexCoord2(0.0F, 0.0F); GL.Vertex2(_position.X, _position.Y);
-                    GL.TexCoord2(1.0F, 0.0F); GL.Vertex2(_position.X + _size.X, _position.Y);
-                    GL.TexCoord2(1.0F, 1.0F); GL.Vertex2(_position.X + _size.X, _position.Y + _size.Y);
-                    GL.TexCoord2(0.0F, 1.0F); GL.Vertex2(_position.X, _position.Y + _size.Y);
+                    GL.TexCoord2(0.0F, 1.0F); GL.Vertex2(_position.X, _position.Y);
+                    GL.TexCoord2(1.0F, 1.0F); GL.Vertex2(_position.X + _size.X, _position.Y);
+                    GL.TexCoord2(1.0F, 0.0F); GL.Vertex2(_position.X + _size.X, _position.Y + _size.Y);
+                    GL.TexCoord2(0.0F, 0.0F); GL.Vertex2(_position.X, _position.Y + _size.Y);
                 }
                 GL.End();
+            }
+        }
+
+        private class TextRenderOperation : RenderOperation
+        {
+            private readonly QFont _font;
+            private readonly string _text;
+            private readonly Vector2 _position;
+            private readonly Color _color;
+
+            public TextRenderOperation(QFont font, string text, Vector2 position, Color color)
+            {
+                _font = font;
+                _text = text;
+                _position = position;
+                _color = color;
+            }
+
+            public override void Render()
+            {
+                _font.Options.Colour = _color;
+                _font.Print(_text, _position);
             }
         }
 
@@ -78,10 +101,9 @@ namespace FimbulvetrEngine.Graphics
             GL.Enable(EnableCap.CullFace);
             GL.FrontFace(FrontFaceDirection.Cw);
 
-            // Setup 2D mode
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.PushMatrix();
-            GL.Ortho(0, Vetr.Instance.Window.Width, Vetr.Instance.Window.Height, 0, 0, 1);
+            // Setup 2D mode, we use QFont.Begin() and QFont.End() as helpers 
+            // to setup the 2D projection without overflowing GL projection stack
+            QFont.Begin();
             GL.MatrixMode(MatrixMode.Modelview);
             GL.PushMatrix();
             GL.LoadIdentity();
@@ -91,8 +113,7 @@ namespace FimbulvetrEngine.Graphics
                 operation.Render();
 
             // Restore matrices
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.PopMatrix();
+            QFont.End();
             GL.MatrixMode(MatrixMode.Modelview);
             GL.PopMatrix();
             
@@ -116,12 +137,17 @@ namespace FimbulvetrEngine.Graphics
 
         public void Draw(Texture2D texture, Vector2 position, Color color)
         {
-            _operations.Add(new Texture2DRenderOperation(texture, position, new Vector2(texture.Width, texture.Height), color));
+            Draw(texture, position, new Vector2(texture.Width, texture.Height), color);
         }
 
         public void Draw(Texture2D texture, Vector2 position, Vector2 size, Color color)
         {
             _operations.Add(new Texture2DRenderOperation(texture, position, size, color));
+        }
+
+        public void DrawText(QFont font, string text, Vector2 position, Color color)
+        {
+            _operations.Add(new TextRenderOperation(font, text, position, color));
         }
     }
 }

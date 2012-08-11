@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Content\ContentManager.cs" />
     <Compile Include="Content\IContentLoader.cs" />
+    <Compile Include="Content\Loaders\QFontLoader.cs" />
     <Compile Include="Content\Loaders\StreamLoader.cs" />
     <Compile Include="Content\Loaders\StringLoader.cs" />
     <Compile Include="Content\Loaders\Texture2DLoader.cs" />
@@ -65,6 +66,26 @@
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuickFont\Builder.cs" />
+    <Compile Include="QuickFont\Configuration\QFontBuilderConfiguration.cs" />
+    <Compile Include="QuickFont\Configuration\QFontConfiguration.cs" />
+    <Compile Include="QuickFont\Configuration\QFontKerningConfiguration.cs" />
+    <Compile Include="QuickFont\Configuration\QFontLoaderConfiguration.cs" />
+    <Compile Include="QuickFont\Configuration\QFontShadowConfiguration.cs" />
+    <Compile Include="QuickFont\Helper.cs" />
+    <Compile Include="QuickFont\JBitmap.cs" />
+    <Compile Include="QuickFont\JMath.cs" />
+    <Compile Include="QuickFont\JTexture.cs" />
+    <Compile Include="QuickFont\JTextureManager.cs" />
+    <Compile Include="QuickFont\KerningCalculator.cs" />
+    <Compile Include="QuickFont\ProjectionStack.cs" />
+    <Compile Include="QuickFont\QBitmap.cs" />
+    <Compile Include="QuickFont\QFont.cs" />
+    <Compile Include="QuickFont\QFontData.cs" />
+    <Compile Include="QuickFont\QFontGlyph.cs" />
+    <Compile Include="QuickFont\QFontRenderOptions.cs" />
+    <Compile Include="QuickFont\TextNodeList.cs" />
+    <Compile Include="QuickFont\TexturePage.cs" />
     <Compile Include="Vetr.cs" />
   </ItemGroup>
   <ItemGroup />

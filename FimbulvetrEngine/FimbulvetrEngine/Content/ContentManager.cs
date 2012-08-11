@@ -6,6 +6,7 @@ using System.IO;
 using FimbulvetrEngine.Content.Loaders;
 using FimbulvetrEngine.Graphics;
 using FimbulvetrEngine.IO;
+using QuickFont;
 
 namespace FimbulvetrEngine.Content
 {
@@ -34,6 +35,7 @@ namespace FimbulvetrEngine.Content
             RegisterLoader<Stream>(new StreamLoader());
             RegisterLoader<String>(new StringLoader());
             RegisterLoader<Texture2D>(new Texture2DLoader());
+            RegisterLoader<QFont>(new QFontLoader());
         }
 
         public void RegisterLoader<T>(IContentLoader loader)
