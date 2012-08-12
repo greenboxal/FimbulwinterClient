@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Threading;
 using FimbulvetrEngine.Content.Loaders;
 using FimbulvetrEngine.Graphics;
 using FimbulvetrEngine.IO;
@@ -16,6 +17,7 @@ namespace FimbulvetrEngine.Content
 
         public Dictionary<Type, IContentLoader> ContentLoaders { get; private set; }
         public Dictionary<string, object> Cache { get; private set; }
+        public Queue<Tuple<WaitCallback, object>> FinalBackgroundQueue { get; private set; }
 
         public ContentManager()
         {
@@ -24,6 +26,7 @@ namespace FimbulvetrEngine.Content
 
             ContentLoaders = new Dictionary<Type, IContentLoader>();
             Cache = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            FinalBackgroundQueue = new Queue<Tuple<WaitCallback, object>>();
 
             RegisterDefaultLoaders();
 
@@ -44,34 +47,72 @@ namespace FimbulvetrEngine.Content
                 ContentLoaders.Add(typeof(T), loader);
         }
 
-        public T Load<T>(string contentName)
+        public T Load<T>(string contentName, bool background = false)
         {
-            object cached;
-
-            if (Cache.TryGetValue(contentName, out cached))
+            lock (Cache)
             {
-                return (T)cached;
+                object cached;
+                if (Cache.TryGetValue(contentName, out cached))
+                {
+                    return (T)cached;
+                }
             }
 
-            return LoadNewContent<T>(contentName);
+            return LoadNewContent<T>(contentName, background);
         }
 
-        private T LoadNewContent<T>(string contentName)
+        private T LoadNewContent<T>(string contentName, bool background)
         {
             if (!ContentLoaders.ContainsKey(typeof(T)))
                 return default(T);
 
-            Stream stream = FileSystemManager.Instance.OpenStream(contentName);
-
-            if (stream == null)
-                return default(T);
-
-            return (T)ContentLoaders[typeof(T)].LoadContent(this, contentName, stream);
+            return (T)ContentLoaders[typeof(T)].LoadContent(this, contentName, background);
         }
 
         public void CacheContent(string contentName, object value)
         {
-            Cache.Add(contentName, value);
+            lock (Cache)
+            {
+                Cache[contentName] = value;
+            }
+        }
+
+        public void EnqueueBackgroundLoading(WaitCallback action, object state = null)
+        {
+            ThreadPool.QueueUserWorkItem(action, state);
+        }
+
+        public void FinalizeBackgroundLoading(WaitCallback action, object state = null)
+        {
+            lock (FinalBackgroundQueue)
+            {
+                FinalBackgroundQueue.Enqueue(new Tuple<WaitCallback, object>(action, state));
+            }
+        }
+
+        public void PoolBackgroundLoading(int max = 0)
+        {
+            int count = 0;
+
+            while (true)
+            {
+                Tuple<WaitCallback, object> callback = null;
+
+                lock (FinalBackgroundQueue)
+                {
+                    if (FinalBackgroundQueue.Count > 0)
+                        callback = FinalBackgroundQueue.Dequeue();
+                }
+
+                if (callback == null)
+                    break;
+
+                callback.Item1(callback.Item2);
+
+                count++;
+                if (max != 0 && count >= max)
+                    break;
+            }
         }
     }
 }

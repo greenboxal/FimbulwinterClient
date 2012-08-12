@@ -8,6 +8,6 @@ namespace FimbulvetrEngine.Graphics
 {
     public interface ITextureLoader
     {
-        Texture2D LoadTexture2D(Stream stream);
+        bool LoadTexture2D(Stream stream, Texture2D texture, bool background);
     }
 }

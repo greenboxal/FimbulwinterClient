@@ -80,9 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\Loaders\MapLoader.cs" />
+    <Compile Include="Content\Loaders\RsmModelLoader.cs" />
     <Compile Include="Content\Map.cs" />
     <Compile Include="Content\MapInternals\Altitude.cs" />
     <Compile Include="Content\MapInternals\Ground.cs" />
+    <Compile Include="Graphics\RsmMesh.cs" />
+    <Compile Include="Graphics\RsmModel.cs" />
     <Compile Include="Graphics\VertexPositionTextureNormalLightmap.cs" />
     <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="Graphics\GroundShaderProgram.cs" />

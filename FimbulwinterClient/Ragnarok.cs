@@ -131,6 +131,8 @@ namespace FimbulwinterClient
             {
                 _fpsCounter++;
             }
+
+            ContentManager.Instance.PoolBackgroundLoading(3);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

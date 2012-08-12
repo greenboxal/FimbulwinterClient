@@ -20,6 +20,7 @@ namespace FimbulvetrEngine.Framework
         public static Game Instance { get; private set; }
 
         public Game()
+            : base(800, 600, GraphicsMode.Default, "Fimbulvetr", GameWindowFlags.Default, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Default)
         {
             if (Instance != null)
                 throw new Exception("This class can have only one instance, use Game.Instance.");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine.Content;
 
 namespace FimbulvetrEngine.Graphics
 {
@@ -27,9 +28,13 @@ namespace FimbulvetrEngine.Graphics
             Loaders.Add(loader);
         }
 
-        public Texture2D LoadFromStream(Stream stream)
+        public void LoadFromStream(Stream stream, Texture2D texture, bool background = false)
         {
-            return Loaders.Select(loader => loader.LoadTexture2D(stream)).FirstOrDefault(texture => texture != null);
+            foreach (ITextureLoader loader in Loaders)
+            {
+                if (loader.LoadTexture2D(stream, texture, background))
+                    break;
+            }
         }
     }
 }

@@ -138,7 +138,7 @@ namespace FimbulwinterClient.Core.Graphics
             GroundMeshes = new Tuple<Texture2D, IndexBuffer>[Map.Ground.Textures.Length];
             for (int i = 0; i < GroundMeshes.Length; i++)
             {
-                Texture2D texture = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + Map.Ground.Textures[i]);
+                Texture2D texture = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + Map.Ground.Textures[i], true);
 
                 IndexBuffer buffer = new IndexBuffer(DrawElementsType.UnsignedInt);
                 buffer.SetData(indexdata[i].ToArray(), BufferUsageHint.StaticDraw);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using Tao.DevIl;
 
@@ -10,9 +12,13 @@ namespace FimbulvetrEngine.Plugins.DevIL
 {
     public class DevILTextureLoader : ITextureLoader
     {
-        public Texture2D LoadTexture2D(Stream stream)
+        private AutoResetEvent _mutex = new AutoResetEvent(true);
+
+        public bool LoadTexture2D(Stream stream, Texture2D texture, bool background)
         {
             int id;
+
+            _mutex.WaitOne();
 
             Il.ilGenImages(1, out id);
             Il.ilBindImage(id);
@@ -20,14 +26,13 @@ namespace FimbulvetrEngine.Plugins.DevIL
             byte[] buffer = new byte[stream.Length];
             stream.Read(buffer, 0, buffer.Length);
 
-            Il.ilEnable(Il.IL_ORIGIN_SET);
             Il.ilSetInteger(Il.IL_ORIGIN_MODE, Il.IL_ORIGIN_UPPER_LEFT);
 
             Il.ilLoadL(Il.IL_TYPE_UNKNOWN, buffer, buffer.Length);
 
             int error = Il.ilGetError();
             if (error != Il.IL_NO_ERROR)
-                return null;
+                return false;
 
             int format = Il.ilGetInteger(Il.IL_IMAGE_FORMAT);
             int type = Il.ilGetInteger(Il.IL_IMAGE_TYPE);
@@ -57,17 +62,29 @@ namespace FimbulvetrEngine.Plugins.DevIL
             int width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
             int height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
 
-            Texture2D result = new Texture2D(width, height);
+            texture.SetSize(width, height);
 
-            result.Bind();
+            if (background)
+            {
+                ContentManager.Instance.FinalizeBackgroundLoading(o => FinalizeLoading(texture, id));
+            }
+            else
+            {
+                FinalizeLoading(texture, id);
+            }
+
+            return true;
+        }
+
+        public void FinalizeLoading(Texture2D texture, int id)
+        {
+            texture.Bind();
             Ilut.ilutGLTexImage(0);
-
-            Il.ilDisable(Il.IL_ORIGIN_SET);
-            Il.ilDisable(Il.IL_FORMAT_SET);
+            texture.SetLoaded();
 
             Il.ilDeleteImages(1, ref id);
 
-            return result;
+            _mutex.Set();
         }
     }
 }

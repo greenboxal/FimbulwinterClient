@@ -6,6 +6,7 @@ using FimbulvetrEngine.Content;
 using FimbulvetrEngine.IO;
 using FimbulwinterClient.Core.Content;
 using FimbulwinterClient.Core.Content.Loaders;
+using FimbulwinterClient.Core.Graphics;
 using FimbulwinterClient.Core.IO;
 
 namespace FimbulwinterClient.Core
@@ -17,6 +18,7 @@ namespace FimbulwinterClient.Core
             FileSystemManager.Instance.RegisterFileSystemFactory(new GrfFileSystemFactory());
 
             ContentManager.Instance.RegisterLoader<Map>(new MapLoader());
+            ContentManager.Instance.RegisterLoader<RsmModel>(new RsmModelLoader());
         }
     }
 }

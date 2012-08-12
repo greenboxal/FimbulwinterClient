@@ -5,14 +5,20 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using FimbulvetrEngine.IO;
 using QuickFont;
 
 namespace FimbulvetrEngine.Content.Loaders
 {
     public class QFontLoader : IContentLoader
     {
-        public object LoadContent(ContentManager contentManager, string contentName, Stream stream)
+        public object LoadContent(ContentManager contentManager, string contentName, bool background)
         {
+            Stream stream = FileSystemManager.Instance.OpenStream(contentName);
+
+            if (stream == null)
+                return null;
+
             byte[] bytes = new byte[stream.Length];
             stream.Read(bytes, 0, bytes.Length);
             stream.Close();

@@ -21,6 +21,9 @@ namespace FimbulvetrEngine.Plugins.DevIL
             Il.ilInit();
             Ilut.ilutRenderer(Ilut.ILUT_OPENGL);
 
+            Il.ilEnable(Il.IL_ORIGIN_SET);
+            Il.ilEnable(Il.IL_FORMAT_SET);
+
             TextureManager.Instance.RegisterTextureLoader(new DevILTextureLoader());
 
             return true;

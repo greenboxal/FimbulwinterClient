@@ -7,6 +7,7 @@ using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core;
 using FimbulwinterClient.Core.Content;
+using FimbulwinterClient.Core.Content.MapInternals;
 using FimbulwinterClient.Core.Graphics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;

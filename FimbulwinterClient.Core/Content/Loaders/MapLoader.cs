@@ -7,9 +7,9 @@ using FimbulvetrEngine.Content;
 
 namespace FimbulwinterClient.Core.Content.Loaders
 {
-    class MapLoader : IContentLoader
+    public class MapLoader : IContentLoader
     {
-        public object LoadContent(ContentManager contentManager, string contentName, Stream stream)
+        public object LoadContent(ContentManager contentManager, string contentName, bool background)
         {
             string baseName = Path.GetFileNameWithoutExtension(contentName);
 
@@ -25,7 +25,6 @@ namespace FimbulwinterClient.Core.Content.Loaders
             gat.Close();
             gnd.Close();
             rsw.Close();
-            stream.Close();
 
             return result;
         }

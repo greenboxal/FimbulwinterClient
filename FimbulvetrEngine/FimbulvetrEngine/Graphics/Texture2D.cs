@@ -11,6 +11,13 @@ namespace FimbulvetrEngine.Graphics
         public int Texture { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public bool Loaded { get; private set; }
+
+        public Texture2D()
+            : this(0, 0)
+        {
+
+        }
 
         public Texture2D(int width, int height)
             : this(GL.GenTexture(), width, height)
@@ -27,12 +34,19 @@ namespace FimbulvetrEngine.Graphics
             Texture = texture;
             Width = width;
             Height = height;
+            Loaded = false;
         }
 
         protected override void GCUnmanagedFinalize()
         {
             if (Texture != 0)
                 GL.DeleteTexture(Texture);
+        }
+
+        public void SetSize(int width, int height)
+        {
+            Width = width;
+            Height = height;
         }
 
         public void SetData(PixelFormat format, PixelInternalFormat iFormat, PixelType type, IntPtr data)
@@ -56,6 +70,11 @@ namespace FimbulvetrEngine.Graphics
         {
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)s);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)t);
+        }
+
+        public void SetLoaded()
+        {
+            Loaded = true;
         }
     }
 }

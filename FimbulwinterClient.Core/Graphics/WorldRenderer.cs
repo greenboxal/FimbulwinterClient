@@ -86,6 +86,15 @@ namespace FimbulwinterClient.Core.Graphics
             }
             GL.PopMatrix();
 
+            // Render models
+            GL.PushMatrix();
+            GL.Rotate(180, Vector3.UnitX);
+            {
+                foreach (World.ModelObject obj in Map.World.Models)
+                    obj.Draw(elapsedTime);
+            }
+            GL.PopMatrix();
+
             GL.Disable(EnableCap.CullFace);
             GL.Disable(EnableCap.DepthTest);
         }

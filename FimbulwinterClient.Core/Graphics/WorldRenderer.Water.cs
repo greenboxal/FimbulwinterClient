@@ -84,7 +84,7 @@ namespace FimbulwinterClient.Core.Graphics
                     if (j < 10)
                         sj = "0" + sj;
 
-                    WaterTextureCache[type][j] = ContentManager.Instance.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1,2}.jpg", type, sj));
+                    WaterTextureCache[type][j] = ContentManager.Instance.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1,2}.jpg", type, sj), true);
                     WaterTextureCache[type][j].SetWrapMode(TextureWrapMode.MirroredRepeat, TextureWrapMode.MirroredRepeat);
                 }
             }

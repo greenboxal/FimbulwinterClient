@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
+using FimbulwinterClient.Core.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace FimbulwinterClient.Core.Content.MapInternals
 {
@@ -184,12 +186,18 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 private set { _scale = value; }
             }
 
-            /*private GravityModel _model;
-            public GravityModel Model
+            private RsmModel _model;
+            public RsmModel Model
             {
                 get { return _model; }
-            }*/
+            }
 
+            private RsmMesh _mesh;
+            public RsmMesh Mesh
+            {
+                get { return _mesh; }
+            }
+            
             public void Load(BinaryReader br, int major, int minor, MapInternals.Ground gnd)
             {
                 if ((major == 1 && minor >= 3) || major > 1)
@@ -218,24 +226,31 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 _scale.X = br.ReadSingle();
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
-
-                //_model = SharedInformation.ContentManager.Load<GravityModel>(@"data\model\" + ModelName);
+                return;
+                _model = ContentManager.Instance.Load<RsmModel>(@"data\model\" + ModelName);
+                _mesh = _model.FindMesh(NodeName);
             }
 
-            /*public void Draw(Effect effect, GameTime gameTime)
+            public void Draw(double elapsed)
             {
-                if (_model == null)
+                if (_model == null || _mesh == null)
                     return;
 
-                Matrix world = Matrix.CreateTranslation(Position.X, Position.Y, Position.Z);
-                world *= Matrix.CreateRotationZ(-Rotation.Z);
-                world *= Matrix.CreateRotationX(-Rotation.X);
-                world *= Matrix.CreateRotationY(Rotation.Y);
-                world *= Matrix.CreateScale(Scale.X, Scale.Y, Scale.Z);
-                world *= Matrix.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
+                GL.PushMatrix();
 
-                _model.Draw(world, effect, gameTime);
-            }*/
+                Matrix4 world = Matrix4.CreateTranslation(Position.X, Position.Y, Position.Z);
+                world *= Matrix4.CreateRotationZ(-Rotation.Z);
+                world *= Matrix4.CreateRotationX(-Rotation.X);
+                world *= Matrix4.CreateRotationY(Rotation.Y);
+                world *= Matrix4.Scale(Scale.X, Scale.Y, Scale.Z);
+                world *= Matrix4.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
+
+                GL.MultMatrix(ref world);
+
+                _mesh.Draw(elapsed);
+
+                GL.PopMatrix();
+            }
         }
 
         public string IniFile { get; private set; }
@@ -245,7 +260,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         public Water WaterInfo { get; private set; }
         public Light LightInfo { get; private set; }
         public Ground GroundInfo { get; private set; }
-        private List<ModelObject> Models { get; set; }
+        public List<ModelObject> Models { get; private set; }
         public Map Owner { get; private set; }
 
         protected byte MinorVersion;

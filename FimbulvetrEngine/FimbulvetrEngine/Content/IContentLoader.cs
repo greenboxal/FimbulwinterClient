@@ -4,6 +4,6 @@ namespace FimbulvetrEngine.Content
 {
     public interface IContentLoader
     {
-        object LoadContent(ContentManager contentManager, string contentName, Stream stream);
+        object LoadContent(ContentManager contentManager, string contentName, bool background);
     }
 }
