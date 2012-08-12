@@ -170,14 +170,8 @@ namespace FimbulwinterClient.Core.Content.MapInternals
         protected byte MinorVersion;
         protected byte MajorVersion;
 
-        public VertexBuffer VertexBuffer { get; private set; }
-        public IndexBuffer[] IndexBuffers { get; private set; }
-        public Texture2D LightmapTexture { get; private set; }
-        public GroundShaderProgram ShaderProgram { get; private set; }
-
         public Ground()
         {
-            ShaderProgram = new GroundShaderProgram();
         }
 
         public bool Load(Stream gnd)

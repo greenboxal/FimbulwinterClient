@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core.Content;
 using FimbulwinterClient.Core.Content.MapInternals;
@@ -13,21 +14,32 @@ namespace FimbulwinterClient.Core.Graphics
     public partial class WorldRenderer
     {
         public Map Map { get; private set; }
+        public bool Loaded { get; private set; }
 
         public WorldRenderer(Map map)
         {
             Map = map;
+            Loaded = false;
         }
 
-        public void LoadResources()
+        public void LoadResources(bool background)
         {
-            LoadGround();
-            LoadWater();
+            LoadGround(background);
+            LoadWater(background);
+
+            // We must do this to ensure that all previous final loading operations was finished
+            if (background)
+                ContentManager.Instance.EnqueueBackgroundLoading(o => Loaded = true);
+            else
+                Loaded = true;
         }
 
         private double _waterElapsed;
         public void Update(double elapsedTime)
         {
+            if (!Loaded)
+                return;
+
             _waterElapsed += elapsedTime;
             while (_waterElapsed >= 0.05F)
             {
@@ -42,6 +54,9 @@ namespace FimbulwinterClient.Core.Graphics
 
         public void Render(double elapsedTime)
         {
+            if (!Loaded)
+                return;
+
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
@@ -87,13 +102,13 @@ namespace FimbulwinterClient.Core.Graphics
             GL.PopMatrix();
 
             // Render models
-            GL.PushMatrix();
+            /*GL.PushMatrix();
             GL.Rotate(180, Vector3.UnitX);
             {
                 foreach (World.ModelObject obj in Map.World.Models)
                     obj.Draw(elapsedTime);
             }
-            GL.PopMatrix();
+            GL.PopMatrix();*/
 
             GL.Disable(EnableCap.CullFace);
             GL.Disable(EnableCap.DepthTest);

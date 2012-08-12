@@ -19,7 +19,6 @@ namespace FimbulwinterClient.GameStates
     public class WorldGameState : GameState
     {
         public string WorldName { get; private set; }
-        public Map World { get; private set; }
         public WorldRenderer WorldRenderer { get; private set; }
         public Camera Camera { get; private set; }
 
@@ -31,10 +30,7 @@ namespace FimbulwinterClient.GameStates
         public override void Setup()
         {
             Camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, -1), 1.0F, 5000.0F);
-            World = ContentManager.Instance.Load<Map>(@"data\" + WorldName + ".gat");
-            
-            WorldRenderer = new WorldRenderer(World);
-            WorldRenderer.LoadResources();
+            WorldRenderer = ContentManager.Instance.Load<WorldRenderer>(@"data\" + WorldName + ".gat", true);
 
             Ragnarok.Instance.Mouse.ButtonDown += Mouse_ButtonDown;
             Ragnarok.Instance.Mouse.ButtonUp += Mouse_ButtonUp;
@@ -82,7 +78,6 @@ namespace FimbulwinterClient.GameStates
 
             if (keyboardState[Key.F])
             {
-                World = null;
                 WorldRenderer = null;
                 GC.Collect();
             }

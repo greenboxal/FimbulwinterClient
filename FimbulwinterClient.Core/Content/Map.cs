@@ -15,11 +15,7 @@ namespace FimbulwinterClient.Core.Content
         public Altitude Altitude { get; private set; }
         public World World { get; private set; }
 
-        public Map()
-        {
-        }
-
-        public bool Load(Stream gat, Stream gnd, Stream rsw)
+        public bool Load(Stream gat, Stream gnd, Stream rsw, bool background)
         {
             Altitude = new Altitude();
             if (!Altitude.Load(gat))

@@ -13,20 +13,20 @@ namespace FimbulvetrEngine.Graphics
         public int Height { get; private set; }
         public bool Loaded { get; private set; }
 
-        public Texture2D()
-            : this(0, 0)
-        {
+        private TextureWrapMode _postLoadS;
+        private TextureWrapMode _postLoadT;
 
+        public Texture2D()
+        {
+            Texture = -1;
+            _postLoadS = TextureWrapMode.ClampToEdge;
+            _postLoadT = TextureWrapMode.ClampToEdge;
         }
 
         public Texture2D(int width, int height)
             : this(GL.GenTexture(), width, height)
         {
-            Bind();
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
+            SetDefaultParamterers();
         }
 
         public Texture2D(int texture, int width, int height)
@@ -68,8 +68,32 @@ namespace FimbulvetrEngine.Graphics
 
         public void SetWrapMode(TextureWrapMode s, TextureWrapMode t)
         {
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)s);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)t);
+            if (Texture != -1)
+            {
+                Bind();
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)s);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)t);
+            }
+            else
+            {
+                _postLoadS = s;
+                _postLoadT = t;
+            }
+        }
+
+        private void SetDefaultParamterers()
+        {
+            Bind();
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)_postLoadS);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)_postLoadT);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
+        }
+
+        public void FinishAsyncLoading(int texture)
+        {
+            Texture = texture;
+            SetDefaultParamterers();
         }
 
         public void SetLoaded()

@@ -17,7 +17,7 @@ namespace FimbulwinterClient.Core
         {
             FileSystemManager.Instance.RegisterFileSystemFactory(new GrfFileSystemFactory());
 
-            ContentManager.Instance.RegisterLoader<Map>(new MapLoader());
+            ContentManager.Instance.RegisterLoader<WorldRenderer>(new MapLoader());
             ContentManager.Instance.RegisterLoader<RsmModel>(new RsmModelLoader());
         }
     }

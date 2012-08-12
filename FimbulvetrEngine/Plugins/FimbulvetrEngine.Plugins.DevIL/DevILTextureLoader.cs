@@ -78,8 +78,7 @@ namespace FimbulvetrEngine.Plugins.DevIL
 
         public void FinalizeLoading(Texture2D texture, int id)
         {
-            texture.Bind();
-            Ilut.ilutGLTexImage(0);
+            texture.FinishAsyncLoading(Ilut.ilutGLBindTexImage());
             texture.SetLoaded();
 
             Il.ilDeleteImages(1, ref id);

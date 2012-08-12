@@ -21,13 +21,9 @@ namespace FimbulwinterClient.Core.Graphics
 
         public static Texture2D[][] WaterTextureCache { get; private set; }
 
-        private void LoadWater()
+        private void LoadWater(bool background)
         {
-            WaterShaderProgram = new WaterShaderProgram();
-            WaterBuffer = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
-            WaterIndexes = new IndexBuffer(DrawElementsType.UnsignedShort);
-
-            WaterTextures = CacheWaterTextures(Map.World.WaterInfo.Type);
+            WaterTextures = CacheWaterTextures(Map.World.WaterInfo.Type, background);
             WaterCurrentTexture = 0;
 
             VertexPositionNormalTexture[] vertexdata = new VertexPositionNormalTexture[4];
@@ -62,11 +58,28 @@ namespace FimbulwinterClient.Core.Graphics
             indexdata[2] = 2;
             indexdata[3] = 3;
 
+            if (background)
+            {
+                ContentManager.Instance.FinalizeBackgroundLoading(o => FinalizeWaterLoading(vertexdata, indexdata));
+            }
+            else
+            {
+                FinalizeWaterLoading(vertexdata, indexdata);
+            }
+        }
+
+        private void FinalizeWaterLoading(VertexPositionNormalTexture[] vertexdata, short[] indexdata)
+        {
+            WaterShaderProgram = new WaterShaderProgram();
+
+            WaterBuffer = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
             WaterBuffer.SetData(vertexdata, BufferUsageHint.StaticDraw);
+
+            WaterIndexes = new IndexBuffer(DrawElementsType.UnsignedShort);
             WaterIndexes.SetData(indexdata, BufferUsageHint.StaticDraw);
         }
 
-        private static Texture2D[] CacheWaterTextures(int type)
+        private static Texture2D[] CacheWaterTextures(int type, bool background)
         {
             if (WaterTextureCache == null)
             {
@@ -84,7 +97,7 @@ namespace FimbulwinterClient.Core.Graphics
                     if (j < 10)
                         sj = "0" + sj;
 
-                    WaterTextureCache[type][j] = ContentManager.Instance.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1,2}.jpg", type, sj), true);
+                    WaterTextureCache[type][j] = ContentManager.Instance.Load<Texture2D>(string.Format(@"data\texture\¿öÅÍ\water{0}{1,2}.jpg", type, sj), background);
                     WaterTextureCache[type][j].SetWrapMode(TextureWrapMode.MirroredRepeat, TextureWrapMode.MirroredRepeat);
                 }
             }
