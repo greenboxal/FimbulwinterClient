@@ -27,6 +27,7 @@ namespace FimbulwinterClient.Core.Graphics
         {
             LoadGround(background);
             LoadWater(background);
+            LoadWorld(background);
 
             // We must do this to ensure that all previous final loading operations was finished
             // Note that this means that we are ready to render and not fully loaded
@@ -105,7 +106,7 @@ namespace FimbulwinterClient.Core.Graphics
             GL.Rotate(180, Vector3.UnitX);
             {
                 foreach (World.ModelObject obj in Map.World.Models)
-                    obj.Draw(elapsedTime);
+                    obj.Draw(WaterShaderProgram, elapsedTime);
             }
             GL.PopMatrix();
 

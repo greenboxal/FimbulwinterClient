@@ -91,6 +91,7 @@
     <Compile Include="Graphics\GroundShaderProgram.cs" />
     <Compile Include="Graphics\WaterShaderProgram.cs" />
     <Compile Include="Graphics\WorldRenderer.cs" />
+    <Compile Include="Graphics\WorldRenderer.World.cs" />
     <Compile Include="IO\GrfFileSystem.cs" />
     <Compile Include="IO\GrfFileSystemFactory.cs" />
     <Compile Include="IO\GRF\DES.cs" />

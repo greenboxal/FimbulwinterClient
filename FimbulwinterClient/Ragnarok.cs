@@ -134,7 +134,7 @@ namespace FimbulwinterClient
                 _fpsCounter++;
             }
 
-            Dispatcher.Instance.PollTasks(3);
+            Dispatcher.Instance.PollTasks();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

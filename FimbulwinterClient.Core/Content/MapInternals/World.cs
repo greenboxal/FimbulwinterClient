@@ -226,15 +226,23 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 _scale.X = br.ReadSingle();
                 _scale.Y = br.ReadSingle();
                 _scale.Z = br.ReadSingle();
-                return;
-                _model = ContentManager.Instance.Load<RsmModel>(@"data\model\" + ModelName);
-                _mesh = _model.FindMesh(NodeName);
             }
 
-            public void Draw(double elapsed)
+            public void SetModel(RsmModel model)
             {
-                if (_model == null || _mesh == null)
+                _model = model;
+
+                if (_model.Loaded)
+                    _mesh = _model.FindMesh(NodeName) ?? _model.RootMesh;
+            }
+
+            public void Draw(WaterShaderProgram shader, double elapsed)
+            {
+                if (_model == null || !_model.Loaded)
                     return;
+
+                if (_mesh == null)
+                    _mesh = _model.FindMesh(NodeName) ?? _model.RootMesh;
 
                 GL.PushMatrix();
 
@@ -247,7 +255,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
 
                 GL.MultMatrix(ref world);
 
-                _mesh.Draw(elapsed);
+                _mesh.Draw(shader, elapsed);
 
                 GL.PopMatrix();
             }

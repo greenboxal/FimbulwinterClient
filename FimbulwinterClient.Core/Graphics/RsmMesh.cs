@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
@@ -96,8 +97,15 @@ namespace FimbulwinterClient.Core.Graphics
             get { return _children; }
         }
 
-        public RsmMesh()
+        private RsmModel _owner;
+        public RsmModel Owner
         {
+            get { return _owner; }
+        }
+
+        public RsmMesh(RsmModel owner)
+        {
+            _owner = owner;
             _children = new RsmMesh[0];
         }
 
@@ -216,27 +224,27 @@ namespace FimbulwinterClient.Core.Graphics
                 _rotationFrames[i] = new Tuple<Quaternion, int>(q, time);
             }
 
-            _vertices = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
-            _vertices.SetData(gvertices, BufferUsageHint.StaticDraw);
-
-            _indexes = new IndexBuffer[_textures.Length];
-            for (int i = 0; i < _textures.Length; i++)
-            {
-                if (indexes[i].Count > 0)
+            Dispatcher.Instance.DispatchCoreTask(o =>
                 {
-                    _indexes[i] = new IndexBuffer(DrawElementsType.UnsignedInt);
-                    _indexes[i].SetData(indexes[i].ToArray(), BufferUsageHint.StaticDraw);
-                }
-            }
+                    _vertices = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
+                    _vertices.SetData(gvertices, BufferUsageHint.StaticDraw);
+
+                    _indexes = new IndexBuffer[_textures.Length];
+                    for (int i = 0; i < _textures.Length; i++)
+                    {
+                        if (indexes[i].Count > 0)
+                        {
+                            _indexes[i] = new IndexBuffer(DrawElementsType.UnsignedInt);
+                            _indexes[i].SetData(indexes[i].ToArray(), BufferUsageHint.StaticDraw);
+                        }
+                    }
+                });
         }
 
-        private WaterShaderProgram _program;
-        public void Draw(double elapsed)
+        public void Draw(WaterShaderProgram shader, double elapsed)
         {
-            if (_program == null)
-            {
-                _program = new WaterShaderProgram();
-            }
+            if (!_owner.Loaded || shader == null)
+                return;
 
             Matrix4 g = GetGlobalMatrix(false, elapsed);
             Matrix4 l = GetLocalMatrix();
@@ -245,22 +253,22 @@ namespace FimbulwinterClient.Core.Graphics
             GL.PushMatrix();
             GL.MultMatrix(ref l);
 
-            _program.Begin();
-            _program.SetAlpha(1.0F);
+            shader.Begin();
+            shader.SetAlpha(1.0F);
             _vertices.Bind();
             for (int i = 0; i < _textures.Length; i++)
             {
-                _program.SetTexture(_textures[i]);
+                shader.SetTexture(_textures[i]);
                 _vertices.Render(BeginMode.Triangles, _indexes[i], _indexes[i].Count);
             }
-            _program.End();
+            shader.End();
 
             GL.PopMatrix();
 
             foreach (RsmMesh t in _children)
             {
                 GL.PushMatrix();
-                t.Draw(elapsed);
+                t.Draw(shader, elapsed);
                 GL.PopMatrix();
             }
         }

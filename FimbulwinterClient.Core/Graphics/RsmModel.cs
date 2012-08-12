@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Extensions;
@@ -27,6 +28,7 @@ namespace FimbulwinterClient.Core.Graphics
         public string MainNodeName { get; private set; }
         public RsmMesh[] Meshes { get; private set; }
         public RsmMesh RootMesh { get; private set; }
+        public bool Loaded { get; private set; }
 
         protected byte MinorVersion;
         protected byte MajorVersion;
@@ -64,7 +66,7 @@ namespace FimbulwinterClient.Core.Graphics
             Meshes = new RsmMesh[br.ReadInt32()];
             for (int i = 0; i < Meshes.Length; i++)
             {
-                RsmMesh mesh = new RsmMesh();
+                RsmMesh mesh = new RsmMesh(this);
 
                 mesh.Load(this, br, MajorVersion, MinorVersion);
 
@@ -87,12 +89,15 @@ namespace FimbulwinterClient.Core.Graphics
             realbbrange = (realbbmax + realbbmin) / 2.0F;
             //maxrange = Math.Max(Math.Max(Math.Max(realbbmax.X, -realbbmin.X), Math.Max(realbbmax.Y, -realbbmin.Y)), Math.Max(realbbmax.Z, -realbbmin.Z))));
 
+            Dispatcher.Instance.DispatchCoreTask(o => Loaded = true);
+            
+
             return true;
         }
 
         public RsmMesh FindMesh(string name)
         {
-            return Meshes.FirstOrDefault(t => String.Compare(t.Name, name, true) == 0);
+            return Meshes.FirstOrDefault(t => String.Compare(t.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
         public Vector3 realbbmin, realbbmax, realbbrange;
