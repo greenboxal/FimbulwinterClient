@@ -53,6 +53,7 @@
     <Compile Include="Content\Loaders\StreamLoader.cs" />
     <Compile Include="Content\Loaders\StringLoader.cs" />
     <Compile Include="Content\Loaders\Texture2DLoader.cs" />
+    <Compile Include="Dispatcher.cs" />
     <Compile Include="Graphics\GraphicResource.cs" />
     <Compile Include="Graphics\ImageFormat.cs" />
     <Compile Include="Graphics\IndexBuffer.cs" />

@@ -412,14 +412,17 @@ namespace FimbulwinterClient.Core.IO.GRF
         /// <param name='file'> (GRFFile) The file to get </param>
         public byte[] GetDataFromFile(GrfFile file)
         {
-            byte[] compressedBody = new byte[file.CompressedLengthAligned];
+            lock (_grfStream)
+            {
+                byte[] compressedBody = new byte[file.CompressedLengthAligned];
 
-            _grfStream.Seek(46 + file.Offset, SeekOrigin.Begin);
-            _grfStream.Read(compressedBody, 0, file.CompressedLengthAligned);
+                _grfStream.Seek(46 + file.Offset, SeekOrigin.Begin);
+                _grfStream.Read(compressedBody, 0, file.CompressedLengthAligned);
 
-            DES.GrfDecode(compressedBody, file.Flags, file.CompressedLength);
+                DES.GrfDecode(compressedBody, file.Flags, file.CompressedLength);
 
-            return ZlibStream.UncompressBuffer(compressedBody);
+                return ZlibStream.UncompressBuffer(compressedBody);
+            }
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.IO;
 using FimbulwinterClient.Core.Graphics;
@@ -13,17 +14,19 @@ namespace FimbulwinterClient.Core.Content.Loaders
     {
         public object LoadContent(ContentManager contentManager, string contentName, bool background)
         {
-            Stream stream = FileSystemManager.Instance.OpenStream(contentName);
+            RsmModel result = new RsmModel();
 
-            if (stream == null)
-                return null;
+            Dispatcher.Instance.DispatchTask(o =>
+            {
+                Stream stream = FileSystemManager.Instance.OpenStream(contentName);
 
-            RsmModel model = new RsmModel();
+                if (stream == null)
+                    return;
 
-            if (!model.Load(stream))
-                return null;
+                result.Load(stream);
+            }, background);
 
-            return model;
+            return result;
         }
     }
 }

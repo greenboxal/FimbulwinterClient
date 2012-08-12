@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using OpenTK;
@@ -58,25 +59,17 @@ namespace FimbulwinterClient.Core.Graphics
             indexdata[2] = 2;
             indexdata[3] = 3;
 
-            if (background)
+
+            Dispatcher.Instance.DispatchCoreTask(o =>
             {
-                ContentManager.Instance.FinalizeBackgroundLoading(o => FinalizeWaterLoading(vertexdata, indexdata));
-            }
-            else
-            {
-                FinalizeWaterLoading(vertexdata, indexdata);
-            }
-        }
+                WaterShaderProgram = new WaterShaderProgram();
 
-        private void FinalizeWaterLoading(VertexPositionNormalTexture[] vertexdata, short[] indexdata)
-        {
-            WaterShaderProgram = new WaterShaderProgram();
+                WaterBuffer = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
+                WaterBuffer.SetData(vertexdata, BufferUsageHint.StaticDraw);
 
-            WaterBuffer = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
-            WaterBuffer.SetData(vertexdata, BufferUsageHint.StaticDraw);
-
-            WaterIndexes = new IndexBuffer(DrawElementsType.UnsignedShort);
-            WaterIndexes.SetData(indexdata, BufferUsageHint.StaticDraw);
+                WaterIndexes = new IndexBuffer(DrawElementsType.UnsignedShort);
+                WaterIndexes.SetData(indexdata, BufferUsageHint.StaticDraw);
+            });
         }
 
         private static Texture2D[] CacheWaterTextures(int type, bool background)

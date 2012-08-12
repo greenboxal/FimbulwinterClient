@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core.Content.MapInternals;
@@ -28,14 +29,10 @@ namespace FimbulwinterClient.Core.Graphics
 
         private void LoadGround(bool background)
         {
-            if (background)
-            {
-                ContentManager.Instance.FinalizeBackgroundLoading(o => GroundShaderProgram = new GroundShaderProgram());
-            }
-            else
-            {
-                GroundShaderProgram = new GroundShaderProgram();
-            }
+            Dispatcher.Instance.DispatchCoreTask(o =>
+                {
+                    GroundShaderProgram = new GroundShaderProgram();
+                });
 
             CreateGroundBuffers(background);
             CreateGroundLightmap(background);
@@ -71,19 +68,11 @@ namespace FimbulwinterClient.Core.Graphics
                 }
             }
 
-            if (background)
-            {
-                ContentManager.Instance.FinalizeBackgroundLoading(o =>
-                {
-                    GroundLightmap = new Texture2D(w * 8, h * 8);
-                    GroundLightmap.SetData(PixelFormat.Rgba, PixelInternalFormat.Rgba, PixelType.Float, color);
-                });
-            }
-            else
+            Dispatcher.Instance.DispatchCoreTask(o =>
             {
                 GroundLightmap = new Texture2D(w * 8, h * 8);
                 GroundLightmap.SetData(PixelFormat.Rgba, PixelInternalFormat.Rgba, PixelType.Float, color);
-            }
+            });
         }
 
         private void CreateGroundBuffers(bool background)
@@ -150,27 +139,7 @@ namespace FimbulwinterClient.Core.Graphics
             }
 
 
-            if (background)
-            {
-                ContentManager.Instance.FinalizeBackgroundLoading(o =>
-                {
-                    GroundBuffer = new VertexBuffer(VertexPositionTextureNormalLightmap.VertexDeclaration);
-                    GroundMeshes = new Tuple<Texture2D, IndexBuffer>[Map.Ground.Textures.Length];
-
-                    GroundBuffer.SetData(vertexdata.ToArray(), BufferUsageHint.StaticDraw);
-                    GroundMeshes = new Tuple<Texture2D, IndexBuffer>[Map.Ground.Textures.Length];
-                    for (int i = 0; i < GroundMeshes.Length; i++)
-                    {
-                        Texture2D texture = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + Map.Ground.Textures[i], true);
-
-                        IndexBuffer buffer = new IndexBuffer(DrawElementsType.UnsignedInt);
-                        buffer.SetData(indexdata[i].ToArray(), BufferUsageHint.StaticDraw);
-
-                        GroundMeshes[i] = new Tuple<Texture2D, IndexBuffer>(texture, buffer);
-                    }
-                });
-            }
-            else
+            Dispatcher.Instance.DispatchCoreTask(o =>
             {
                 GroundBuffer = new VertexBuffer(VertexPositionTextureNormalLightmap.VertexDeclaration);
                 GroundMeshes = new Tuple<Texture2D, IndexBuffer>[Map.Ground.Textures.Length];
@@ -186,7 +155,7 @@ namespace FimbulwinterClient.Core.Graphics
 
                     GroundMeshes[i] = new Tuple<Texture2D, IndexBuffer>(texture, buffer);
                 }
-            }
+            });
         }
 
         private void SetupGroundSurface(IList<VertexPositionTextureNormalLightmap> vertexdata, ICollection<int> indexdata, int surfaceId, int currentSurface, int x, int y, CellTileType cellTileType)

@@ -63,6 +63,8 @@ namespace FimbulwinterClient
         {
             GL.ClearColor(Color.CornflowerBlue);
 
+            Dispatcher.Instance.Context = Context;
+
             Renderer = new Gwen.Renderer.OpenTK();
             Skin = new TexturedBase(Renderer, ContentManager.Instance.Load<Stream>(@"data\fb\skin.png"));
             Canvas = new Canvas(Skin);
@@ -132,7 +134,7 @@ namespace FimbulwinterClient
                 _fpsCounter++;
             }
 
-            ContentManager.Instance.PoolBackgroundLoading(3);
+            Dispatcher.Instance.PollTasks(3);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

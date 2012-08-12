@@ -14,33 +14,19 @@ namespace FimbulvetrEngine.Content.Loaders
         {
             Texture2D texture = new Texture2D();
 
-            // FIXME: Deadlock occururing
-            background = true;
+            Dispatcher.Instance.DispatchTask(o =>
+                {
+                    Stream stream = FileSystemManager.Instance.OpenStream(contentName);
 
-            if (background)
-            {
-                ContentManager.Instance.EnqueueBackgroundLoading(o => LoadContentSub(texture, contentName, true));
-            }
-            else
-            {
-                if (!LoadContentSub(texture, contentName, false))
-                    return null;
-            }
+                    if (stream == null)
+                        return;
+
+                    TextureManager.Instance.LoadFromStream(stream, texture, background);
+                }, background);
 
             contentManager.CacheContent(contentName, texture);
 
             return texture;
-        }
-
-        private bool LoadContentSub(Texture2D texture, string contentName, bool background)
-        {
-            Stream stream = FileSystemManager.Instance.OpenStream(contentName);
-
-            if (stream == null)
-                return false;
-
-            TextureManager.Instance.LoadFromStream(stream, texture, background);
-            return true;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Core.Content;
@@ -28,10 +29,8 @@ namespace FimbulwinterClient.Core.Graphics
             LoadWater(background);
 
             // We must do this to ensure that all previous final loading operations was finished
-            if (background)
-                ContentManager.Instance.EnqueueBackgroundLoading(o => Loaded = true);
-            else
-                Loaded = true;
+            // Note that this means that we are ready to render and not fully loaded
+            Dispatcher.Instance.DispatchCoreTask(o => Loaded = true);
         }
 
         private double _waterElapsed;
@@ -102,13 +101,13 @@ namespace FimbulwinterClient.Core.Graphics
             GL.PopMatrix();
 
             // Render models
-            /*GL.PushMatrix();
+            GL.PushMatrix();
             GL.Rotate(180, Vector3.UnitX);
             {
                 foreach (World.ModelObject obj in Map.World.Models)
                     obj.Draw(elapsedTime);
             }
-            GL.PopMatrix();*/
+            GL.PopMatrix();
 
             GL.Disable(EnableCap.CullFace);
             GL.Disable(EnableCap.DepthTest);

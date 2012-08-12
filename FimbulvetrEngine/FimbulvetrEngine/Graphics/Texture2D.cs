@@ -81,6 +81,12 @@ namespace FimbulvetrEngine.Graphics
             }
         }
 
+        public void SetTexture(int texture)
+        {
+            Texture = texture;
+            SetDefaultParamterers();
+        }
+
         private void SetDefaultParamterers()
         {
             Bind();
@@ -88,12 +94,6 @@ namespace FimbulvetrEngine.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)_postLoadT);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
-        }
-
-        public void FinishAsyncLoading(int texture)
-        {
-            Texture = texture;
-            SetDefaultParamterers();
         }
 
         public void SetLoaded()

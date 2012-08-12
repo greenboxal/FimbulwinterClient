@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FimbulvetrEngine;
 using FimbulvetrEngine.Content;
+using FimbulvetrEngine.Graphics;
+using FimbulvetrEngine.IO;
 using FimbulwinterClient.Core.Graphics;
 
 namespace FimbulwinterClient.Core.Content.Loaders
@@ -16,38 +19,26 @@ namespace FimbulwinterClient.Core.Content.Loaders
             WorldRenderer result = new WorldRenderer(map);
             string baseName = Path.GetFileNameWithoutExtension(contentName);
 
-            if (background)
+            Dispatcher.Instance.DispatchTask(o =>
             {
-                ContentManager.Instance.EnqueueBackgroundLoading(o => LoadContentSub(map, result, baseName, true));
-            }
-            else
-            {
-                if (!LoadContentSub(map, result, baseName, false))
-                    return null;
-            }
+                Stream gat = FileSystemManager.Instance.OpenStream(@"data\" + baseName + ".gat");
+                Stream gnd = FileSystemManager.Instance.OpenStream(@"data\" + baseName + ".gnd");
+                Stream rsw = FileSystemManager.Instance.OpenStream(@"data\" + baseName + ".rsw");
+
+                if (gat == null || gnd == null || rsw == null)
+                    return;
+
+                if (!map.Load(gat, gnd, rsw, background))
+                    return;
+
+                gat.Close();
+                gnd.Close();
+                rsw.Close();
+
+                result.LoadResources(background);
+            }, background);
 
             return result;
-        }
-
-        public bool LoadContentSub(Map map, WorldRenderer renderer, string basename, bool background)
-        {
-            Stream gat = ContentManager.Instance.Load<Stream>(@"data\" + basename + ".gat");
-            Stream gnd = ContentManager.Instance.Load<Stream>(@"data\" + basename + ".gnd");
-            Stream rsw = ContentManager.Instance.Load<Stream>(@"data\" + basename + ".rsw");
-
-            if (gat == null || gnd == null || rsw == null)
-                return false;
-
-            if (!map.Load(gat, gnd, rsw, background))
-                return false;
-
-            gat.Close();
-            gnd.Close();
-            rsw.Close();
-
-            renderer.LoadResources(background);
-
-            return true;
         }
     }
 }

@@ -30,6 +30,7 @@ namespace FimbulvetrEngine
 
         private void InstanceSingletonClasses()
         {
+            new Dispatcher();
             new PluginManager();
             new FileSystemManager();
             new ContentManager();
