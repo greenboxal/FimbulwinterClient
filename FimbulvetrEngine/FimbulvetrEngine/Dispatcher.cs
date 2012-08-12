@@ -12,14 +12,29 @@ namespace FimbulvetrEngine
         public static Dispatcher Instance { get; private set; }
 
         public IGraphicsContext Context { get; set; }
+        public Queue<Tuple<WaitCallback, object>> CoreTaskQueue { get; private set; }
+
         public Queue<Tuple<WaitCallback, object>> TaskQueue { get; private set; }
+        public AutoResetEvent TaskSinalizer { get; private set; }
+        public Thread TaskThread { get; private set; }
 
         public Dispatcher()
         {
             if (Instance != null)
                 throw new Exception("Only one instance of Dispatcher is allowed, use the Instance property.");
 
+            CoreTaskQueue = new Queue<Tuple<WaitCallback, object>>();
+
             TaskQueue = new Queue<Tuple<WaitCallback, object>>();
+            TaskSinalizer = new AutoResetEvent(false);
+            TaskThread = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        TaskSinalizer.WaitOne();
+                        PollQueue(TaskQueue, 0);
+                    }
+                });
 
             Instance = this;
         }
@@ -30,7 +45,14 @@ namespace FimbulvetrEngine
         {
             if (background)
             {
-                ThreadPool.QueueUserWorkItem(task, state);
+                lock (CoreTaskQueue)
+                {
+                    TaskQueue.Enqueue(new Tuple<WaitCallback, object>(task, state));
+                    TaskSinalizer.Set();
+                }
+
+                if ((TaskThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
+                    TaskThread.Start();
             }
             else
             {
@@ -47,15 +69,20 @@ namespace FimbulvetrEngine
             }
             else
             {
-                lock (TaskQueue)
+                lock (CoreTaskQueue)
                 {
-                    TaskQueue.Enqueue(new Tuple<WaitCallback, object>(task, state));
+                    CoreTaskQueue.Enqueue(new Tuple<WaitCallback, object>(task, state));
                 }
             }
         }
 
         // Poll the task queue and executes the avaiable tasks. This should be called only from the main thread(thread which owns the Context)
-        public void PollTasks(int max = 0)
+        public void PollCoreTasks(int max = 0)
+        {
+            PollQueue(CoreTaskQueue, max);
+        }
+
+        private void PollQueue(Queue<Tuple<WaitCallback, object>> queue, int max)
         {
             int count = 0;
 
@@ -63,10 +90,10 @@ namespace FimbulvetrEngine
             {
                 Tuple<WaitCallback, object> callback = null;
 
-                lock (TaskQueue)
+                lock (queue)
                 {
-                    if (TaskQueue.Count > 0)
-                        callback = TaskQueue.Dequeue();
+                    if (queue.Count > 0)
+                        callback = queue.Dequeue();
                 }
 
                 if (callback == null)
