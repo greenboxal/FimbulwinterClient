@@ -18,7 +18,7 @@ namespace FimbulwinterClient.Core.Graphics
         public IndexBuffer WaterIndexes { get; private set; }
         public Texture2D[] WaterTextures { get; private set; }
         public int WaterCurrentTexture { get; private set; }
-        public WaterShaderProgram WaterShaderProgram { get; private set; }
+        public CommonShaderProgram WaterShaderProgram { get; private set; }
 
         public static Texture2D[][] WaterTextureCache { get; private set; }
 
@@ -62,7 +62,7 @@ namespace FimbulwinterClient.Core.Graphics
 
             Dispatcher.Instance.DispatchCoreTask(o =>
             {
-                WaterShaderProgram = new WaterShaderProgram();
+                WaterShaderProgram = new CommonShaderProgram();
 
                 WaterBuffer = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
                 WaterBuffer.SetData(vertexdata, BufferUsageHint.StaticDraw);

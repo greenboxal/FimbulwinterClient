@@ -241,9 +241,9 @@ namespace FimbulwinterClient.Core.Graphics
                 });
         }
 
-        public void Draw(WaterShaderProgram shader, double elapsed)
+        public void Draw(CommonShaderProgram shader, double elapsed)
         {
-            if (!_owner.Loaded || shader == null)
+            if (!_owner.Loaded)
                 return;
 
             Matrix4 g = GetGlobalMatrix(false, elapsed);
@@ -254,7 +254,7 @@ namespace FimbulwinterClient.Core.Graphics
             GL.MultMatrix(ref l);
 
             shader.Begin();
-            shader.SetAlpha(1.0F);
+            shader.SetAlpha(_owner.Alpha);
             _vertices.Bind();
             for (int i = 0; i < _textures.Length; i++)
             {

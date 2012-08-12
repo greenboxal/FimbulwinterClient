@@ -9,15 +9,15 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FimbulwinterClient.Core.Graphics
 {
-    public class WaterShaderProgram : ShaderProgram
+    public class CommonShaderProgram : ShaderProgram
     {
         private readonly int _texturePosition;
         private readonly int _alphaPosition;
 
-        public WaterShaderProgram()
+        public CommonShaderProgram()
         {
-            AttachShader(new Shader(ShaderType.VertexShader, ContentManager.Instance.Load<String>(@"data\fb\Shaders\Water_VS.glsl")));
-            AttachShader(new Shader(ShaderType.FragmentShader, ContentManager.Instance.Load<String>(@"data\fb\Shaders\Water_PS.glsl")));
+            AttachShader(new Shader(ShaderType.VertexShader, ContentManager.Instance.Load<String>(@"data\fb\Shaders\Common_VS.glsl")));
+            AttachShader(new Shader(ShaderType.FragmentShader, ContentManager.Instance.Load<String>(@"data\fb\Shaders\Common_PS.glsl")));
 
             Link();
 

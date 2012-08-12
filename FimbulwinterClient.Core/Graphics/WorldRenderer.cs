@@ -105,8 +105,13 @@ namespace FimbulwinterClient.Core.Graphics
             GL.PushMatrix();
             GL.Rotate(180, Vector3.UnitX);
             {
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
                 foreach (World.ModelObject obj in Map.World.Models)
                     obj.Draw(WaterShaderProgram, elapsedTime);
+
+                GL.Disable(EnableCap.Blend);
             }
             GL.PopMatrix();
 

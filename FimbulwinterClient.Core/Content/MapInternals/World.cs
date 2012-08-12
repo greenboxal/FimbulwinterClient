@@ -236,7 +236,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     _mesh = _model.FindMesh(NodeName) ?? _model.RootMesh;
             }
 
-            public void Draw(WaterShaderProgram shader, double elapsed)
+            public void Draw(CommonShaderProgram shader, double elapsed)
             {
                 if (_model == null || !_model.Loaded)
                     return;

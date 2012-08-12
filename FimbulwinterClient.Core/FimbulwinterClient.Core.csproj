@@ -89,7 +89,7 @@
     <Compile Include="Graphics\VertexPositionTextureNormalLightmap.cs" />
     <Compile Include="Content\MapInternals\World.cs" />
     <Compile Include="Graphics\GroundShaderProgram.cs" />
-    <Compile Include="Graphics\WaterShaderProgram.cs" />
+    <Compile Include="Graphics\CommonShaderProgram.cs" />
     <Compile Include="Graphics\WorldRenderer.cs" />
     <Compile Include="Graphics\WorldRenderer.World.cs" />
     <Compile Include="IO\GrfFileSystem.cs" />
