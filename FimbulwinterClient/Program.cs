@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenTK;
 
 namespace FimbulwinterClient
 {
@@ -11,7 +12,8 @@ namespace FimbulwinterClient
         {
             using (Ragnarok ro = new Ragnarok())
             {
-                ro.Run();
+                ro.VSync = VSyncMode.Off;
+                ro.Run(0, 0);
             }
         }
     }

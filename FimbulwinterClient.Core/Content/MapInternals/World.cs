@@ -251,7 +251,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 world *= Matrix4.CreateRotationX(-Rotation.X);
                 world *= Matrix4.CreateRotationY(Rotation.Y);
                 world *= Matrix4.Scale(Scale.X, Scale.Y, Scale.Z);
-                world *= Matrix4.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
+                //world *= Matrix4.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
 
                 GL.MultMatrix(ref world);
 

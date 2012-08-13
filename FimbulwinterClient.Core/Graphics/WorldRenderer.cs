@@ -58,17 +58,15 @@ namespace FimbulwinterClient.Core.Graphics
                 return;
 
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
+            //GL.Enable(EnableCap.CullFace);
 
             // We don't need to see what is on our back
-            GL.CullFace(CullFaceMode.Back);
+            //GL.CullFace(CullFaceMode.Back);
 
             // Render ground
             GL.PushMatrix();
             GL.Rotate(180, Vector3.UnitX);
             {
-                GL.DepthMask(true);
-
                 GroundBuffer.Bind();
                 GroundShaderProgram.Begin();
                 GroundShaderProgram.SetLightmap(GroundLightmap);
@@ -78,8 +76,6 @@ namespace FimbulwinterClient.Core.Graphics
                     GroundBuffer.Render(BeginMode.Triangles, t.Item2, t.Item2.Count);
                 }
                 GroundShaderProgram.End();
-
-                //GL.DepthMask(false);
             }
             GL.PopMatrix();
 
@@ -103,7 +99,6 @@ namespace FimbulwinterClient.Core.Graphics
 
             // Render models
             GL.PushMatrix();
-            GL.Rotate(180, Vector3.UnitX);
             {
                 GL.Enable(EnableCap.Blend);
                 GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);

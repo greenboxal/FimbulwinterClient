@@ -169,7 +169,7 @@ namespace FimbulwinterClient.Core.Graphics
                     br.ReadSingle();
 
                 texcoords[i].X = br.ReadSingle();
-                texcoords[i].Y = br.ReadSingle();
+                texcoords[i].Y = 1 - br.ReadSingle();
             }
 
             List<VertexPositionNormalTexture> ggvertices = new List<VertexPositionNormalTexture>();
