@@ -58,10 +58,7 @@ namespace FimbulwinterClient.Core.Graphics
                 return;
 
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.CullFace);
-
-            // We don't need to see what is on our back
-            //GL.CullFace(CullFaceMode.Back);
+            GL.Enable(EnableCap.Normalize);
 
             // Render ground
             GL.PushMatrix();
@@ -99,19 +96,22 @@ namespace FimbulwinterClient.Core.Graphics
 
             // Render models
             GL.PushMatrix();
+            GL.Rotate(180, Vector3.UnitX);
             {
                 GL.Enable(EnableCap.Blend);
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                GL.Enable(EnableCap.AlphaTest);
+                GL.AlphaFunc(AlphaFunction.Notequal, 0.00F);
 
                 foreach (World.ModelObject obj in Map.World.Models)
-                    obj.Draw(WaterShaderProgram, elapsedTime);
+                    obj.Draw(Map.Ground, WaterShaderProgram, elapsedTime);
 
-                GL.Disable(EnableCap.Blend);
+                GL.Disable(EnableCap.AlphaTest);
+                GL.Enable(EnableCap.Blend);
             }
             GL.PopMatrix();
 
-            GL.Disable(EnableCap.CullFace);
             GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Normalize);
         }
     }
 }

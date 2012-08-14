@@ -8,6 +8,7 @@ using FimbulvetrEngine.Content;
 using FimbulvetrEngine.Graphics;
 using FimbulwinterClient.Extensions;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace FimbulwinterClient.Core.Graphics
 {
@@ -59,6 +60,7 @@ namespace FimbulwinterClient.Core.Graphics
             for (int i = 0; i < Textures.Length; i++)
             {
                 Textures[i] = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + br.ReadCString(40));
+                Textures[i].SetMagFilter(TextureMagFilter.Nearest, TextureMagFilter.Nearest);
             }
 
             MainNodeName = br.ReadCString(40);
@@ -79,7 +81,7 @@ namespace FimbulwinterClient.Core.Graphics
             bbmin = new Vector3(999999, 999999, 999999);
             bbmax = new Vector3(-999999, -999999, -999999);
 
-            RootMesh.SetBoundingBox(ref bbmin, ref bbmax);
+            /*RootMesh.SetBoundingBox(ref bbmin, ref bbmax);
             bbrange = (bbmin + bbmax) / 2.0F;
 
             Matrix4 mat = Matrix4.Scale(1, -1, 1);
@@ -88,7 +90,7 @@ namespace FimbulwinterClient.Core.Graphics
             RootMesh.SetBoundingBox2(mat, ref realbbmin, ref realbbmax);
             realbbrange = (realbbmax + realbbmin) / 2.0F;
             //maxrange = Math.Max(Math.Max(Math.Max(realbbmax.X, -realbbmin.X), Math.Max(realbbmax.Y, -realbbmin.Y)), Math.Max(realbbmax.Z, -realbbmin.Z))));
-
+            */
             Dispatcher.Instance.DispatchCoreTask(o => Loaded = true);
             
 

@@ -89,7 +89,7 @@ namespace FimbulwinterClient
             FPSLabel.SetPosition(10, 10);
             FPSLabel.SetBounds(10, 10, 100, 100);
 
-            ChangeWorld("prontera");
+            ChangeWorld("comodo");
 
             Stopwatch.Restart();
             LastTime = 0;

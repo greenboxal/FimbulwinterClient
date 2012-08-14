@@ -31,8 +31,8 @@ namespace FimbulwinterClient.Core.Graphics
             get { return _textures; }
         }
 
-        private Matrix4 _matrix;
-        public Matrix4 Matrix
+        private float[] _matrix;
+        public float[] Matrix
         {
             get { return _matrix; }
         }
@@ -85,6 +85,14 @@ namespace FimbulwinterClient.Core.Graphics
             get { return _scale; }
         }
 
+        private Vector3[] _tempVertices;
+
+        private AxisAlignedBox _boudingBox;
+        public AxisAlignedBox BoudingBox
+        {
+            get { return _boudingBox; }
+        }
+
         private RsmMesh _parent;
         public RsmMesh Parent
         {
@@ -97,7 +105,7 @@ namespace FimbulwinterClient.Core.Graphics
             get { return _children; }
         }
 
-        private RsmModel _owner;
+        private readonly RsmModel _owner;
         public RsmModel Owner
         {
             get { return _owner; }
@@ -120,29 +128,34 @@ namespace FimbulwinterClient.Core.Graphics
                 _textures[i] = owner.Textures[br.ReadInt32()];
             }
 
-            _matrix = Matrix4.Identity;
+            _matrix = new float[16];
+            _matrix[0] = br.ReadSingle();
+            _matrix[1] = br.ReadSingle();
+            _matrix[2] = br.ReadSingle();
+            _matrix[3] = 0;
 
-            _matrix.M11 = br.ReadSingle();
-            _matrix.M12 = br.ReadSingle();
-            _matrix.M13 = br.ReadSingle();
+            _matrix[4] = br.ReadSingle();
+            _matrix[5] = br.ReadSingle();
+            _matrix[6] = br.ReadSingle();
+            _matrix[7] = 0;
 
-            _matrix.M21 = br.ReadSingle();
-            _matrix.M22 = br.ReadSingle();
-            _matrix.M23 = br.ReadSingle();
+            _matrix[8] = br.ReadSingle();
+            _matrix[9] = br.ReadSingle();
+            _matrix[10] = br.ReadSingle();
+            _matrix[11] = 0;
 
-            _matrix.M31 = br.ReadSingle();
-            _matrix.M32 = br.ReadSingle();
-            _matrix.M33 = br.ReadSingle();
-
-            _matrix.Transpose();
-
-            _position.X = br.ReadSingle();
-            _position.Y = br.ReadSingle();
-            _position.Z = br.ReadSingle();
+            _matrix[12] = 0;
+            _matrix[13] = 0;
+            _matrix[14] = 0;
+            _matrix[15] = 1;
 
             _position2.X = br.ReadSingle();
             _position2.Y = br.ReadSingle();
             _position2.Z = br.ReadSingle();
+
+            _position.X = br.ReadSingle();
+            _position.Y = br.ReadSingle();
+            _position.Z = br.ReadSingle();
 
             _rotationAngle = br.ReadSingle();
 
@@ -154,12 +167,12 @@ namespace FimbulwinterClient.Core.Graphics
             _scale.Y = br.ReadSingle();
             _scale.Z = br.ReadSingle();
 
-            Vector3[] vertices = new Vector3[br.ReadInt32()];
-            for (int i = 0; i < vertices.Length; i++)
+            _tempVertices = new Vector3[br.ReadInt32()];
+            for (int i = 0; i < _tempVertices.Length; i++)
             {
-                vertices[i].X = br.ReadSingle();
-                vertices[i].Y = br.ReadSingle();
-                vertices[i].Z = br.ReadSingle();
+                _tempVertices[i].X = br.ReadSingle();
+                _tempVertices[i].Y = br.ReadSingle();
+                _tempVertices[i].Z = br.ReadSingle();
             }
 
             Vector2[] texcoords = new Vector2[br.ReadInt32()];
@@ -183,9 +196,9 @@ namespace FimbulwinterClient.Core.Graphics
             {
                 int start = i * 3;
 
-                Vector3 v1 = vertices[br.ReadInt16()];
-                Vector3 v2 = vertices[br.ReadInt16()];
-                Vector3 v3 = vertices[br.ReadInt16()];
+                Vector3 v1 = _tempVertices[br.ReadInt16()];
+                Vector3 v2 = _tempVertices[br.ReadInt16()];
+                Vector3 v3 = _tempVertices[br.ReadInt16()];
 
                 Vector2 t1 = texcoords[br.ReadInt16()];
                 Vector2 t2 = texcoords[br.ReadInt16()];
@@ -193,8 +206,8 @@ namespace FimbulwinterClient.Core.Graphics
 
                 int tex = br.ReadInt16();
                 br.ReadInt16();
-                int twoSide = br.ReadInt32();
-                int smoothGroup = br.ReadInt32();
+                br.ReadInt32();
+                br.ReadInt32();
 
                 Vector3 normal = Vector3.Cross(v1 - v3, v2 - v3);
                 normal.Normalize();
@@ -207,8 +220,6 @@ namespace FimbulwinterClient.Core.Graphics
                 indexes[tex].Add(start + 1);
                 indexes[tex].Add(start + 2);
             }
-
-            gvertices = ggvertices.ToArray();
 
             _rotationFrames = new Tuple<Quaternion, int>[br.ReadInt32()];
             for (int i = 0; i < _rotationFrames.Length; i++)
@@ -227,7 +238,7 @@ namespace FimbulwinterClient.Core.Graphics
             Dispatcher.Instance.DispatchCoreTask(o =>
                 {
                     _vertices = new VertexBuffer(VertexPositionNormalTexture.VertexDeclaration);
-                    _vertices.SetData(gvertices, BufferUsageHint.StaticDraw);
+                    _vertices.SetData(ggvertices.ToArray(), BufferUsageHint.StaticDraw);
 
                     _indexes = new IndexBuffer[_textures.Length];
                     for (int i = 0; i < _textures.Length; i++)
@@ -241,17 +252,112 @@ namespace FimbulwinterClient.Core.Graphics
                 });
         }
 
+        private void MatrixMultVect(float[] m, Vector3 vin, ref Vector3 vout) 
+        {
+            vout.X = vin.X * m[0] + vin.Y * m[4] + vin.Z * m[8] + 1.0f * m[12];
+            vout.Y = vin.X * m[1] + vin.Y * m[5] + vin.Z * m[9] + 1.0f * m[13];
+            vout.Z = vin.X * m[2] + vin.Y * m[6] + vin.Z * m[10] + 1.0f * m[14];
+        }
+
+        private void CalculateBoundingBox()
+        {
+            _boudingBox = new AxisAlignedBox(new Vector3(999999), new Vector3(-999999));
+
+            foreach (Vector3 ov in _tempVertices)
+            {
+                Vector3 v = Vector3.Zero;
+
+                MatrixMultVect(_matrix, ov, ref v);
+
+                if (Parent != null || Children.Length > 0)
+                    v += _position2;
+
+                _boudingBox += v;
+            }
+
+            foreach (RsmMesh m in _children)
+            {
+                m.CalculateBoundingBox();
+            }
+
+            _boudingBox.CalculateRangeAndOffset();
+        }
+
+        private double _lastTick;
         public void Draw(CommonShaderProgram shader, double elapsed)
         {
             if (!_owner.Loaded)
                 return;
 
-            Matrix4 g = GetGlobalMatrix(false, elapsed);
-            Matrix4 l = GetLocalMatrix();
+            GL.Scale(_scale);
 
-            GL.MultMatrix(ref g);
+            if (Parent == null)
+            {
+                if (Children.Length == 0)
+                {
+                    GL.Translate(0, -_boudingBox.Max.Y + _boudingBox.Offset.Y, 0);
+                }
+                else
+                {
+                    GL.Translate(-_boudingBox.Offset.X, -_boudingBox.Max.Y, -_boudingBox.Offset.Z);
+                }
+            }
+            else
+            {
+                GL.Translate(Position);
+            }
+
+            if (RotationFrames.Length == 0)
+            {
+                GL.Rotate(MathHelper.RadiansToDegrees(RotationAngle), RotationAxis);
+            }
+            else
+            {
+                int current = 0;
+
+                for (int i = 0; i < _rotationFrames.Length; i++)
+                {
+                    if (_rotationFrames[i].Item2 > _lastTick)
+                    {
+                        current = i - 1;
+                        break;
+                    }
+                }
+
+                if (current < 0)
+                    current = 0;
+
+                int next = current + 1;
+                if (next >= _rotationFrames.Length)
+                    next = 0;
+
+                float interval = ((float)(_lastTick - _rotationFrames[current].Item2)) / ((_rotationFrames[next].Item2 - _rotationFrames[current].Item2));
+                Quaternion q = Quaternion.Slerp(_rotationFrames[current].Item1, _rotationFrames[next].Item1, interval);
+                q.Normalize();
+
+                _lastTick += elapsed;
+                while (_lastTick > _rotationFrames[_rotationFrames.Length - 1].Item2)
+                    _lastTick -= _rotationFrames[_rotationFrames.Length - 1].Item2;
+
+                float angle;
+                Vector3 axis;
+                q.ToAxisAngle(out axis, out angle);
+
+                GL.Rotate(MathHelper.RadiansToDegrees(angle), axis);
+            }
+
             GL.PushMatrix();
-            GL.MultMatrix(ref l);
+
+            if (Parent == null && Children.Length == 0)
+            {
+                GL.Translate(-_boudingBox.Offset.X, -_boudingBox.Offset.Y, -_boudingBox.Offset.Z);
+            }
+            else if (Parent != null || Children.Length > 0)
+            {
+                GL.Translate(_position2);
+            }
+            
+            GL.MultMatrix(_matrix);
 
             shader.Begin();
             shader.SetAlpha(_owner.Alpha);
@@ -272,199 +378,18 @@ namespace FimbulwinterClient.Core.Graphics
                 GL.PopMatrix();
             }
         }
-        private Matrix4 _globalMatrix;
-        private bool _globalMatrixCached;
-        private double _lastTick;
-        private Matrix4 GetGlobalMatrix(bool animated, double elapsed)
-        {
-            if (_globalMatrixCached)
-                return _globalMatrix;
-            
-            _globalMatrix = Matrix4.Identity;
-
-            if (_parent == null)
-            {
-                if (_children.Length > 0)
-                _localMatrix *= Matrix4.CreateTranslation(-bbrange.X, -bbmax.Y, -bbrange.Z);
-                else
-                _localMatrix *= Matrix4.CreateTranslation(0, -bbmax.Y + bbrange.Y, 0);
-            }
-            else
-            {
-                _globalMatrix *= Matrix4.CreateTranslation(_position);
-            }
-
-            if (_rotationFrames.Length == 0)
-            {
-                _globalMatrix *= Matrix4.CreateFromAxisAngle(_rotationAxis, _rotationAngle);
-            }
-            else
-            {
-                if (animated)
-                {
-                    int current = 0;
-
-                    for (int i = 0; i < _rotationFrames.Length; i++)
-                    {
-                        if (_rotationFrames[i].Item2 > _lastTick)
-                        {
-                            current = i - 1;
-                            break;
-                        }
-                    }
-
-                    if (current < 0)
-                        current = 0;
-
-                    int next = current + 1;
-                    if (next >= _rotationFrames.Length)
-                        next = 0;
-
-                    float interval = ((float)(_lastTick - _rotationFrames[current].Item2)) / ((_rotationFrames[next].Item2 - _rotationFrames[current].Item2));
-                    Quaternion q = Quaternion.Slerp(_rotationFrames[current].Item1, _rotationFrames[next].Item1, interval);
-                    q.Normalize();
-
-                    //_globalMatrix *= q;
-
-                    _lastTick += elapsed;
-                    while (_lastTick > _rotationFrames[_rotationFrames.Length - 1].Item2)
-                        _lastTick -= _rotationFrames[_rotationFrames.Length - 1].Item2;
-                }
-                else
-                {
-                    Quaternion q = _rotationFrames[0].Item1;
-
-                    q.Normalize();
-
-                    //_globalMatrix *= Matrix.CreateFromQuaternion(q);
-                }
-            }
-            
-            _globalMatrix *= Matrix4.Scale(_scale);
-            
-            if (_rotationFrames.Length == 0)
-                _globalMatrixCached = true;
-
-            return _globalMatrix;
-        }
-
-        private Matrix4 _localMatrix;
-        private bool _localMatrixCached;
-        private Matrix4 GetLocalMatrix()
-        {
-            if (_localMatrixCached)
-                return _localMatrix;
-
-            _localMatrix = Matrix4.Identity;
-
-            if (_parent == null && _children.Length > 0)
-                _localMatrix *= Matrix4.CreateTranslation(-bbrange.X, -bbrange.Y, -bbrange.Z);
-
-            if (Parent != null || _children.Length == 0)
-                _localMatrix *= Matrix4.CreateTranslation(_position.X, _position.Y, _position.Z);
-
-            _localMatrix *= _matrix; 
-            _localMatrixCached = true;
-
-            return _localMatrix;
-        }
-
-        public void SetBoundingBox(ref Vector3 _bbmin, ref Vector3 _bbmax)
-        {
-	        int i;
-
-	        bbmin = new Vector3(9999999, 9999999, 9999999);
-	        bbmax = new Vector3(-9999999, -9999999, -9999999);
-
-	        if(_parent != null)
-		        bbmin = bbmax = new Vector3(0, 0, 0);
-
-	        Matrix4 myMat = _matrix;
-            for (i = 0; i < gvertices.Length / 3; i++)
-	        {
-		        for(int ii = 0; ii < 3; ii++)
-		        {
-                    Vector3 v = Vector3.Transform(gvertices[i + ii].Position, myMat);
-
-			        if(_parent != null || _children.Length > 0)
-				        v += _position + _position2;
-
-                    bbmin.X = Math.Min(bbmin.X, v.X);
-                    bbmin.Y = Math.Min(bbmin.Y, v.Y);
-                    bbmin.Z = Math.Min(bbmin.Z, v.Z);
-
-                    bbmax.X = Math.Max(bbmax.X, v.X);
-                    bbmax.Y = Math.Max(bbmax.Y, v.Y);
-                    bbmax.Z = Math.Max(bbmax.Z, v.Z);
-		        }
-	        }
-
-	        bbrange = (_bbmin + _bbmax) / 2.0f;
-
-            _bbmin.X = Math.Min(_bbmin.X, bbmin.X);
-            _bbmin.Y = Math.Min(_bbmin.Y, bbmin.Y);
-            _bbmin.Z = Math.Min(_bbmin.Z, bbmin.Z);
-
-            _bbmax.X = Math.Max(_bbmax.X, bbmax.X);
-            _bbmax.Y = Math.Max(_bbmax.Y, bbmax.Y);
-            _bbmax.Z = Math.Max(_bbmax.Z, bbmax.Z);
-            
-            for (i = 0; i < _children.Length; i++)
-            {
-		        _children[i].SetBoundingBox(ref _bbmin, ref _bbmax);
-            }
-        }
-
-        public void SetBoundingBox2(Matrix4 mat, ref Vector3 _bbmin, ref Vector3 _bbmax)
-        {
-	        Matrix4 myMat = mat * GetGlobalMatrix(false, 0);
-            Matrix4 mat2 = myMat * GetLocalMatrix();
-	        int i;
-
-            for (i = 0; i < gvertices.Length / 3; i++)
-	        {
-		        for(int ii = 0; ii < 3; ii++)
-		        {
-                    Vector3 v = Vector3.Transform(gvertices[i + ii].Position, mat2);
         
-                    bbmin.X = Math.Min(bbmin.X, v.X);
-                    bbmin.Y = Math.Min(bbmin.Y, v.Y);
-                    bbmin.Z = Math.Min(bbmin.Z, v.Z);
-
-                    bbmax.X = Math.Max(bbmax.X, v.X);
-                    bbmax.Y = Math.Max(bbmax.Y, v.Y);
-                    bbmax.Z = Math.Max(bbmax.Z, v.Z);
-		        }
-	        }
-
-	        bbrange = (_bbmin + _bbmax) / 2.0f;
-
-            _bbmin.X = Math.Min(_bbmin.X, bbmin.X);
-            _bbmin.Y = Math.Min(_bbmin.Y, bbmin.Y);
-            _bbmin.Z = Math.Min(_bbmin.Z, bbmin.Z);
-
-            _bbmax.X = Math.Max(_bbmax.X, bbmax.X);
-            _bbmax.Y = Math.Max(_bbmax.Y, bbmax.Y);
-            _bbmax.Z = Math.Max(_bbmax.Z, bbmax.Z);
-
-            for (i = 0; i < _children.Length; i++)
-            {
-		        _children[i].SetBoundingBox2(mat, ref _bbmin, ref _bbmax);
-            }	
-        }
-
-        Vector3 bbmin, bbmax, bbrange;
-        VertexPositionNormalTexture[] gvertices;
-
-        public void CreateChildren(RsmMesh[] _meshes)
+        public void CreateChildren(RsmMesh[] meshes)
         {
-            foreach (RsmMesh m in _meshes.Where(m => String.Compare(m.Name, _parentName, StringComparison.OrdinalIgnoreCase) == 0))
+            foreach (RsmMesh m in meshes.Where(m => String.Compare(m.Name, _parentName, StringComparison.OrdinalIgnoreCase) == 0))
             {
                 _parent = m;
                 break;
             }
 
-            _children = _meshes.Where(m => String.Compare(m.ParentName, _name, StringComparison.OrdinalIgnoreCase) == 0).ToArray();
+            _children = meshes.Where(m => String.Compare(m.ParentName, _name, StringComparison.OrdinalIgnoreCase) == 0).ToArray();
+
+            CalculateBoundingBox();
         }
     }
 }

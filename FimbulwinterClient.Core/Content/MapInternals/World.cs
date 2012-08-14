@@ -236,7 +236,7 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                     _mesh = _model.FindMesh(NodeName) ?? _model.RootMesh;
             }
 
-            public void Draw(CommonShaderProgram shader, double elapsed)
+            public void Draw(MapInternals.Ground ground, CommonShaderProgram shader, double elapsed)
             {
                 if (_model == null || !_model.Loaded)
                     return;
@@ -244,16 +244,16 @@ namespace FimbulwinterClient.Core.Content.MapInternals
                 if (_mesh == null)
                     _mesh = _model.FindMesh(NodeName) ?? _model.RootMesh;
 
+                float offsetX = ground.Zoom * ground.Width / 2;
+                float offsetZ = ground.Zoom * ground.Height / 2;
+
                 GL.PushMatrix();
 
-                Matrix4 world = Matrix4.CreateTranslation(Position.X, Position.Y, Position.Z);
-                world *= Matrix4.CreateRotationZ(-Rotation.Z);
-                world *= Matrix4.CreateRotationX(-Rotation.X);
-                world *= Matrix4.CreateRotationY(Rotation.Y);
-                world *= Matrix4.Scale(Scale.X, Scale.Y, Scale.Z);
-                //world *= Matrix4.CreateTranslation(-_model.realbbrange.X, _model.realbbrange.Y, -_model.realbbrange.Z);
-
-                GL.MultMatrix(ref world);
+                GL.Translate(-offsetX + _position.X * 5, _position.Y, -offsetZ + _position.Z * 5);
+                GL.Rotate(-Rotation.X, Vector3.UnitX);
+                GL.Rotate(-Rotation.Z, Vector3.UnitZ);
+                GL.Rotate(Rotation.Y, Vector3.UnitY);
+                GL.Scale(_scale);
 
                 _mesh.Draw(shader, elapsed);
 

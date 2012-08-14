@@ -84,6 +84,7 @@
     <Compile Include="Content\Map.cs" />
     <Compile Include="Content\MapInternals\Altitude.cs" />
     <Compile Include="Content\MapInternals\Ground.cs" />
+    <Compile Include="Graphics\AxisAlignedBox.cs" />
     <Compile Include="Graphics\RsmMesh.cs" />
     <Compile Include="Graphics\RsmModel.cs" />
     <Compile Include="Graphics\VertexPositionTextureNormalLightmap.cs" />

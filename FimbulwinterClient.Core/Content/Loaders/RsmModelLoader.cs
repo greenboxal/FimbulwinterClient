@@ -26,6 +26,8 @@ namespace FimbulwinterClient.Core.Content.Loaders
                 result.Load(stream);
             }, background);
 
+            ContentManager.Instance.CacheContent(contentName, result);
+
             return result;
         }
     }
