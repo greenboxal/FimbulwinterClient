@@ -60,7 +60,7 @@ namespace FimbulwinterClient.Core.Graphics
             for (int i = 0; i < Textures.Length; i++)
             {
                 Textures[i] = ContentManager.Instance.Load<Texture2D>(@"data\texture\" + br.ReadCString(40));
-                Textures[i].SetMagFilter(TextureMagFilter.Nearest, TextureMagFilter.Nearest);
+                //Textures[i].SetMagFilter(TextureMagFilter.Nearest, TextureMagFilter.Nearest);
             }
 
             MainNodeName = br.ReadCString(40);

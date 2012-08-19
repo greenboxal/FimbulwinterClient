@@ -278,6 +278,7 @@ namespace FimbulwinterClient.Core.Graphics
             foreach (RsmMesh m in _children)
             {
                 m.CalculateBoundingBox();
+                _boudingBox += m.BoudingBox;
             }
 
             _boudingBox.CalculateRangeAndOffset();
