@@ -118,10 +118,6 @@
     <Compile Include="IO\ZLib\ZlibStream.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FimbulvetrEngine\FimbulvetrEngine.Framework\FimbulvetrEngine.Framework.csproj">
-      <Project>{c8304924-8f55-48f1-a5f3-b434c3b4c556}</Project>
-      <Name>FimbulvetrEngine.Framework</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FimbulvetrEngine\FimbulvetrEngine\FimbulvetrEngine.csproj">
       <Project>{7ff70cd4-9b36-41c8-881a-4d94fbe9bbc8}</Project>
       <Name>FimbulvetrEngine %28FimbulvetrEngine\FimbulvetrEngine%29</Name>
